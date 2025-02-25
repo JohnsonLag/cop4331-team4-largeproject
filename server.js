@@ -31,9 +31,8 @@ app.post('/api/addcard', async (req, res, next) =>
         error = e.toString();
     }
 
-    cardList.push( card );
     var ret = { error: error };
-    res.status(200).tsxon(ret);
+    res.status(200).json(ret);
 });
 
 app.post('/api/login', async (req, res, next) =>
@@ -71,7 +70,7 @@ app.post('/api/searchcards', async (req, res, next) =>
     const { userId, search } = req.body;
     var _search = search.trim();
     const db = client.db();
-    const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'r'}}).toArray();
+    const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
 
     var _ret = [];
     for( var i=0; i<results.length; i++ )
@@ -80,7 +79,7 @@ app.post('/api/searchcards', async (req, res, next) =>
     }
 
     var ret = {results:_ret, error:error};
-    res.status(200).tsxon(ret);
+    res.status(200).json(ret);
 });
 
 app.use((req, res, next) =>
