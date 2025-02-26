@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 function Login() {
-    const app_name = 'http://coolestappever.xyz/';
+    const app_name = 'coolestappever.xyz';
     function buildPath(route:string) : string
     {
         if (process.env.NODE_ENV != 'development')
