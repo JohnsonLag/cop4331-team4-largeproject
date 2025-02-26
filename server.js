@@ -1,4 +1,5 @@
-const config = require('./config');
+require('dotenv').config();
+const url = process.env.MONGODB_URI;
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -9,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(config.mongoURL);
+const client = new MongoClient(url);
 client.connect();
 
 
@@ -43,6 +44,9 @@ app.post('/api/login', async (req, res, next) =>
     var error = '';
 
     const { login, password } = req.body;
+
+    console.log(login);
+    console.log(password);
 
     const db = client.db();
     const results = await db.collection('Users').find({Login:login,Password:password}).toArray();

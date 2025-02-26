@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 
 function Login() {
+    const app_name = '{insert_ip_or_domain}';
+    function buildPath(route:string) : string
+    {
+        if (process.env.NODE_ENV != 'development')
+        {
+            return 'http://' + app_name + ':5000/' + route;
+        }
+        else
+        {
+            return 'http://localhost:5000/' + route;
+        }
+    }
+
     const [message,setMessage] = useState('');
     const [loginName,setLoginName] = React.useState('');
     const [loginPassword,setPassword] = React.useState('');
@@ -22,7 +35,7 @@ function Login() {
         var js = JSON.stringify(obj);
         try
         {
-            const response = await fetch('http://localhost:5000/api/login',
+            const response = await fetch(buildPath('api/login'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
             var res = JSON.parse(await response.text());

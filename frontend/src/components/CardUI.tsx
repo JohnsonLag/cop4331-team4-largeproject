@@ -2,11 +2,22 @@ import React, { useState } from 'react';
 
 function CardUI()
 {
+    const app_name = '{insert_ip_or_domain}';
+    function buildPath(route:string) : string
+    {
+        if (process.env.NODE_ENV != 'development')
+        {
+            return 'http://' + app_name + ':5000/' + route;
+        }
+        else
+        {
+            return 'http://localhost:5000/' + route;
+        }
+    }
+
     let _ud : any = localStorage.getItem('user_data');
     let ud = JSON.parse( _ud );
     let userId : string = ud.id;
-    let firstName : string = ud.firstName;
-    let lastName : string = ud.lastName;
     const [message,setMessage] = useState('');
     const [searchResults,setResults] = useState('');
     const [cardList,setCardList] = useState('');
@@ -30,8 +41,7 @@ function CardUI()
         let js = JSON.stringify(obj);
         try
         {
-            const response = await
-            fetch('http://localhost:5000/api/addcard',
+            const response = await fetch(buildPath('api/addCard'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
             let txt = await response.text();
@@ -58,8 +68,7 @@ function CardUI()
         let js = JSON.stringify(obj);
         try
         {
-            const response = await
-                fetch('http://localhost:5000/api/searchcards',
+            const response = await fetch(buildPath('api/searchCards'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
             let txt = await response.text();

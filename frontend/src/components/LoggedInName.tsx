@@ -10,7 +10,6 @@ function LoggedInName()
     }
 
     var ud = JSON.parse(_ud);
-    var userId = ud.id;
     var firstName = ud.firstName;
     var lastName = ud.lastName;
 
