@@ -24,7 +24,7 @@ app.post('/api/addcard', async (req, res, next) =>
 
     try
     {
-        const db = client.db();
+        const db = client.db('MERNSTACK');
         const result = db.collection('Cards').insertOne(newCard);
     }
     catch(e)
@@ -44,11 +44,9 @@ app.post('/api/login', async (req, res, next) =>
     var error = '';
 
     const { login, password } = req.body;
+    
+    const db = client.db('MERNSTACK');
 
-    console.log(login);
-    console.log(password);
-
-    const db = client.db();
     const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
 
     var id = -1;
@@ -73,7 +71,7 @@ app.post('/api/searchcards', async (req, res, next) =>
     var error = '';
     const { userId, search } = req.body;
     var _search = search.trim();
-    const db = client.db();
+    const db = client.db('MERNSTACK');
     const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
 
     var _ret = [];
