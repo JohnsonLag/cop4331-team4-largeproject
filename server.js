@@ -64,6 +64,49 @@ app.post('/api/login', async (req, res, next) =>
     res.status(200).json(ret);
 });
 
+app.post('/api/signup', async (req, res, next) => {
+    // incoming: login, password, firstName, lastName
+    // outoing: id, firstName, lastName, error
+
+    let error = '';
+
+    const { login, password, firstName, lastName } = req.body;
+
+    const db = client.db('MERNSTACK');
+
+    const results = await db.collection('Users').find({ Login: login }).toArray();
+
+    if (results.length > 0) {
+        error = 'Username already exists';
+        const ret = { id: -1, firstName: '', lastName: '', error: error };
+        return res.status(409).json(ret);
+    }
+
+    let newUserId = 1;
+    const lastUserArr = await db.collection('Users').find({}).sort({ UserId: -1 }).limit(1).toArray();
+    if (lastUserArr.length > 0) {
+        newUserId = lastUserArr[0].UserId + 1;
+    }
+
+    const newUser = {
+        UserId: newUserId,
+        Login: login,
+        Password: password,
+        FirstName: firstName,
+        LastName: lastName
+    };
+
+    try {
+        await db.collection('Users').insertOne(newUser);
+    } catch (e) {
+        error = e.toString();
+    }
+
+    const ret = { id: newUserId, firstName: firstName, lastName: lastName, error: error };
+    res.status(200).json(ret);
+});
+
+
 app.post('/api/searchcards', async (req, res, next) =>
 {
     // incoming: userId, search
