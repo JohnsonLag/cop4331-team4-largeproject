@@ -82,14 +82,7 @@ app.post('/api/signup', async (req, res, next) => {
         return res.status(409).json(ret);
     }
 
-    let newUserId = 1;
-    const lastUserArr = await db.collection('Users').find({}).sort({ UserId: -1 }).limit(1).toArray();
-    if (lastUserArr.length > 0) {
-        newUserId = lastUserArr[0].UserId + 1;
-    }
-
     const newUser = {
-        UserId: newUserId,
         Login: login,
         Password: password,
         FirstName: firstName,
