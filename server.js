@@ -95,7 +95,7 @@ app.post('/api/signup', async (req, res, next) => {
         error = e.toString();
     }
 
-    const ret = { id: newUserId, firstName: firstName, lastName: lastName, error: error };
+    const ret = { firstName: firstName, lastName: lastName, error: error };
     res.status(200).json(ret);
 });
 
