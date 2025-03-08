@@ -13,10 +13,11 @@ const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
 
-
+/* CARDS */
+// Create
 app.post('/api/addcard', async (req, res, next) =>
 {
-    // incoming: userId, color
+    // incoming: userId, card
     // outgoing: error
     const { userId, card } = req.body;
     const newCard = {Card:card,UserId:userId};
@@ -36,34 +37,29 @@ app.post('/api/addcard', async (req, res, next) =>
     res.status(200).json(ret);
 });
 
-app.post('/api/login', async (req, res, next) =>
+// Retrieve
+app.post('/api/searchcards', async (req, res, next) =>
 {
-    // incoming: login, password
-    // outgoing: id, firstName, lastName, error
-
+    // incoming: userId, search
+    // outgoing: results[], error
     var error = '';
-
-    const { login, password } = req.body;
-    
+    const { userId, search } = req.body;
+    var _search = search.trim();
     const db = client.db('MERNSTACK');
+    const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
 
-    const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
-
-    var id = -1;
-    var fn = '';
-    var ln = '';
-    
-    if( results.length > 0 )
+    var _ret = [];
+    for( var i=0; i<results.length; i++ )
     {
-        id = results[0].UserId;
-        fn = results[0].FirstName;
-        ln = results[0].LastName;
+        _ret.push( results[i].Card );
     }
 
-    var ret = { id:id, firstName:fn, lastName:ln, error:''};
+    var ret = {results:_ret, error:error};
     res.status(200).json(ret);
 });
 
+/* USERS */
+// Create
 app.post('/api/signup', async (req, res, next) => {
     // incoming: login, password, firstName, lastName
     // outoing: id, firstName, lastName, error
@@ -99,8 +95,40 @@ app.post('/api/signup', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+// Retrieve
+app.post('/api/login', async (req, res, next) =>
+{
+    // incoming: login, password
+    // outgoing: id, firstName, lastName, error
 
-app.post('/api/searchcards', async (req, res, next) =>
+    var error = '';
+
+    const { login, password } = req.body;
+    
+    const db = client.db('MERNSTACK');
+
+    const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
+
+    var id = -1;
+    var fn = '';
+    var ln = '';
+    
+    if( results.length > 0 )
+    {
+        id = results[0].UserId;
+        fn = results[0].FirstName;
+        ln = results[0].LastName;
+    }
+
+    var ret = { id:id, firstName:fn, lastName:ln, error:''};
+    res.status(200).json(ret);
+});
+
+/* NOTES */
+// Create
+
+// Retrieve
+app.post('/api/searchnotes', async (req, res, next) =>
 {
     // incoming: userId, search
     // outgoing: results[], error
@@ -108,17 +136,29 @@ app.post('/api/searchcards', async (req, res, next) =>
     const { userId, search } = req.body;
     var _search = search.trim();
     const db = client.db('MERNSTACK');
-    const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
+    // NOTE: Right now, the search function bases the search
+    //  on the titles of the Notes
+    //  We could potentially change this in the future to also search the body
+    //  of the text
+    const results = await db.collection('Notes').find({"Title":{$regex: _search + '.*', $options:'i'}}).toArray();
 
     var _ret = [];
-    for( var i=0; i<results.length; i++ )
+    for( var i=0; i < results.length; i++ )
     {
         _ret.push( results[i].Card );
     }
 
-    var ret = {results:_ret, error:error};
+    var ret = {results: _ret , error: error};
     res.status(200).json(ret);
 });
+
+// Update
+
+// Delete
+
+
+
+
 
 app.use((req, res, next) =>
 {
