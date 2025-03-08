@@ -1,6 +1,9 @@
 require('dotenv').config();
 const url = process.env.MONGODB_URI;
 
+// To use MongoDB ObjecctId
+const { ObjectId } = require('mongodb');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -140,12 +143,16 @@ app.post('/api/searchnotes', async (req, res, next) =>
     //  on the titles of the Notes
     //  We could potentially change this in the future to also search the body
     //  of the text
-    const results = await db.collection('Notes').find({"Title":{$regex: _search + '.*', $options:'i'}}).toArray();
+    const results = await db.collection('Notes').find({
+        UserId: new ObjectId(userId),
+        Title: { $regex: _search + '.*', $options: 'i' },
+    }).toArray();
 
     var _ret = [];
     for( var i=0; i < results.length; i++ )
     {
-        _ret.push( results[i].Card );
+        console.log(results[i]);
+        _ret.push(results[i]);
     }
 
     var ret = {results: _ret , error: error};
