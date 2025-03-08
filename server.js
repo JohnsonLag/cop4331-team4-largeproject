@@ -18,18 +18,20 @@ client.connect();
 
 /* CARDS */
 // Create
-app.post('/api/addcard', async (req, res, next) =>
+app.post('/api/addnote', async (req, res, next) =>
 {
-    // incoming: userId, card
+    // incoming: userId, title
     // outgoing: error
-    const { userId, card } = req.body;
-    const newCard = {Card:card,UserId:userId};
+    const { userId, title } = req.body;
+    const newNote = {
+        Title: title,
+        UserId: new ObjectId(userId)};
     var error = '';
 
     try
     {
         const db = client.db('MERNSTACK');
-        const result = db.collection('Cards').insertOne(newCard);
+        const result = db.collection('Notes').insertOne(newNote);
     }
     catch(e)
     {
