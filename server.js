@@ -142,7 +142,7 @@ app.post('/api/addnote', async (req, res, next) =>
     let existingNote = await db.collection('Notes').findOne({ Title: title });
     if (existingNote)
     {
-        error = 'Document name already exists already exists';
+        error = 'Notes name already exists already exists';
         const ret = { id: -1, error: error };
         return res.status(409).json(ret);
     }
@@ -197,6 +197,32 @@ app.post('/api/searchnotes', async (req, res, next) =>
 // Update
 
 // Delete
+app.post('/api/deletenote', async (req, res, next) =>
+{
+    // incoming: ObjectId
+    const { id } = req.body;
+    let error = '';
+
+    try {
+        // Initiate db
+        const db = client.db('MERNSTACK');
+
+        // Delete note with matching ObjectId
+        let result = await db.collection('Notes').deleteOne({
+            _id: new ObjectId(id),
+        });
+
+        // If no document was deleted
+        if (result.deletedCount == 0) {
+            error = 'Note not found';
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+});
 
 
 
