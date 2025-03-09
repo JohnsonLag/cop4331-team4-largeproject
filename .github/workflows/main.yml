@@ -35,6 +35,7 @@ jobs:
           sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
           cd /var/www/coolestappever.xyz/html
           git pull origin main
+          cd frontend
           npm install
           npm run build
           systemctl restart nginx
