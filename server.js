@@ -18,20 +18,18 @@ client.connect();
 
 /* CARDS */
 // Create
-app.post('/api/addnote', async (req, res, next) =>
+app.post('/api/addcard', async (req, res, next) =>
 {
-    // incoming: userId, title
+    // incoming: userId, color
     // outgoing: error
-    const { userId, title } = req.body;
-    const newNote = {
-        Title: title,
-        UserId: new ObjectId(userId)};
+    const { userId, card } = req.body;
+    const newCard = {Card:card,UserId:userId};
     var error = '';
 
     try
     {
         const db = client.db('MERNSTACK');
-        const result = db.collection('Notes').insertOne(newNote);
+        const result = db.collection('Cards').insertOne(newCard);
     }
     catch(e)
     {
@@ -131,6 +129,41 @@ app.post('/api/login', async (req, res, next) =>
 
 /* NOTES */
 // Create
+app.post('/api/addnote', async (req, res, next) =>
+{
+    // incoming: userId, title
+    // outgoing: error
+    const { userId, title } = req.body;
+
+    // Initiate db
+    const db = client.db('MERNSTACK');
+
+    // Check if a note with the same title already exists
+    let existingNote = await db.collection('Notes').findOne({ Title: title });
+    if (existingNote)
+    {
+        error = 'Document name already exists already exists';
+        const ret = { id: -1, error: error };
+        return res.status(409).json(ret);
+    }
+
+    const newNote = {
+        Title: title,
+        UserId: new ObjectId(userId)};
+    var error = '';
+
+    try
+    {
+        const result = db.collection('Notes').insertOne(newNote);
+    }
+    catch(e)
+    {
+        error = e.toString();
+    }
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+});
 
 // Retrieve
 app.post('/api/searchnotes', async (req, res, next) =>
