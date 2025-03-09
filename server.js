@@ -1,6 +1,9 @@
 require('dotenv').config();
 const url = process.env.MONGODB_URI;
 
+// To use MongoDB ObjecctId
+const { ObjectId } = require('mongodb');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -13,7 +16,8 @@ const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
 
-
+/* CARDS */
+// Create
 app.post('/api/addcard', async (req, res, next) =>
 {
     // incoming: userId, color
@@ -36,34 +40,29 @@ app.post('/api/addcard', async (req, res, next) =>
     res.status(200).json(ret);
 });
 
-app.post('/api/login', async (req, res, next) =>
+// Retrieve
+app.post('/api/searchcards', async (req, res, next) =>
 {
-    // incoming: login, password
-    // outgoing: id, firstName, lastName, error
-
+    // incoming: userId, search
+    // outgoing: results[], error
     var error = '';
-
-    const { login, password } = req.body;
-    
+    const { userId, search } = req.body;
+    var _search = search.trim();
     const db = client.db('MERNSTACK');
+    const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
 
-    const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
-
-    var id = -1;
-    var fn = '';
-    var ln = '';
-    
-    if( results.length > 0 )
+    var _ret = [];
+    for( var i=0; i<results.length; i++ )
     {
-        id = results[0].UserId;
-        fn = results[0].FirstName;
-        ln = results[0].LastName;
+        _ret.push( results[i].Card );
     }
 
-    var ret = { id:id, firstName:fn, lastName:ln, error:''};
+    var ret = {results:_ret, error:error};
     res.status(200).json(ret);
 });
 
+/* USERS */
+// Create
 app.post('/api/signup', async (req, res, next) => {
     // incoming: login, password, firstName, lastName
     // outoing: id, firstName, lastName, error
@@ -99,8 +98,75 @@ app.post('/api/signup', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+// Retrieve
+app.post('/api/login', async (req, res, next) =>
+{
+    // incoming: login, password
+    // outgoing: id, firstName, lastName, error
 
-app.post('/api/searchcards', async (req, res, next) =>
+    var error = '';
+
+    const { login, password } = req.body;
+    
+    const db = client.db('MERNSTACK');
+
+    const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
+
+    var id = -1;
+    var fn = '';
+    var ln = '';
+    
+    if( results.length > 0 )
+    {
+        id = results[0].UserId;
+        fn = results[0].FirstName;
+        ln = results[0].LastName;
+    }
+
+    var ret = { id:id, firstName:fn, lastName:ln, error:''};
+    res.status(200).json(ret);
+});
+
+/* NOTES */
+// Create
+app.post('/api/addnote', async (req, res, next) =>
+{
+    // incoming: userId, title
+    // outgoing: error
+    const { userId, title } = req.body;
+
+    // Initiate db
+    const db = client.db('MERNSTACK');
+
+    // Check if a note with the same title already exists
+    let existingNote = await db.collection('Notes').findOne({ Title: title });
+    if (existingNote)
+    {
+        error = 'Notes name already exists already exists';
+        const ret = { id: -1, error: error };
+        return res.status(409).json(ret);
+    }
+
+    const newNote = {
+        Title: title,
+        UserId: new ObjectId(userId)};
+    var error = '';
+
+    try
+    {
+        const result = db.collection('Notes').insertOne(newNote);
+    }
+    catch(e)
+    {
+        error = e.toString();
+    }
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+});
+
+// Retrieve
+app.post('/api/searchnotes', async (req, res, next) =>
 {
     // incoming: userId, search
     // outgoing: results[], error
@@ -108,17 +174,59 @@ app.post('/api/searchcards', async (req, res, next) =>
     const { userId, search } = req.body;
     var _search = search.trim();
     const db = client.db('MERNSTACK');
-    const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
+    // NOTE: Right now, the search function bases the search
+    //  on the titles of the Notes
+    //  We could potentially change this in the future to also search the body
+    //  of the text
+    const results = await db.collection('Notes').find({
+        UserId: new ObjectId(userId),
+        Title: { $regex: _search + '.*', $options: 'i' },
+    }).toArray();
 
     var _ret = [];
-    for( var i=0; i<results.length; i++ )
+    for( var i=0; i < results.length; i++ )
     {
-        _ret.push( results[i].Card );
+        console.log(results[i]);
+        _ret.push(results[i]);
     }
 
-    var ret = {results:_ret, error:error};
+    var ret = {results: _ret , error: error};
     res.status(200).json(ret);
 });
+
+// Update
+
+// Delete
+app.post('/api/deletenote', async (req, res, next) =>
+{
+    // incoming: ObjectId
+    const { id } = req.body;
+    let error = '';
+
+    try {
+        // Initiate db
+        const db = client.db('MERNSTACK');
+
+        // Delete note with matching ObjectId
+        let result = await db.collection('Notes').deleteOne({
+            _id: new ObjectId(id),
+        });
+
+        // If no document was deleted
+        if (result.deletedCount == 0) {
+            error = 'Note not found';
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+});
+
+
+
+
 
 app.use((req, res, next) =>
 {
