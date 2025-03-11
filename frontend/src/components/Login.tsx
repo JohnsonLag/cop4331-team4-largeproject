@@ -58,13 +58,20 @@ function Login() {
         }
     };
 
+    function goToSignupPage(event:any) : Promise<void>
+    {
+        window.location.href = '/signup';
+    };
+
     return (
         <div id="loginDiv">
             <span id="inner-title">PLEASE LOG IN</span><br></br>
             <input type="text" id="loginName" placeholder="Username" onChange={handleSetLoginName} />
             <input type="password" id="loginPassword" placeholder="Password" onChange={handleSetPassword} />
-            <input type="submit" id="loginButton" className="buttons" value = "Do It"
+            <input type="submit" id="loginButton" className="buttons" value = "Login"
             onClick={doLogin} />
+            <input type="submit" id="signupButton" className="buttons" value = "Signup"
+            onClick={goToSignupPage} />
             <span id="loginResult">{message}</span>
         </div>
     );
