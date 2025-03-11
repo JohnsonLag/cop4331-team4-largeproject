@@ -58,7 +58,7 @@ function Login() {
         }
     };
 
-    function goToSignupPage(event:any) : Promise<void>
+    function goToSignupPage() : void
     {
         window.location.href = '/signup';
     };
