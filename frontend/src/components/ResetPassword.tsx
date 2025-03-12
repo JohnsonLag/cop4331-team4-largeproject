@@ -17,7 +17,6 @@ function ResetPassword() {
     const [message,setMessage] = useState('');
     const [resetEmail,setResetEmail] = React.useState('');
     const [resetVerificationCode,setResetVerificationCode] = React.useState('');
-    const [resetName,setResetName] = React.useState('');
     const [resetPassword,setPassword] = React.useState('');
 
     function handleSetResetEmail( e: any ) : void
@@ -65,7 +64,7 @@ function ResetPassword() {
     async function doSubmitVerificationCode(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {email:email,verificationCode:resetVerificationCode};
+        var obj = {email:resetEmail,verificationCode:resetVerificationCode};
         var js = JSON.stringify(obj);
         try
         {

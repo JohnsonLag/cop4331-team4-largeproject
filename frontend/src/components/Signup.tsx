@@ -83,7 +83,7 @@ function Signup() {
     async function doSubmitVerificationCode(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {email:email,verificationCode:signupVerificationCode};
+        var obj = {email:signupEmail,verificationCode:signupVerificationCode};
         var js = JSON.stringify(obj);
         try
         {
