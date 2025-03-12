@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Signup() {
+function ResetPassword() {
     const app_name = 'coolestappever.xyz';
     function buildPath(route:string) : string
     {
@@ -15,39 +15,21 @@ function Signup() {
     }
 
     const [message,setMessage] = useState('');
-    const [signupEmail,setSignupEmail] = React.useState('');
-    const [signupVerificationCode,setSignupVerificationCode] = React.useState('');
-    const [signupName,setSignupName] = React.useState('');
-    const [signupFirstName,setSignupFirstName] = React.useState('');
-    const [signupLastName,setSignupLastName] = React.useState('');
-    const [signupPassword,setPassword] = React.useState('');
+    const [resetEmail,setResetEmail] = React.useState('');
+    const [resetVerificationCode,setResetVerificationCode] = React.useState('');
+    const [resetName,setResetName] = React.useState('');
+    const [resetPassword,setPassword] = React.useState('');
 
-
-    function handleSetSignupEmail( e: any ) : void
+    function handleSetResetEmail( e: any ) : void
     {
-        setSignupEmail( e.target.value );
+        setResetEmail( e.target.value );
     }
 
-    function handleSetSignupVerificationCode( e: any ) : void
+    function handleSetResetVerificationCode( e: any ) : void
     {
-        setSignupVerificationCode( e.target.value );
+        setResetVerificationCode( e.target.value );
     }
-    
-	function handleSetSignupName( e: any ) : void
-    {
-        setSignupName( e.target.value );
-    }
-
-	function handleSetSignupFirstName( e: any ) : void
-    {
-        setSignupFirstName( e.target.value );
-    }
-    
-	function handleSetSignupLastName( e: any ) : void
-    {
-        setSignupLastName( e.target.value );
-    }
-     
+       
     function handleSetPassword( e: any ) : void
     {
         setPassword( e.target.value );
@@ -56,7 +38,7 @@ function Signup() {
     async function doSubmitEmail(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {email:signupEmail};
+        var obj = {email:resetEmail};
         var js = JSON.stringify(obj);
         try
         {
@@ -83,7 +65,7 @@ function Signup() {
     async function doSubmitVerificationCode(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {email:email,verificationCode:signupVerificationCode};
+        var obj = {email:email,verificationCode:resetVerificationCode};
         var js = JSON.stringify(obj);
         try
         {
@@ -107,24 +89,24 @@ function Signup() {
         }
     };
 
-    async function doSignup(event:any) : Promise<void>
+    async function doReset(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {signup:signupName,password:signupPassword,firstName:signupFirstName,lastName:signupLastName};
+        var obj = {email:resetEmail,password:resetPassword};
         var js = JSON.stringify(obj);
         try
         {
-            const response = await fetch(buildPath('api/signup'),
+            const response = await fetch(buildPath('api/resetpassword'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                setMessage('Could not do signup.');
+                setMessage('Could not do reset.');
             }
             else
             {
-                setMessage('Signup successful. Go back to the login page to login.');
+                setMessage('Reset successful. Go back to the login page to login.');
             }
         }
         catch(error:any)
@@ -140,21 +122,18 @@ function Signup() {
     };
 
     return (
-        <div id="signupDiv">
+        <div id="resetDiv">
             <span id="inner-title">PLEASE SIGN UP</span><br></br>
-            <input type="text" id="signupEmail" placeholder="Email" onChange={handleSetSignupEmail} />
-            <input type="text" id="signupVerificationCode" placeholder="VerificationCode" onChange={handleSetSignupVerificationCode} />
-            <input type="text" id="signupName" placeholder="Username" onChange={handleSetSignupName} />
-            <input type="text" id="signupFirstName" placeholder="First Name" onChange={handleSetSignupFirstName} />
-            <input type="text" id="signupLastName" placeholder="Last Name" onChange={handleSetSignupLastName} />
-            <input type="password" id="signupPassword" placeholder="Password" onChange={handleSetPassword} />
-            <input type="submit" id="signupEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} />
-            <input type="submit" id="signupVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} />
-            <input type="submit" id="signupButton" className="buttons" value = "Signup" onClick={doSignup} />
+            <input type="text" id="resetEmail" placeholder="Email" onChange={handleSetResetEmail} />
+            <input type="text" id="resetVerificationCode" placeholder="VerificationCode" onChange={handleSetResetVerificationCode} />
+            <input type="password" id="resetPassword" placeholder="Password" onChange={handleSetPassword} />
+            <input type="submit" id="resetEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} />
+            <input type="submit" id="resetVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} />
+            <input type="submit" id="resetButton" className="buttons" value = "Reset" onClick={doReset} />
             <input type="submit" id="loginButton" className="buttons" value = "Go to login page" onClick={goToLoginPage} />
-            <span id="signupResult">{message}</span>
+            <span id="resetResult">{message}</span>
         </div>
     );
 };
 
-export default Signup;
+export default ResetPassword;
