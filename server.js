@@ -1,7 +1,9 @@
+// REMEMBER: You must add an .env file with the MongoDB
+//           connection string to this directory to be able to access the database
 require('dotenv').config();
 const url = process.env.MONGODB_URI;
 
-// To use MongoDB ObjecctId
+// To use MongoDB ObjectId
 const { ObjectId } = require('mongodb');
 
 const express = require('express');
@@ -15,6 +17,13 @@ app.use(bodyParser.json());
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
+
+/* UTIL FUNCTIONS */
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidEmail(email) {
+    return emailRegex.test(email);
+}
 
 /* CARDS */
 // Create
@@ -64,15 +73,22 @@ app.post('/api/searchcards', async (req, res, next) =>
 /* USERS */
 // Create
 app.post('/api/signup', async (req, res, next) => {
-    // incoming: login, password, firstName, lastName
+    // incoming: login, password, firstName, lastName, email
     // outoing: id, firstName, lastName, error
 
     let error = '';
 
-    const { login, password, firstName, lastName } = req.body;
+    const { login, password, firstName, lastName, email } = req.body;
 
+    // Check validity of email using regex
+    if (!isValidEmail(email)){
+        error = 'Invalid email! please use format: user@email.com'
+        const ret = { id: -1, firstName: '', lastName: '', error: error};
+        return res.status(409).json(ret);
+    }
+
+    // Check if existing user
     const db = client.db('MERNSTACK');
-
     const results = await db.collection('Users').find({ Login: login }).toArray();
 
     if (results.length > 0) {
@@ -81,13 +97,13 @@ app.post('/api/signup', async (req, res, next) => {
         return res.status(409).json(ret);
     }
 
+    // Insert new user
     const newUser = {
         Login: login,
         Password: password,
         FirstName: firstName,
         LastName: lastName
     };
-
     try {
         await db.collection('Users').insertOne(newUser);
     } catch (e) {
