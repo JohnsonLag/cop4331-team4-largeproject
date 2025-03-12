@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './page-styles.css';
 
 function Signup() {
     const app_name = 'coolestappever.xyz';
@@ -110,7 +111,7 @@ function Signup() {
     async function doSignup(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {signup:signupName,password:signupPassword,firstName:signupFirstName,lastName:signupLastName};
+        var obj = {signup:signupName,password:signupPassword,firstName:signupFirstName,lastName:signupLastName,email:signupEmail};
         var js = JSON.stringify(obj);
         try
         {
@@ -140,7 +141,7 @@ function Signup() {
     };
 
     return (
-        <div id="signupDiv">
+        <div className="inputAndButtonsDiv" id="signupDiv">
             <span id="inner-title">PLEASE SIGN UP</span><br></br>
             <input type="text" id="signupEmail" placeholder="Email" onChange={handleSetSignupEmail} />
             <input type="text" id="signupVerificationCode" placeholder="VerificationCode" onChange={handleSetSignupVerificationCode} />
@@ -148,8 +149,8 @@ function Signup() {
             <input type="text" id="signupFirstName" placeholder="First Name" onChange={handleSetSignupFirstName} />
             <input type="text" id="signupLastName" placeholder="Last Name" onChange={handleSetSignupLastName} />
             <input type="password" id="signupPassword" placeholder="Password" onChange={handleSetPassword} />
-            <input type="submit" id="signupEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} />
-            <input type="submit" id="signupVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} />
+            <input type="submit" id="signupEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} disabled />
+            <input type="submit" id="signupVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} disabled />
             <input type="submit" id="signupButton" className="buttons" value = "Signup" onClick={doSignup} />
             <input type="submit" id="loginButton" className="buttons" value = "Go to login page" onClick={goToLoginPage} />
             <span id="signupResult">{message}</span>

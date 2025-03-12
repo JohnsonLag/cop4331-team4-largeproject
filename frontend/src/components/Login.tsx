@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './page-styles.css';
 
 function Login() {
     const app_name = 'coolestappever.xyz';
@@ -69,7 +70,7 @@ function Login() {
     };
 
     return (
-        <div id="loginDiv">
+        <div className="inputAndButtonsDiv" id="loginDiv">
             <span id="inner-title">PLEASE LOG IN</span><br></br>
             <input type="text" id="loginName" placeholder="Username" onChange={handleSetLoginName} />
             <input type="password" id="loginPassword" placeholder="Password" onChange={handleSetPassword} />

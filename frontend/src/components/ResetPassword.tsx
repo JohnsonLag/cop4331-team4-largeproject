@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './page-styles.css';
 
 function ResetPassword() {
     const app_name = 'coolestappever.xyz';
@@ -121,14 +122,14 @@ function ResetPassword() {
     };
 
     return (
-        <div id="resetDiv">
+        <div className="inputAndButtonsDiv" id="resetDiv">
             <span id="inner-title">PLEASE SIGN UP</span><br></br>
             <input type="text" id="resetEmail" placeholder="Email" onChange={handleSetResetEmail} />
             <input type="text" id="resetVerificationCode" placeholder="VerificationCode" onChange={handleSetResetVerificationCode} />
             <input type="password" id="resetPassword" placeholder="Password" onChange={handleSetPassword} />
-            <input type="submit" id="resetEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} />
-            <input type="submit" id="resetVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} />
-            <input type="submit" id="resetButton" className="buttons" value = "Reset" onClick={doReset} />
+            <input type="submit" id="resetEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} disabled />
+            <input type="submit" id="resetVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} disabled />
+            <input type="submit" id="resetButton" className="buttons" value = "Reset password" onClick={doReset} disabled />
             <input type="submit" id="loginButton" className="buttons" value = "Go to login page" onClick={goToLoginPage} />
             <span id="resetResult">{message}</span>
         </div>
