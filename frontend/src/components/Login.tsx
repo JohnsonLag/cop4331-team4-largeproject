@@ -62,6 +62,11 @@ function Login() {
     {
         window.location.href = '/signup';
     };
+	
+    function goToResetPasswordPage() : void
+    {
+        window.location.href = '/reset-password';
+    };
 
     return (
         <div id="loginDiv">
@@ -72,6 +77,8 @@ function Login() {
             onClick={doLogin} />
             <input type="submit" id="signupButton" className="buttons" value = "Signup"
             onClick={goToSignupPage} />
+            <input type="submit" id="resetPasswordButton" className="buttons" value = "Reset password"
+            onClick={goToResetPasswordPage} />
             <span id="loginResult">{message}</span>
         </div>
     );

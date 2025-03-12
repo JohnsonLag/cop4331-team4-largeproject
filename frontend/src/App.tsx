@@ -3,6 +3,7 @@ import './App.css';
 
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import CardPage from './pages/CardPage';
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <Router>
           <Routes>
               <Route path="/" element={<LoginPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/cards" element={<CardPage />} />
               {/* Default redirect if no route matches */}
