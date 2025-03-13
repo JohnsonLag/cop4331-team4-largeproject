@@ -111,7 +111,7 @@ function Signup() {
     async function doSignup(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {signup:signupName,password:signupPassword,firstName:signupFirstName,lastName:signupLastName,email:signupEmail};
+        var obj = {login:signupName,password:signupPassword,firstName:signupFirstName,lastName:signupLastName,email:signupEmail};
         var js = JSON.stringify(obj);
         try
         {
