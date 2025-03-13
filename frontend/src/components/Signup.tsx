@@ -156,6 +156,7 @@ function Signup() {
             <input type="text" id="signupFirstName" placeholder="First Name" onChange={handleSetSignupFirstName} />
             <input type="text" id="signupLastName" placeholder="Last Name" onChange={handleSetSignupLastName} />
             <input type="password" id="signupPassword" placeholder="Password" onChange={handleSetPassword} />
+			<br />
             <input type="submit" id="signupEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} disabled />
             <input type="submit" id="signupVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} disabled />
             <input type="submit" id="signupButton" className="buttons" value = "Signup" onClick={doSignup} />

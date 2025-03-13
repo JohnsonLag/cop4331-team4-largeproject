@@ -127,6 +127,7 @@ function ResetPassword() {
             <input type="text" id="resetEmail" placeholder="Email" onChange={handleSetResetEmail} />
             <input type="text" id="resetVerificationCode" placeholder="VerificationCode" onChange={handleSetResetVerificationCode} />
             <input type="password" id="resetPassword" placeholder="Password" onChange={handleSetPassword} />
+			<br />
             <input type="submit" id="resetEmail" className="buttons" value = "Submit email" onClick={doSubmitEmail} disabled />
             <input type="submit" id="resetVerificationCode" className="buttons" value = "Submit verification code" onClick={doSubmitVerificationCode} disabled />
             <input type="submit" id="resetButton" className="buttons" value = "Reset password" onClick={doReset} disabled />
