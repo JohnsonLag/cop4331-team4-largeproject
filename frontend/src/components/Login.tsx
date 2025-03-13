@@ -32,6 +32,13 @@ function Login() {
     async function doLogin(event:any) : Promise<void>
     {
         event.preventDefault();
+		
+		if (loginName === "" || loginPassword === "")
+		{
+			setMessage("All fields must be filled out.");
+			return;
+		}
+		
         var obj = {login:loginName,password:loginPassword};
         var js = JSON.stringify(obj);
         try
@@ -42,7 +49,7 @@ function Login() {
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                setMessage('User/Password combination incorrect, or error: ' + res.error);
+                setMessage('User/Password combination incorrect');
             }
             else
             {

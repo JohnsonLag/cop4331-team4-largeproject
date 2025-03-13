@@ -56,7 +56,7 @@ function Signup() {
 
     async function doSubmitEmail(event:any) : Promise<void>
     {
-        event.preventDefault();
+        event.preventDefault();		
         var obj = {email:signupEmail};
         var js = JSON.stringify(obj);
         try
@@ -111,6 +111,13 @@ function Signup() {
     async function doSignup(event:any) : Promise<void>
     {
         event.preventDefault();
+		
+		if (signupName === "" || signupPassword === "" || signupFirstName === "" || signupLastName === "" || signupEmail === "")
+		{
+			setMessage("All fields must be filled out.");
+			return;
+		}
+		
         var obj = {login:signupName,password:signupPassword,firstName:signupFirstName,lastName:signupLastName,email:signupEmail};
         var js = JSON.stringify(obj);
         try
