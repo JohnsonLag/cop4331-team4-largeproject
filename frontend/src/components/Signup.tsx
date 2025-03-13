@@ -121,7 +121,7 @@ function Signup() {
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                setMessage('Could not do signup.');
+                setMessage('Could not do signup, error: ' + res.error);
             }
             else
             {

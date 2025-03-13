@@ -48,7 +48,7 @@ function ResetPassword() {
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                setMessage('Could not send email.');
+                setMessage('Could not send email, or error:' + res.error);
             }
             else
             {
@@ -75,7 +75,7 @@ function ResetPassword() {
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                setMessage('Could not verify code.');
+                setMessage('Could not verify code, or error: ' + res.error);
             }
             else
             {
@@ -102,7 +102,7 @@ function ResetPassword() {
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                setMessage('Could not do reset.');
+                setMessage('Could not do reset, or error: ' + res.error);
             }
             else
             {
