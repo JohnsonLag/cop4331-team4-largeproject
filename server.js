@@ -1,7 +1,6 @@
 // REMEMBER: You must add an .env file with the MongoDB
 //           connection string to this directory to be able to access the database
 require('dotenv').config();
-const url = process.env.MONGODB_URI;
 
 // To use MongoDB ObjectId
 const { ObjectId } = require('mongodb');
@@ -14,12 +13,13 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(url);
+const url = process.env.MONGODB_URI;
+const mongoose = require("mongoose");
+mongoose.connect(url).then(() => console.log("Mongo DB connected")).catch(err => console.log(err));
 client.connect();
 
 var card_api = require('./card_api.js');
-card_api.setApp(app, client);
+card_api.setApp(app, mongoose);
 
 /* UTIL FUNCTIONS */
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,50 +28,6 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// /* CARDS */
-// // Create
-// app.post('/api/addcard', async (req, res, next) =>
-// {
-//     // incoming: userId, color
-//     // outgoing: error
-//     const { userId, card } = req.body;
-//     const newCard = {Card:card,UserId:userId};
-//     var error = '';
-
-//     try
-//     {
-//         const db = client.db('MERNSTACK');
-//         const result = db.collection('Cards').insertOne(newCard);
-//     }
-//     catch(e)
-//     {
-//         error = e.toString();
-//     }
-
-//     var ret = { error: error };
-//     res.status(200).json(ret);
-// });
-
-// // Retrieve
-// app.post('/api/searchcards', async (req, res, next) =>
-// {
-//     // incoming: userId, search
-//     // outgoing: results[], error
-//     var error = '';
-//     const { userId, search } = req.body;
-//     var _search = search.trim();
-//     const db = client.db('MERNSTACK');
-//     const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
-
-//     var _ret = [];
-//     for( var i=0; i<results.length; i++ )
-//     {
-//         _ret.push( results[i].Card );
-//     }
-
-//     var ret = {results:_ret, error:error};
-//     res.status(200).json(ret);
-// });
 
 /* USERS */
 // Create
@@ -134,15 +90,31 @@ app.post('/api/login', async (req, res, next) =>
     var id = -1;
     var fn = '';
     var ln = '';
+
+    var ret;
     
     if( results.length > 0 )
     {
         id = results[0].UserId;
         fn = results[0].FirstName;
         ln = results[0].LastName;
+
+        try
+        {
+            const token = require("./createJWT.js");
+            ret = token.createToken( fn, ln, id );
+        }
+        catch (e)
+        {
+            ret = { error: e.message };
+        }
+    }
+    else
+    {
+        ret = { error: "Login/Password incorrect"};
     }
 
-    var ret = { id:id, firstName:fn, lastName:ln, error:''};
+    // var ret = { id:id, firstName:fn, lastName:ln, error:''};
     res.status(200).json(ret);
 });
 

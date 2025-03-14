@@ -1,17 +1,21 @@
+import { useJwt } from "react-jwt";
+import { storeToken, retrieveToken } from "../tokenStorage.tsx";
 import React, { useState } from 'react';
+import axios, { AxiosResponse } from "axios";
 
 import { buildPath } from './Path.tsx';
 
 function CardUI()
 {
-    let _ud : any = localStorage.getItem('user_data');
-    let ud = JSON.parse( _ud );
-    let userId : string = ud.id;
     const [message,setMessage] = useState('');
     const [searchResults,setResults] = useState('');
     const [cardList,setCardList] = useState('');
     const [search,setSearchValue] = React.useState('');
     const [card,setCardNameValue] = React.useState('');
+
+    let _ud : any = localStorage.getItem('user_data');
+    let ud = JSON.parse( _ud );
+    let userId : string = ud.id;
 
     function handleSearchTextChange( e: any ) : void
     {
@@ -42,6 +46,7 @@ function CardUI()
             else
             {
                 setMessage('Card has been added');
+                storeToken( res.jwtToken );
             }
         }
         catch(error:any)
@@ -55,13 +60,14 @@ function CardUI()
         e.preventDefault();
         let obj = {userId:userId,search:search};
         let js = JSON.stringify(obj);
+        let res = null;
         try
         {
             const response = await fetch(buildPath('api/searchCards'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
             let txt = await response.text();
-            let res = JSON.parse(txt);
+            res = JSON.parse(txt);
             let _results = res.results;
             let resultText = '';
             for( let i=0; i<_results.length; i++ )
@@ -74,11 +80,13 @@ function CardUI()
             }
             setResults('Card(s) have been retrieved');
             setCardList(resultText);
+            storeToken( res.jwtToken );
         }
         catch(error:any)
         {
             alert(error.toString());
             setResults(error.toString());
+            storeToken( res.jwtToken ); // NOTE: This might cause errors in the future if res is null
         }
     };
 

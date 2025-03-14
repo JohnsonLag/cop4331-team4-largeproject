@@ -1,7 +1,11 @@
+import { useJwt } from "react-jwt";
 import React, { useState } from 'react';
-import './page-styles.css';
+import axios, { AxiosResponse } from "axios";
 
+import './page-styles.css';
 import { buildPath } from './Path.tsx';
+import { retrieveToken, storeToken } from "../tokenStorage.tsx";
+
 
 function Login() {
     const [message,setMessage] = useState('');
@@ -42,10 +46,19 @@ function Login() {
             }
             else
             {
-                var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
-                localStorage.setItem('user_data', JSON.stringify(user));
-                setMessage('');
-                window.location.href = '/cards';
+                // Store token
+                storeToken( res.jwtToken );
+
+                // Decode token
+                const token = retrieveToken();
+
+                if (token)
+                {
+                    var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
+                    localStorage.setItem('user_data', JSON.stringify(user));
+                    setMessage('');
+                    window.location.href = '/cards';
+                }
             }
         }
         catch(error:any)
