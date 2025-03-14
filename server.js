@@ -18,6 +18,9 @@ const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
 
+var card_api = require('./api.js');
+card_api.setApp(app, client);
+
 /* UTIL FUNCTIONS */
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -25,50 +28,50 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-/* CARDS */
-// Create
-app.post('/api/addcard', async (req, res, next) =>
-{
-    // incoming: userId, color
-    // outgoing: error
-    const { userId, card } = req.body;
-    const newCard = {Card:card,UserId:userId};
-    var error = '';
+// /* CARDS */
+// // Create
+// app.post('/api/addcard', async (req, res, next) =>
+// {
+//     // incoming: userId, color
+//     // outgoing: error
+//     const { userId, card } = req.body;
+//     const newCard = {Card:card,UserId:userId};
+//     var error = '';
 
-    try
-    {
-        const db = client.db('MERNSTACK');
-        const result = db.collection('Cards').insertOne(newCard);
-    }
-    catch(e)
-    {
-        error = e.toString();
-    }
+//     try
+//     {
+//         const db = client.db('MERNSTACK');
+//         const result = db.collection('Cards').insertOne(newCard);
+//     }
+//     catch(e)
+//     {
+//         error = e.toString();
+//     }
 
-    var ret = { error: error };
-    res.status(200).json(ret);
-});
+//     var ret = { error: error };
+//     res.status(200).json(ret);
+// });
 
-// Retrieve
-app.post('/api/searchcards', async (req, res, next) =>
-{
-    // incoming: userId, search
-    // outgoing: results[], error
-    var error = '';
-    const { userId, search } = req.body;
-    var _search = search.trim();
-    const db = client.db('MERNSTACK');
-    const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
+// // Retrieve
+// app.post('/api/searchcards', async (req, res, next) =>
+// {
+//     // incoming: userId, search
+//     // outgoing: results[], error
+//     var error = '';
+//     const { userId, search } = req.body;
+//     var _search = search.trim();
+//     const db = client.db('MERNSTACK');
+//     const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
 
-    var _ret = [];
-    for( var i=0; i<results.length; i++ )
-    {
-        _ret.push( results[i].Card );
-    }
+//     var _ret = [];
+//     for( var i=0; i<results.length; i++ )
+//     {
+//         _ret.push( results[i].Card );
+//     }
 
-    var ret = {results:_ret, error:error};
-    res.status(200).json(ret);
-});
+//     var ret = {results:_ret, error:error};
+//     res.status(200).json(ret);
+// });
 
 /* USERS */
 // Create
