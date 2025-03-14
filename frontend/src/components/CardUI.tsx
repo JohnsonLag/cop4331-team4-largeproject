@@ -46,7 +46,7 @@ function CardUI()
             else
             {
                 setMessage('Card has been added');
-                storeToken( res.jwtToken );
+                storeToken( res );
             }
         }
         catch(error:any)
