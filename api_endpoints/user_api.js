@@ -62,13 +62,7 @@ exports.setApp = function ( app, client )
 
         const { login, password } = req.body;
 
-        console.log(req.body);
-
-        console.log(login);
-        console.log(password);
-
         const results = await Users.find({ Login: login, Password: password});
-        console.log(results);
 
         var id = -1;
         var fn = '';

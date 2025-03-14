@@ -46,15 +46,11 @@ function Login() {
             }
             else
             {
-                console.log(res);
-
                 // Store token
                 storeToken( res );
 
                 // Decode token
                 const token = retrieveToken();
-
-                console.log(token);
 
                 if (token)
                 {

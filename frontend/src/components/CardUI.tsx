@@ -32,8 +32,6 @@ function CardUI()
         e.preventDefault();
         let obj = { userId:userId, card:card, jwtToken: retrieveToken() };
 
-        console.log( obj.jwtToken );
-
         let js = JSON.stringify(obj);
 
         try
@@ -44,8 +42,6 @@ function CardUI()
 
             let txt = await response.text();
             let res = JSON.parse(txt);
-
-            console.log(res);
 
             if( res.error && res.error.length > 0 )
             {
@@ -79,7 +75,6 @@ function CardUI()
 
             let txt = await response.text();
             res = JSON.parse(txt);
-            console.log(res);
 
             let _results = res.results;
             let resultText = '';

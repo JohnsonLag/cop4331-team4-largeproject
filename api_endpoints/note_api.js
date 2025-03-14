@@ -67,7 +67,6 @@ exports.setApp = function ( app, client )
         var _ret = [];
         for( var i=0; i < results.length; i++ )
         {
-            console.log(results[i]);
             _ret.push(results[i]);
         }
     

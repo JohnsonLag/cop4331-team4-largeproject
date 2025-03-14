@@ -63,8 +63,6 @@ exports.setApp = function ( app, client )
         var error = '';
         const { userId, search, jwtToken } = req.body;
 
-        console.log( req.body );
-
         // Check Json Web Token
         try
         {
@@ -85,10 +83,6 @@ exports.setApp = function ( app, client )
         try
         {
             var _search = search.trim();
-
-            console.log("FUCK");
-            console.log( _search );
-            console.log("FUCK");
     
             const results = await Cards.find({ "Card": { $regex: _search + '.*', $options: 'i' } });
     
