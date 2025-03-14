@@ -28,7 +28,7 @@ exports.setApp = function ( app, client )
         }
 
         // const newCard = {Card:card,UserId:userId};
-        const newCard = new Cards({ Name: card, UserId: userId });
+        const newCard = new Cards({ Card: card, UserId: userId });
 
         var error = '';
         try
@@ -90,13 +90,13 @@ exports.setApp = function ( app, client )
             console.log( _search );
             console.log("FUCK");
     
-            const results = await Cards.find({ "Name": { $regex: _search + '.*', $options: 'i' } });
+            const results = await Cards.find({ "Card": { $regex: _search + '.*', $options: 'i' } });
     
             console.log( results );    
 
             for( var i=0; i < results.length; i++ )
             {
-                _ret.push( results[i].Name );
+                _ret.push( results[i].Card );
             }
         }
         catch (e)

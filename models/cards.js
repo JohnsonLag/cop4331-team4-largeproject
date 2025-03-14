@@ -5,7 +5,7 @@ const CardSchema = new Schema({
     UserId: {
         type: Number
     },
-    Name: {
+    Card: {
         type: String,
         required: true
     }
