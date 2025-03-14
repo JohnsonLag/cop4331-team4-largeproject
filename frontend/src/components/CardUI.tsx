@@ -1,6 +1,6 @@
-import { useJwt } from "react-jwt";
 import { storeToken, retrieveToken } from "../tokenStorage.tsx";
 import React, { useState } from 'react';
+import { useJwt } from 'react-jwt';
 import axios, { AxiosResponse } from "axios";
 
 import { buildPath } from './Path.tsx';
@@ -30,23 +30,31 @@ function CardUI()
     async function addCard(e:any) : Promise<void>
     {
         e.preventDefault();
-        let obj = {userId:userId,card:card};
+        let obj = { userId:userId, card:card, jwtToken: retrieveToken() };
+
+        console.log( obj.jwtToken );
+
         let js = JSON.stringify(obj);
+
         try
         {
             const response = await fetch(buildPath('api/addCard'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
+
             let txt = await response.text();
             let res = JSON.parse(txt);
-            if( res.error.length > 0 )
+
+            console.log(res);
+
+            if( res.error && res.error.length > 0 )
             {
                 setMessage( "API Error:" + res.error );
             }
             else
             {
                 setMessage('Card has been added');
-                storeToken( res );
+                storeToken( res.jwtToken );
             }
         }
         catch(error:any)
@@ -58,18 +66,24 @@ function CardUI()
     async function searchCard(e:any) : Promise<void>
     {
         e.preventDefault();
-        let obj = {userId:userId,search:search};
+
+        let obj = { userId:userId, search:search, jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
         let res = null;
+
         try
         {
             const response = await fetch(buildPath('api/searchCards'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
+
             let txt = await response.text();
             res = JSON.parse(txt);
+            console.log(res);
+
             let _results = res.results;
             let resultText = '';
+
             for( let i=0; i<_results.length; i++ )
             {
                 resultText += _results[i];
@@ -86,7 +100,7 @@ function CardUI()
         {
             alert(error.toString());
             setResults(error.toString());
-            storeToken( res.jwtToken ); // NOTE: This might cause errors in the future if res is null
+            // storeToken( res.jwtToken ); // NOTE: This might cause errors in the future if res is null
         }
     };
 

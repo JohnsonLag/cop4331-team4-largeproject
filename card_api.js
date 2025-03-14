@@ -4,7 +4,7 @@ require('mongodb');
 var token = require('./createJWT.js');
 
 // Cards model
-const Card = require("./models/card.js");
+const Cards = require("./models/cards.js");
 
 exports.setApp = function ( app, client )
 {
@@ -28,7 +28,7 @@ exports.setApp = function ( app, client )
         }
 
         // const newCard = {Card:card,UserId:userId};
-        const newCard = new Card({ Card: card, UserId: userId });
+        const newCard = new Cards({ Name: card, UserId: userId });
 
         var error = '';
         try
@@ -63,6 +63,9 @@ exports.setApp = function ( app, client )
         var error = '';
         const { userId, search, jwtToken } = req.body;
 
+        console.log( req.body );
+
+        // Check Json Web Token
         try
         {
             if( token.isExpired(jwtToken))
@@ -77,18 +80,31 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        var _search = search.trim();
-        // const db = client.db();
-        // const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*',
-        //     $options:'r'}}).toArray();
-        const results = await Card.find({ "Card": { $regex: _search + '.*', $options: 'r' } });
+        // Retrieve cards using search query
         var _ret = [];
-
-        for( var i=0; i<results.length; i++ )
+        try
         {
-            _ret.push( results[i].Card );
+            var _search = search.trim();
+
+            console.log("FUCK");
+            console.log( _search );
+            console.log("FUCK");
+    
+            const results = await Cards.find({ "Name": { $regex: _search + '.*', $options: 'i' } });
+    
+            console.log( results );    
+
+            for( var i=0; i < results.length; i++ )
+            {
+                _ret.push( results[i].Name );
+            }
+        }
+        catch (e)
+        {
+            console.log(e);
         }
 
+        // Refresh token
         var refreshedToken = null;
         try
         {
@@ -99,7 +115,8 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        var ret = { results:_ret, error: error, jwtToken: refreshedToken };
+        var ret = { results: _ret, error: error, jwtToken: refreshedToken };
+
         res.status(200).json(ret);
     });
 }

@@ -5,9 +5,9 @@ const CardSchema = new Schema({
     UserId: {
         type: Number
     },
-    Card: {
+    Name: {
         type: String,
         required: true
     }
 });
-module.exports = Card = mongoose.model('Cards', CardSchema);
+module.exports = cards = mongoose.model("Cards", CardSchema, "Cards");

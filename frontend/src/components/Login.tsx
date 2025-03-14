@@ -54,6 +54,8 @@ function Login() {
                 // Decode token
                 const token = retrieveToken();
 
+                console.log(token);
+
                 if (token)
                 {
                     var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
