@@ -1,20 +1,9 @@
 import React, { useState } from 'react';
 import './page-styles.css';
 
-function Login() {
-    const app_name = 'coolestappever.xyz';
-    function buildPath(route:string) : string
-    {
-        if (process.env.NODE_ENV != 'development')
-        {
-            return 'http://' + app_name + ':5000/' + route;
-        }
-        else
-        {
-            return 'http://localhost:5000/' + route;
-        }
-    }
+import { buildPath } from './Path.tsx';
 
+function Login() {
     const [message,setMessage] = useState('');
     const [loginName,setLoginName] = React.useState('');
     const [loginPassword,setPassword] = React.useState('');
@@ -49,7 +38,7 @@ function Login() {
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                setMessage('User/Password combination incorrect');
+                setMessage('User/Password combination incorrect or user doesn\'t exist');
             }
             else
             {

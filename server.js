@@ -18,7 +18,7 @@ const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
 
-var card_api = require('./api.js');
+var card_api = require('./card_api.js');
 card_api.setApp(app, client);
 
 /* UTIL FUNCTIONS */
