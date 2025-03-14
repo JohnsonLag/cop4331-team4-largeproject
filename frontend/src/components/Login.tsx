@@ -46,8 +46,10 @@ function Login() {
             }
             else
             {
+                console.log(res);
+
                 // Store token
-                storeToken( res.jwtToken );
+                storeToken( res );
 
                 // Decode token
                 const token = retrieveToken();
