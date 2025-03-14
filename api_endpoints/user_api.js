@@ -1,10 +1,10 @@
 require('express');
 require('mongodb');
 
-var token = require('./createJWT.js');
+var token = require('../createJWT.js');
 
 // Users model
-const Users = require("./models/users.js");
+const Users = require("../models/users.js");
 
 exports.setApp = function ( app, client )
 {
@@ -84,7 +84,7 @@ exports.setApp = function ( app, client )
 
             try
             {
-                const token = require("./createJWT.js");
+                const token = require("../createJWT.js");
                 ret = token.createToken( fn, ln, id );
             }
             catch (e)

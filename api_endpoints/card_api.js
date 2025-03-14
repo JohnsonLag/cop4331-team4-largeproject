@@ -1,10 +1,10 @@
 require('express');
 require('mongodb');
 
-var token = require('./createJWT.js');
+var token = require('../createJWT.js');
 
 // Cards model
-const Cards = require("./models/cards.js");
+const Cards = require("../models/cards.js");
 
 exports.setApp = function ( app, client )
 {
