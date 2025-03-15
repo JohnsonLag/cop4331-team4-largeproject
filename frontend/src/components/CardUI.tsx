@@ -41,7 +41,7 @@ function CardUI()
     async function addCard(e:any) : Promise<void>
     {
         e.preventDefault();
-        let obj = { userId: null, card: card, jwtToken: retrieveToken() };
+        let obj = { userId: userId, card: card, jwtToken: retrieveToken() };
 
         let js = JSON.stringify(obj);
 
