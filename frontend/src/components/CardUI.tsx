@@ -1,9 +1,11 @@
-import { storeToken, retrieveToken } from "../tokenStorage.tsx";
+import { storeToken, retrieveToken, getUserIdFromToken } from "../tokenStorage.tsx";
 import React, { useState } from 'react';
 import { useJwt } from 'react-jwt';
 import axios, { AxiosResponse } from "axios";
 
 import { buildPath } from './Path.tsx';
+
+import { jwtDecode } from "jwt-decode";
 
 function CardUI()
 {
@@ -13,9 +15,18 @@ function CardUI()
     const [search,setSearchValue] = React.useState('');
     const [card,setCardNameValue] = React.useState('');
 
-    let _ud : any = localStorage.getItem('user_data');
-    let ud = JSON.parse( _ud );
-    let userId : string = ud.userId;
+    // Grab current token and userId
+    let currentToken = retrieveToken();
+    let userId : number = -1;
+    if (currentToken)
+    {
+        userId = getUserIdFromToken(currentToken);
+    }
+    else
+    {
+        console.log("NO VALID TOKEN FOUND. USERID CAN NOT BE DETERMINED")
+        // TODO: redirect back to login if no token found
+    }
 
     function handleSearchTextChange( e: any ) : void
     {
@@ -30,7 +41,7 @@ function CardUI()
     async function addCard(e:any) : Promise<void>
     {
         e.preventDefault();
-        let obj = { userId:userId, card:card, jwtToken: retrieveToken() };
+        let obj = { userId: null, card: card, jwtToken: retrieveToken() };
 
         let js = JSON.stringify(obj);
 
@@ -63,11 +74,9 @@ function CardUI()
     {
         e.preventDefault();
 
-        let obj = { userId:userId, search:search, jwtToken: retrieveToken() };
+        let obj = { userId: userId, search: search, jwtToken: retrieveToken() };
 
-        let jwtsomething = retrieveToken();
-
-        console.log( jwtsomething );
+        console.log( obj );
 
         let js = JSON.stringify(obj);
         let res = null;

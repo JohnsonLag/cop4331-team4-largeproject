@@ -38,31 +38,31 @@ _createToken = function ( fn, ln, id )
     return return_val;
 }
 
-// exports.decodeToken = function (token) 
+// exports.getUserIdFromToken = function (token) 
 // {
-//     _decodeToken(token);
+//     _getUserIdFromToken(token);
 // }
 
-// _decodeToken = function (token) 
+// _getUserIdFromToken = function (token) 
 // {
 //     try {
 //         // Decode the token
-//         const decoded = jwt.decode(token, { complete: true });
+//         var ud = jwt.decode(token,{complete:true});
 
-//         console.log(decoded);
+//         console.log(ud);
 
-//         // if (!decoded || !decoded.payload) {
-//         //     throw new Error("Invalid token: Unable to decode");
-//         // }
+//         if (!ud || !ud.payload) {
+//             throw new Error("Invalid token: Unable to decode");
+//         }
 
-//         // // Retrieve the user ID from the payload
-//         // const userId = decoded.payload.userId;
+//         // Retrieve the user ID from the payload
+//         const userId = ud.payload.userId;
 
-//         // if (!userId) {
-//         //     throw new Error("Invalid token: User ID not found in payload");
-//         // }
+//         if (!userId) {
+//             throw new Error("Invalid token: User ID not found in payload");
+//         }
 
-//         // return userId;
+//         return userId;
 //     } catch (e) {
 //         console.error("Token decoding error:", e.message);
 //         return null;
