@@ -8,10 +8,6 @@ exports.createToken = function ( fn, ln, id )
 
 _createToken = function ( fn, ln, id )
 {
-    console.log(fn);
-    console.log(ln);
-    console.log(id);
-
     try
     {
         const expiration = new Date();
@@ -38,37 +34,6 @@ _createToken = function ( fn, ln, id )
     return return_val;
 }
 
-// exports.getUserIdFromToken = function (token) 
-// {
-//     _getUserIdFromToken(token);
-// }
-
-// _getUserIdFromToken = function (token) 
-// {
-//     try {
-//         // Decode the token
-//         var ud = jwt.decode(token,{complete:true});
-
-//         console.log(ud);
-
-//         if (!ud || !ud.payload) {
-//             throw new Error("Invalid token: Unable to decode");
-//         }
-
-//         // Retrieve the user ID from the payload
-//         const userId = ud.payload.userId;
-
-//         if (!userId) {
-//             throw new Error("Invalid token: User ID not found in payload");
-//         }
-
-//         return userId;
-//     } catch (e) {
-//         console.error("Token decoding error:", e.message);
-//         return null;
-//     }
-// }
-
 exports.isExpired = function( token )
 {
     var isError = jwt.verify( token, process.env.ACCESS_TOKEN_SECRET,
@@ -89,9 +54,6 @@ exports.isExpired = function( token )
 exports.refresh = function( token )
 {
     var ud = jwt.decode(token,{complete:true});
-
-    console.log("This is the result of decoding our jwt token in JWTUtils.refresh(): ", ud);
-
     var userId = ud.payload.userId;
     var firstName = ud.payload.firstName;
     var lastName = ud.payload.lastName;

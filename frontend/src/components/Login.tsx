@@ -41,8 +41,6 @@ function Login() {
                 'application/json'}});
             var res = JSON.parse(await response.text());
 
-            console.log(res);
-
             // If api endpoint returned a valid access token... proceed to login
             if ("accessToken" in res)
             {
@@ -51,8 +49,6 @@ function Login() {
 
                 // Decode token
                 const token = retrieveToken();
-
-                console.log(token);
 
                 // TODO: This is probably redundant, needs to be changed
                 // var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}

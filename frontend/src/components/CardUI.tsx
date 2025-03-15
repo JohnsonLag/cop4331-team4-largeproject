@@ -76,8 +76,6 @@ function CardUI()
 
         let obj = { userId: userId, search: search, jwtToken: retrieveToken() };
 
-        console.log( obj );
-
         let js = JSON.stringify(obj);
         let res = null;
 

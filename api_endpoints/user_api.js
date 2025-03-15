@@ -81,8 +81,6 @@ exports.setApp = function ( app, client )
 
         const results = await Users.find({ Login: login, Password: password});
 
-        console.log(results);
-
         var id = -1;
         var fn = '';
         var ln = '';
@@ -94,9 +92,6 @@ exports.setApp = function ( app, client )
             id = results[0].UserId;
             fn = results[0].FirstName;
             ln = results[0].LastName;
-
-            console.log(id);
-            console.log(fn);
 
             try
             {
