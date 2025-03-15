@@ -1,7 +1,7 @@
 require('express');
 require('mongodb');
 
-var token = require('../createJWT.js');
+var token = require('../JWTUtils.js');
 
 // Cards model
 const Cards = require("../models/cards.js");
@@ -13,6 +13,7 @@ exports.setApp = function ( app, client )
         // incoming: userId, color, jwtToken
         // outgoing: error
         const { userId, card, jwtToken } = req.body;
+
         try
         {
             if( token.isExpired(jwtToken))

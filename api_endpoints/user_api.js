@@ -1,10 +1,21 @@
 require('express');
 require('mongodb');
 
-var token = require('../createJWT.js');
+var token = require('../JWTUtils.js');
 
 // Users model
 const Users = require("../models/users.js");
+
+// UserId generator
+const getNextUserId = require("../userIdGenerator.js");
+
+/* UTIL FUNCTIONS */
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidEmail(email) {
+    return emailRegex.test(email);
+}
+
 
 exports.setApp = function ( app, client )
 {
@@ -26,8 +37,7 @@ exports.setApp = function ( app, client )
         }
 
         // Check if existing user
-        const db = client.db('MERNSTACK');
-        const results = await db.collection('Users').find({ Login: login }).toArray();
+        const results = await Users.find({ Login: login });
 
         if (results.length > 0) {
             error = 'Username already exists';
@@ -36,19 +46,26 @@ exports.setApp = function ( app, client )
         }
 
         // Insert new user
-        const newUser = {
-            Login: login,
-            Password: password,
-            FirstName: firstName,
-            LastName: lastName
-        };
+        var userId = null;
         try {
-            await db.collection('Users').insertOne(newUser);
+            // Generate new userId
+            userId = await getNextUserId();
+
+            const newUser = new Users({
+                UserId: userId,
+                Login: login,
+                Password: password,
+                FirstName: firstName,
+                LastName: lastName,
+                Email: email
+            });
+
+            newUser.save();
         } catch (e) {
             error = e.toString();
         }
 
-        const ret = { firstName: firstName, lastName: lastName, error: error };
+        const ret = { userId: userId, firstName: firstName, lastName: lastName, error: error };
         res.status(200).json(ret);
     });
 
@@ -76,9 +93,11 @@ exports.setApp = function ( app, client )
             fn = results[0].FirstName;
             ln = results[0].LastName;
 
+            console.log(id);
+            console.log(fn);
+
             try
             {
-                const token = require("../createJWT.js");
                 ret = token.createToken( fn, ln, id );
             }
             catch (e)

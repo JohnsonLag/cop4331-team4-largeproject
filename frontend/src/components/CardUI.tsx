@@ -64,6 +64,11 @@ function CardUI()
         e.preventDefault();
 
         let obj = { userId:userId, search:search, jwtToken: retrieveToken() };
+
+        let jwtsomething = retrieveToken();
+
+        console.log( jwtsomething );
+
         let js = JSON.stringify(obj);
         let res = null;
 

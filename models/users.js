@@ -3,7 +3,9 @@ const Schema = mongoose.Schema;
 //Create Schema
 const UserSchema = new Schema({
     UserId: {
-        type: Number
+        type: Number,
+        unique: true,
+        required: true,
     },
     FirstName: {
         type: String,

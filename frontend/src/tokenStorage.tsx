@@ -14,6 +14,7 @@ export function retrieveToken(): string | null {
     let ud: string | null = null;
     try {
         ud = localStorage.getItem('token_data');
+
     } catch (e: any) {
         console.log(e.message);
     }
