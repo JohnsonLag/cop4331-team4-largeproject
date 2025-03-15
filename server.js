@@ -27,13 +27,6 @@ user_api.setApp(app, mongoose);
 var card_api = require('./api_endpoints/card_api.js');
 card_api.setApp(app, mongoose);
 
-/* UTIL FUNCTIONS */
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function isValidEmail(email) {
-    return emailRegex.test(email);
-}
-
 app.use((req, res, next) =>
 {
     res.setHeader('Access-Control-Allow-Origin', '*');

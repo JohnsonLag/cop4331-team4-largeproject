@@ -1,7 +1,7 @@
 require('express');
 require('mongodb');
 
-var token = require('../createJWT.js');
+var token = require('../JWTUtils.js');
 
 // Notes model
 const Cards = require("../models/notes.js");

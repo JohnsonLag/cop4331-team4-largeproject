@@ -1,7 +1,7 @@
 require('express');
 require('mongodb');
 
-var token = require('../createJWT.js');
+var token = require('../JWTUtils.js');
 
 // Cards model
 const Cards = require("../models/cards.js");
@@ -13,6 +13,7 @@ exports.setApp = function ( app, client )
         // incoming: userId, color, jwtToken
         // outgoing: error
         const { userId, card, jwtToken } = req.body;
+
         try
         {
             if( token.isExpired(jwtToken))
@@ -27,9 +28,8 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // const newCard = {Card:card,UserId:userId};
+        // Add a new card
         const newCard = new Cards({ Card: card, UserId: userId });
-
         var error = '';
         try
         {
@@ -42,6 +42,7 @@ exports.setApp = function ( app, client )
             error = e.toString();   
         }
 
+        // Refresh token
         var refreshedToken = null;
         try
         {
@@ -84,7 +85,7 @@ exports.setApp = function ( app, client )
         {
             var _search = search.trim();
     
-            const results = await Cards.find({ "Card": { $regex: _search + '.*', $options: 'i' } });
+            const results = await Cards.find({"UserId": userId ,"Card": { $regex: _search + '.*', $options: 'i' } });
 
             for( var i=0; i < results.length; i++ )
             {
