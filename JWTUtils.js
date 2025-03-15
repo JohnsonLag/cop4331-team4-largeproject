@@ -8,6 +8,10 @@ exports.createToken = function ( fn, ln, id )
 
 _createToken = function ( fn, ln, id )
 {
+    console.log(fn);
+    console.log(ln);
+    console.log(id);
+
     try
     {
         const expiration = new Date();

@@ -40,11 +40,11 @@ function Login() {
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
             var res = JSON.parse(await response.text());
-            if( res.id <= 0 )
-            {
-                setMessage('User/Password combination incorrect or user doesn\'t exist');
-            }
-            else
+
+            console.log(res);
+
+            // If api endpoint returned a valid access token... proceed to login
+            if ("accessToken" in res)
             {
                 // Store token
                 storeToken( res );
@@ -52,13 +52,20 @@ function Login() {
                 // Decode token
                 const token = retrieveToken();
 
-                if (token)
-                {
-                    var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
-                    localStorage.setItem('user_data', JSON.stringify(user));
-                    setMessage('');
-                    window.location.href = '/cards';
-                }
+                var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
+                localStorage.setItem('user_data', JSON.stringify(user));
+                setMessage('');
+                window.location.href = '/cards';
+            }
+
+            // Otherwise, show user error
+            else if ("error" in res) {
+                setMessage('User/Password combination incorrect or user doesn\'t exist');
+            }
+
+            // (this shouldn't ever happen)
+            else {
+                setMessage('You should NOT be seeing this error message under any circumstance. Please debug login.tsx');
             }
         }
         catch(error:any)

@@ -81,11 +81,13 @@ exports.setApp = function ( app, client )
 
         const results = await Users.find({ Login: login, Password: password});
 
+        console.log(results);
+
         var id = -1;
         var fn = '';
         var ln = '';
 
-        var ret;
+        var ret = null;
         
         if ( results.length > 0 )
         {
@@ -110,7 +112,6 @@ exports.setApp = function ( app, client )
             ret = { error: "Login/Password incorrect"};
         }
 
-        // var ret = { id:id, firstName:fn, lastName:ln, error:''};
         res.status(200).json(ret);
     });
 }
