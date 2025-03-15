@@ -14,7 +14,7 @@ exports.setApp = function ( app, client )
         // outgoing: error
         const { userId, card, jwtToken } = req.body;
 
-        console.log(req.body);
+        console.log("This is the request body for /api/addcard: ", req.body);
 
         try
         {
@@ -30,9 +30,8 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // const newCard = {Card:card,UserId:userId};
+        // Add a new card
         const newCard = new Cards({ Card: card, UserId: userId });
-
         var error = '';
         try
         {
@@ -45,6 +44,7 @@ exports.setApp = function ( app, client )
             error = e.toString();   
         }
 
+        // Refresh token
         var refreshedToken = null;
         try
         {

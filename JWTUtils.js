@@ -90,9 +90,9 @@ exports.refresh = function( token )
 {
     var ud = jwt.decode(token,{complete:true});
 
-    console.log(ud);
+    console.log("This is the result of decoding our jwt token in JWTUtils.refresh(): ", ud);
 
-    var userId = ud.payload.id;
+    var userId = ud.payload.userId;
     var firstName = ud.payload.firstName;
     var lastName = ud.payload.lastName;
     return _createToken( firstName, lastName, userId );
