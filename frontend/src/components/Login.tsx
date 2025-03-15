@@ -49,10 +49,7 @@ function Login() {
 
                 // Decode token
                 const token = retrieveToken();
-
-                // TODO: This is probably redundant, needs to be changed
-                // var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
-                // localStorage.setItem('user_data', JSON.stringify(user));
+                
                 setMessage('');
                 window.location.href = '/cards';
             }
