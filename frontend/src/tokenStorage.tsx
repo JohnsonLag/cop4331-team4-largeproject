@@ -24,7 +24,7 @@ export function retrieveToken(): string | null {
 }
 
 interface TokenPayload {
-    userId: number; // Assuming userId is a string
+    userId: number; 
     firstName: string;
     lastName: string;
     iat?: number; // Optional: Issued at (timestamp)
@@ -40,4 +40,27 @@ export function getUserIdFromToken(token: string): number {
         console.error('Failed to decode token:', error);
         return -1; // Return bad user id if decoding fails
     }
-  };
+};
+
+export function getFirstNameFromToken(token: string): string {
+    try {
+        const decoded = jwtDecode<TokenPayload>(token);
+        return decoded.firstName;
+    }
+    catch (error) {
+        console.error('Failed to decode token: ', error);
+        return ''; // Return empty name if decoding fails
+    }
+}
+
+export function getLastNameFromToken(token: string): string {
+    try {
+        const decoded = jwtDecode<TokenPayload>(token);
+        return decoded.lastName;
+    }
+    catch (error) {
+        console.error('Failed to decode token: ', error);
+        return ''; // Return empty name if decoding fails
+    }
+}
+

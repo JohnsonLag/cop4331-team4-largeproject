@@ -51,6 +51,7 @@ exports.setApp = function ( app, client )
         catch(e)
         {
             console.log(e.message);
+            errror = e;
         }
 
         var ret = { error: error, jwtToken: refreshedToken };
