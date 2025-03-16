@@ -39,12 +39,4 @@ jobs:
           npm install
           npm run build
           systemctl restart nginx
-          cd /var/cardsServer
-          pm2 kill
-          git pull origin main
-          npm install
-          npm install -g pm2
-          pm2 start server.js --name "express-server"
-          pm2 startup
-          pm2 save
           EOF
