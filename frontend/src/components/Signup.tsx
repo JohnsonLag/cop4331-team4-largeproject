@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import './page-styles.css';
 import { buildPath } from "./Path.tsx";
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { storeToken } from '../tokenStorage.tsx';
 
 function Signup() {
     const [message,setMessage] = useState('');
