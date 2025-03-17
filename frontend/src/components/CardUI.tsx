@@ -107,7 +107,7 @@ function CardUI()
         {
             alert(error.toString());
             setResults(error.toString());
-            // storeToken( res.jwtToken ); // NOTE: This might cause errors in the future if res is null
+            storeToken( res.jwtToken ); // NOTE: This might cause errors in the future if res is null
         }
     };
 

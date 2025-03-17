@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 
-interface Token {
+export interface Token {
     accessToken: string;
 }
 

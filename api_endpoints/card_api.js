@@ -14,6 +14,7 @@ exports.setApp = function ( app, client )
         // outgoing: error
         const { userId, card, jwtToken } = req.body;
 
+        // Check Json Web Token
         try
         {
             if( token.isExpired(jwtToken))

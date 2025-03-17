@@ -1,16 +1,33 @@
 import { useJwt } from "react-jwt";
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 import React, { useState } from 'react';
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import './page-styles.css';
 import { buildPath } from './Path.tsx';
-import { retrieveToken, storeToken } from "../tokenStorage.tsx";
-
+import { retrieveToken, storeToken, Token } from "../tokenStorage.tsx";
 
 function Login() {
     const [message,setMessage] = useState('');
     const [loginName,setLoginName] = React.useState('');
     const [loginPassword,setPassword] = React.useState('');
+
+    interface LoginResponse {
+        error: string;
+        token: Token;
+    }
+
+    interface UserPayload extends JwtPayload {
+        userId: string;
+        firstName: string;
+        lastName: string;
+    }
+
+    interface User {
+        firstName: string;
+        lastName: string;
+        id: string;
+    }
 
     function handleSetLoginName( e: any ) : void
     {
@@ -34,41 +51,42 @@ function Login() {
 		
         var obj = {login:loginName,password:loginPassword};
         var js = JSON.stringify(obj);
-        try
-        {
-            const response = await fetch(buildPath('api/login'),
-                {method:'POST',body:js,headers:{'Content-Type':
-                'application/json'}});
-            var res = JSON.parse(await response.text());
 
-            // If api endpoint returned a valid access token... proceed to login
-            if ("accessToken" in res)
-            {
-                // Store token
-                storeToken( res );
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/login'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<LoginResponse>) {
+            const res = response.data;
+            console.log(res);
 
-                // // Decode token
-                // const token = retrieveToken();
-                
-                setMessage('');
+            if (res.error) {
+                console.log(res.error);
+                setMessage('User/Password combination incorrect');
+            } else {
+                storeToken(res.token);
+                const decodedUserData = jwtDecode(res.token.accessToken) as UserPayload;
+
+                const userId = decodedUserData.userId;
+                const firstName = decodedUserData.firstName;
+                const lastName = decodedUserData.lastName;
+    
+                const user: User = { firstName: firstName, lastName: lastName, id: userId };
+                localStorage.setItem('user_data', JSON.stringify(user));
                 window.location.href = '/cards';
             }
-
-            // Otherwise, show user error
-            else if ("error" in res) {
-                setMessage('User/Password combination incorrect or user doesn\'t exist');
-            }
-
-            // (this shouldn't ever happen)
-            else {
-                setMessage('You should NOT be seeing this error message under any circumstance. Please debug login.tsx');
-            }
-        }
-        catch(error:any)
-        {
-            alert(error.toString());
-            return;
-        }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     };
 
     function goToSignupPage() : void
