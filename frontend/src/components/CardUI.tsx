@@ -1,7 +1,8 @@
-import { storeToken, retrieveToken} from "../tokenStorage.tsx";
+import { Token, storeToken, retrieveToken, deleteToken} from "../tokenStorage.tsx";
 import React, { useState } from 'react';
 
 import { buildPath } from './Path.tsx';
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 function CardUI()
 {
@@ -10,6 +11,11 @@ function CardUI()
     const [cardList,setCardList] = useState('');
     const [search,setSearchValue] = React.useState('');
     const [card,setCardNameValue] = React.useState('');
+
+    interface AddCardResponse {
+        error: string;
+        jwtToken: Token;
+    }
 
     // Get current user information
     let _ud : any = localStorage.getItem('user_data');
@@ -33,29 +39,40 @@ function CardUI()
 
         let js = JSON.stringify(obj);
 
-        try
-        {
-            const response = await fetch(buildPath('api/addCard'),
-                {method:'POST',body:js,headers:{'Content-Type':
-                'application/json'}});
-
-            let txt = await response.text();
-            let res = JSON.parse(txt);
-
-            if( res.error && res.error.length > 0 )
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/addCard'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<AddCardResponse>) {
+            const res = response.data;
+            
+            if (res.error && res.error.length > 0)
             {
-                setMessage( "API Error:" + res.error );
+                setMessage("API Error: " + res.error );
+            }
+            else if (res.jwtToken == null)
+            {
+                setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                window.location.href = "/";
             }
             else
             {
-                setMessage('Card has been added');
-                storeToken( res.jwtToken );
+                setMessage("Card has been added");
+                storeToken(res.jwtToken);
             }
-        }
-        catch(error:any)
-        {
-            setMessage(error.toString());
-        }
+        })
+        .catch(function (error) {
+            alert(error.toString());
+            return;
+        });
     };
 
     async function searchCard(e:any) : Promise<void>
