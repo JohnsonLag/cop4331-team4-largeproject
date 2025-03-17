@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 
 import './page-styles.css';
 import { buildPath } from "./Path.tsx";
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { storeToken } from '../tokenStorage.tsx';
 
 function Signup() {
     const [message,setMessage] = useState('');
@@ -11,6 +14,13 @@ function Signup() {
     const [signupFirstName,setSignupFirstName] = React.useState('');
     const [signupLastName,setSignupLastName] = React.useState('');
     const [signupPassword,setPassword] = React.useState('');
+
+    interface SignUpResponse {
+        userId: number;
+        firstName: string;
+        lastName: string;
+        error: string;
+    }
 
 
     function handleSetSignupEmail( e: any ) : void
@@ -107,28 +117,39 @@ function Signup() {
 			return;
 		}
 		
-        var obj = {login:signupName,password:signupPassword,firstName:signupFirstName,lastName:signupLastName,email:signupEmail};
+        var obj = { 
+            login:signupName, 
+            password:signupPassword, 
+            firstName:signupFirstName, 
+            lastName:signupLastName, 
+            email:signupEmail
+        };
         var js = JSON.stringify(obj);
-        try
-        {
-            const response = await fetch(buildPath('api/signup'),
-                {method:'POST',body:js,headers:{'Content-Type':
-                'application/json'}});
-            var res = JSON.parse(await response.text());
-            if( res.id <= 0 )
-            {
-                setMessage('Could not do signup, error: ' + res.error);
+
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/signup'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<SignUpResponse>) {
+            const res = response.data;
+            if (res.userId <= 0) {
+                setMessage('Unable to register new user. ' + res.error);
+            } else {
+                setMessage('Sign up successful. Please go back to the login page to login')
             }
-            else
-            {
-                setMessage('Signup successful. Go back to the login page to login.');
-            }
-        }
-        catch(error:any)
-        {
+        })
+        .catch(function (error) {
             alert(error.toString());
             return;
-        }
+        });
     };
 
     function goToLoginPage() : void
