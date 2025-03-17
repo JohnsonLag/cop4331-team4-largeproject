@@ -17,6 +17,12 @@ function CardUI()
         jwtToken: Token;
     }
 
+    interface SearchCardsResponse {
+        results: Array<string>;
+        error: string;
+        jwtToken: Token;
+    }
+
     // Get current user information
     let _ud : any = localStorage.getItem('user_data');
     let ud = JSON.parse( _ud );
@@ -57,11 +63,15 @@ function CardUI()
             if (res.error && res.error.length > 0)
             {
                 setMessage("API Error: " + res.error );
+                return;
             }
             else if (res.jwtToken == null)
             {
                 setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                deleteToken();
+                localStorage.removeItem("user_data");
                 window.location.href = "/";
+                return;
             }
             else
             {
@@ -82,38 +92,53 @@ function CardUI()
         let obj = { userId: userId, search: search, jwtToken: retrieveToken() };
 
         let js = JSON.stringify(obj);
-        let res = null;
 
-        try
-        {
-            const response = await fetch(buildPath('api/searchCards'),
-                {method:'POST',body:js,headers:{'Content-Type':
-                'application/json'}});
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/searchcards'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<SearchCardsResponse>) {
+            const res = response.data;
 
-            let txt = await response.text();
-            res = JSON.parse(txt);
-
-            let _results = res.results;
-            let resultText = '';
-
-            for( let i=0; i<_results.length; i++ )
+            if (res.jwtToken == null)
             {
-                resultText += _results[i];
-                if( i < _results.length - 1 )
-                {
-                    resultText += ', ';
-                }
+                setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                deleteToken();
+                localStorage.removeItem("user_data");
+                window.location.href = "/";
             }
-            setResults('Card(s) have been retrieved');
-            setCardList(resultText);
-            storeToken( res.jwtToken );
-        }
-        catch(error:any)
-        {
+            else
+            {
+                let _results = res.results;
+                let resultText = "";
+    
+                for (let i = 0; i < _results.length; i++)
+                {
+                    resultText += _results[i];
+                    if (i < _results.length -1)
+                    {
+                        resultText += ", ";
+                    }
+                }
+    
+                setResults("Cards have been retrieved");
+                setCardList(resultText);
+                storeToken(res.jwtToken);
+                return;
+            }
+        })
+        .catch(function (error) {
             alert(error.toString());
-            setResults(error.toString());
-            storeToken( res.jwtToken ); // NOTE: This might cause errors in the future if res is null
-        }
+            return;
+        });
     };
 
     return(
