@@ -1,4 +1,4 @@
-import { storeToken, retrieveToken, deleteToken, getUserIdFromToken, getFirstNameFromToken, getLastNameFromToken } from "../tokenStorage.tsx";
+import { deleteToken } from "../tokenStorage.tsx";
 
 function LoggedInName()
 {
@@ -12,6 +12,7 @@ function LoggedInName()
     const doLogout = (event: React.MouseEvent<HTMLButtonElement>): void => {
         event.preventDefault();
         deleteToken();
+        localStorage.removeItem("user_data");
         window.location.href = '/';
     };
 

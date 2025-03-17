@@ -1,11 +1,7 @@
-import { storeToken, retrieveToken, getUserIdFromToken } from "../tokenStorage.tsx";
+import { storeToken, retrieveToken} from "../tokenStorage.tsx";
 import React, { useState } from 'react';
-import { useJwt } from 'react-jwt';
-import axios, { AxiosResponse } from "axios";
 
 import { buildPath } from './Path.tsx';
-
-import { jwtDecode } from "jwt-decode";
 
 function CardUI()
 {
