@@ -1,20 +1,9 @@
 import React, { useState } from 'react';
+
 import './page-styles.css';
+import { buildPath } from "./Path.tsx";
 
 function Signup() {
-    const app_name = 'coolestappever.xyz';
-    function buildPath(route:string) : string
-    {
-        if (process.env.NODE_ENV != 'development')
-        {
-            return 'http://' + app_name + ':5000/' + route;
-        }
-        else
-        {
-            return 'http://localhost:5000/' + route;
-        }
-    }
-
     const [message,setMessage] = useState('');
     const [signupEmail,setSignupEmail] = React.useState('');
     const [signupVerificationCode,setSignupVerificationCode] = React.useState('');
