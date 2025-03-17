@@ -16,11 +16,12 @@ export function retrieveToken(): string | null {
     let ud: string | null = null;
     try {
         ud = localStorage.getItem('token_data');
+        return ud;
 
     } catch (e: any) {
         console.log(e.message);
+        return null;
     }
-    return ud;
 }
 
 export function deleteToken(): void | string {
