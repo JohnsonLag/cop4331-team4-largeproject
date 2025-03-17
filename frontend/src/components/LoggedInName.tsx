@@ -2,23 +2,11 @@ import { storeToken, retrieveToken, deleteToken, getUserIdFromToken, getFirstNam
 
 function LoggedInName()
 {
-    // Grab current token and user information
-    let currentToken = retrieveToken();
-    let userId : number = -1;
-    let firstName : string = '';
-    let lastName : string = '';
-    if (currentToken)
-    {
-        userId = getUserIdFromToken(currentToken);
-        firstName = getFirstNameFromToken(currentToken);
-        lastName = getLastNameFromToken(currentToken);
-    }
-    else
-    {
-        console.log("NO VALID TOKEN FOUND. USERID CAN NOT BE DETERMINED")
-        window.location.href = '/login';
-        return null;
-    }
+    // Grab current user information
+    let _ud : any = localStorage.getItem('user_data');
+    let ud = JSON.parse( _ud );
+    let firstName : string = ud.firstName;
+    let lastName : string = ud.lastName;
 
     // Logout handler
     const doLogout = (event: React.MouseEvent<HTMLButtonElement>): void => {

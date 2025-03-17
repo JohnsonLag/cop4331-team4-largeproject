@@ -15,18 +15,10 @@ function CardUI()
     const [search,setSearchValue] = React.useState('');
     const [card,setCardNameValue] = React.useState('');
 
-    // Grab current token and userId
-    let currentToken = retrieveToken();
-    let userId : number = -1;
-    if (currentToken)
-    {
-        userId = getUserIdFromToken(currentToken);
-    }
-    else
-    {
-        console.log("NO VALID TOKEN FOUND. USERID CAN NOT BE DETERMINED")
-        // TODO: redirect back to login if no token found
-    }
+    // Get current user information
+    let _ud : any = localStorage.getItem('user_data');
+    let ud = JSON.parse( _ud );
+    let userId : string = ud.id;
 
     function handleSearchTextChange( e: any ) : void
     {
