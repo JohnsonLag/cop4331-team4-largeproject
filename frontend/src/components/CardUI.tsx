@@ -1,11 +1,8 @@
-import { storeToken, retrieveToken, getUserIdFromToken } from "../tokenStorage.tsx";
+import { Token, storeToken, retrieveToken, deleteToken} from "../tokenStorage.tsx";
 import React, { useState } from 'react';
-import { useJwt } from 'react-jwt';
-import axios, { AxiosResponse } from "axios";
 
 import { buildPath } from './Path.tsx';
-
-import { jwtDecode } from "jwt-decode";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 function CardUI()
 {
@@ -15,18 +12,21 @@ function CardUI()
     const [search,setSearchValue] = React.useState('');
     const [card,setCardNameValue] = React.useState('');
 
-    // Grab current token and userId
-    let currentToken = retrieveToken();
-    let userId : number = -1;
-    if (currentToken)
-    {
-        userId = getUserIdFromToken(currentToken);
+    interface AddCardResponse {
+        error: string;
+        jwtToken: Token;
     }
-    else
-    {
-        console.log("NO VALID TOKEN FOUND. USERID CAN NOT BE DETERMINED")
-        // TODO: redirect back to login if no token found
+
+    interface SearchCardsResponse {
+        results: Array<string>;
+        error: string;
+        jwtToken: Token;
     }
+
+    // Get current user information
+    let _ud : any = localStorage.getItem('user_data');
+    let ud = JSON.parse( _ud );
+    let userId : string = ud.id;
 
     function handleSearchTextChange( e: any ) : void
     {
@@ -45,29 +45,44 @@ function CardUI()
 
         let js = JSON.stringify(obj);
 
-        try
-        {
-            const response = await fetch(buildPath('api/addCard'),
-                {method:'POST',body:js,headers:{'Content-Type':
-                'application/json'}});
-
-            let txt = await response.text();
-            let res = JSON.parse(txt);
-
-            if( res.error && res.error.length > 0 )
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/addCard'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<AddCardResponse>) {
+            const res = response.data;
+            
+            if (res.error && res.error.length > 0)
             {
-                setMessage( "API Error:" + res.error );
+                setMessage("API Error: " + res.error );
+                return;
+            }
+            else if (res.jwtToken == null)
+            {
+                setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                deleteToken();
+                localStorage.removeItem("user_data");
+                window.location.href = "/";
+                return;
             }
             else
             {
-                setMessage('Card has been added');
-                storeToken( res.jwtToken );
+                setMessage("Card has been added");
+                storeToken(res.jwtToken);
             }
-        }
-        catch(error:any)
-        {
-            setMessage(error.toString());
-        }
+        })
+        .catch(function (error) {
+            alert(error.toString());
+            return;
+        });
     };
 
     async function searchCard(e:any) : Promise<void>
@@ -77,38 +92,53 @@ function CardUI()
         let obj = { userId: userId, search: search, jwtToken: retrieveToken() };
 
         let js = JSON.stringify(obj);
-        let res = null;
 
-        try
-        {
-            const response = await fetch(buildPath('api/searchCards'),
-                {method:'POST',body:js,headers:{'Content-Type':
-                'application/json'}});
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/searchcards'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<SearchCardsResponse>) {
+            const res = response.data;
 
-            let txt = await response.text();
-            res = JSON.parse(txt);
-
-            let _results = res.results;
-            let resultText = '';
-
-            for( let i=0; i<_results.length; i++ )
+            if (res.jwtToken == null)
             {
-                resultText += _results[i];
-                if( i < _results.length - 1 )
-                {
-                    resultText += ', ';
-                }
+                setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                deleteToken();
+                localStorage.removeItem("user_data");
+                window.location.href = "/";
             }
-            setResults('Card(s) have been retrieved');
-            setCardList(resultText);
-            storeToken( res.jwtToken );
-        }
-        catch(error:any)
-        {
+            else
+            {
+                let _results = res.results;
+                let resultText = "";
+    
+                for (let i = 0; i < _results.length; i++)
+                {
+                    resultText += _results[i];
+                    if (i < _results.length -1)
+                    {
+                        resultText += ", ";
+                    }
+                }
+    
+                setResults("Cards have been retrieved");
+                setCardList(resultText);
+                storeToken(res.jwtToken);
+                return;
+            }
+        })
+        .catch(function (error) {
             alert(error.toString());
-            setResults(error.toString());
-            // storeToken( res.jwtToken ); // NOTE: This might cause errors in the future if res is null
-        }
+            return;
+        });
     };
 
     return(

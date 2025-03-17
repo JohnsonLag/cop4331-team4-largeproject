@@ -1,7 +1,7 @@
 require('express');
 require('mongodb');
 
-var token = require('../JWTUtils.js');
+var JWTUtils = require('../JWTUtils.js');
 
 // Users model
 const Users = require("../models/users.js");
@@ -85,7 +85,8 @@ exports.setApp = function ( app, client )
         var fn = '';
         var ln = '';
 
-        var ret = null;
+        var token = null;
+        var error = null;
         
         if ( results.length > 0 )
         {
@@ -95,18 +96,20 @@ exports.setApp = function ( app, client )
 
             try
             {
-                ret = token.createToken( fn, ln, id );
+                token = JWTUtils.createToken( fn, ln, id );
+
             }
             catch (e)
             {
-                ret = { error: e.message };
+                error = e.message;
             }
         }
         else
         {
-            ret = { error: "Login/Password incorrect"};
+            error = "Login/Password incorrect";
         }
 
+        const ret = { token: token, error: error };
         res.status(200).json(ret);
     });
 }
