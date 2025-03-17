@@ -47,8 +47,8 @@ function Login() {
                 // Store token
                 storeToken( res );
 
-                // Decode token
-                const token = retrieveToken();
+                // // Decode token
+                // const token = retrieveToken();
                 
                 setMessage('');
                 window.location.href = '/cards';

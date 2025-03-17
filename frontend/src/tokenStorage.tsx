@@ -23,6 +23,14 @@ export function retrieveToken(): string | null {
     return ud;
 }
 
+export function deleteToken(): void | string {
+    try {
+        localStorage.removeItem('token_data');
+    } catch (e: any) {
+        console.log("ERROR: Could not remove token data upon user logout: ", e);
+    }
+}
+
 interface TokenPayload {
     userId: number; 
     firstName: string;
