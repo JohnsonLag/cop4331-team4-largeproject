@@ -57,7 +57,9 @@ exports.setApp = function ( app, client )
                 Password: password,
                 FirstName: firstName,
                 LastName: lastName,
-                Email: email
+                Email: email,
+                RequiresVerification: true,
+                ResettingPassword: false,
             });
 
             newUser.save();
