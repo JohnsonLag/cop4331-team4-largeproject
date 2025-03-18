@@ -33,16 +33,25 @@ exports.setApp = function ( app, client )
         if (!isValidEmail(email)){
             error = 'Invalid email! please use format: user@email.com'
             const ret = { id: -1, firstName: '', lastName: '', error: error};
-            return res.status(409).json(ret);
+            res.status(200).json(ret);
+            return;
         }
 
         // Check if existing user
-        const results = await Users.find({ Login: login });
+        // ... If username/login OR email exists
+        const results = await Users.find({
+            $or: [
+                { Login: login },
+                { Email: email },
+            ]
+        });
 
         if (results.length > 0) {
-            error = 'Username already exists';
+            console.log("HAD AADB BAD");
+            error = 'Username or email address already exists';
             const ret = { id: -1, firstName: '', lastName: '', error: error };
-            return res.status(409).json(ret);
+            res.status(200).json(ret);
+            return;
         }
 
         // Insert new user
