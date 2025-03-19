@@ -32,13 +32,13 @@ exports.setApp = function ( app, client )
         }
 
         // Add a new note document
-        const notesId = getNextNotesId();
+        const notesId = await getNextNotesId();
         var _body = [];
         _body.push(body);
 
         const newNote = new Notes({ 
             UserId: userId, 
-            NotesId: notesId,
+            NoteId: notesId,
             Title: title, 
             Body: _body 
         });

@@ -19,4 +19,4 @@ const NoteSchema = new Schema({
         required: true
     },
 });
-module.exports = users = mongoose.model("Notes", UserSchema, "Notes");
+module.exports = notes = mongoose.model("Notes", NoteSchema, "Notes");
