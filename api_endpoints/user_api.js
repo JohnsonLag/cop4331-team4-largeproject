@@ -1,13 +1,14 @@
 require('express');
 require('mongodb');
 
-var JWTUtils = require('../JWTUtils.js');
+var JWTUtils = require('../utils/JWTUtils.js');
 
 // Users model
 const Users = require("../models/users.js");
 
 // UserId generator
 const getNextUserId = require("../userIdGenerator.js");
+const { sendVerificationEmail } = require('../utils/sendEmail.js');
 
 /* UTIL FUNCTIONS */
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,34 +34,59 @@ exports.setApp = function ( app, client )
         if (!isValidEmail(email)){
             error = 'Invalid email! please use format: user@email.com'
             const ret = { id: -1, firstName: '', lastName: '', error: error};
-            return res.status(409).json(ret);
+            res.status(200).json(ret);
+            return;
         }
 
         // Check if existing user
-        const results = await Users.find({ Login: login });
+        // ... If username/login OR email exists
+        const results = await Users.find({
+            $or: [
+                { Login: login },
+                { Email: email },
+            ]
+        });
 
         if (results.length > 0) {
-            error = 'Username already exists';
+            error = 'Username or email address already exists';
             const ret = { id: -1, firstName: '', lastName: '', error: error };
-            return res.status(409).json(ret);
+            res.status(200).json(ret);
+            return;
         }
 
         // Insert new user
-        var userId = null;
+        var userId = -1;
         try {
             // Generate new userId
             userId = await getNextUserId();
 
+            // Generate new token for verification
+            const verificationToken = JWTUtils.createVerificationToken(userId);
+
+            // If creating verification token failed
+            if (error in verificationToken)
+            {
+                console.log("ERROR: Could not generate verification code for user sign up!");
+                const ret = { userId: -1, firstName: "", lastName: "", error: verificationToken.error }
+                res.status(200).json(ret);
+            }
+
+            // Create new user
             const newUser = new Users({
                 UserId: userId,
                 Login: login,
                 Password: password,
                 FirstName: firstName,
                 LastName: lastName,
-                Email: email
+                Email: email,
+                Verified: false,
+                VerificationToken: verificationToken.accessToken
             });
-
             newUser.save();
+
+            // Send the verification email
+            await sendVerificationEmail(email, verificationToken.accessToken);
+
         } catch (e) {
             error = e.toString();
         }

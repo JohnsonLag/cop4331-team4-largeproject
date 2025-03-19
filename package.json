@@ -17,6 +17,9 @@
         "jsonwebtoken": "^9.0.2",
         "mongodb": "^6.13.1",
         "mongoose": "^8.12.1",
-        "react-jwt": "^1.2.2"
+        "nodemailer": "^6.10.0",
+        "nodemailer-sendgrid-transport": "^0.2.0",
+        "react-jwt": "^1.2.2",
+        "sendgrid": "^5.2.3"
     }
 }

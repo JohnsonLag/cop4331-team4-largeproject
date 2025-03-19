@@ -34,6 +34,26 @@ _createToken = function ( fn, ln, id )
     return return_val;
 }
 
+exports.createVerificationToken = function ( id )
+{
+    return _createVerificationToken(id);
+}
+
+_createVerificationToken = function ( id)
+{
+    try
+    {
+        tok = jwt.sign({ userId: id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+        return { accessToken: tok };
+    }
+    catch (e) 
+    {
+        var return_val = { error: e.message };
+        return return_val;
+    }
+}
+
+
 exports.isExpired = function( token )
 {
     var isError = jwt.verify( token, process.env.ACCESS_TOKEN_SECRET,

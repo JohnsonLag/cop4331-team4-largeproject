@@ -138,7 +138,7 @@ function Signup() {
         axios(config)
         .then(function (response: AxiosResponse<SignUpResponse>) {
             const res = response.data;
-            if (res.userId <= 0) {
+            if (res.userId <= 0 || res.error != '') {
                 setMessage('Unable to register new user. ' + res.error);
             } else {
                 setMessage('Sign up successful. Please go back to the login page to login')
