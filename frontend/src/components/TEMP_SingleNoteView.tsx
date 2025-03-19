@@ -1,5 +1,5 @@
 import { Token, storeToken, retrieveToken, deleteToken} from "../tokenStorage.tsx";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { buildPath } from './Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -18,14 +18,60 @@ function SingleNoteView()
     const [note, setNote] = useState<SingleNoteResponse | null>(null);
     const [error, setError] = useState<string>('');
 
-
     // Get current user information
     let _ud : any = localStorage.getItem('user_data');
     let ud = JSON.parse( _ud );
     let userId : string = ud.id;
 
     // Fetch the note
+    useEffect(() => {
+        const fetchNote = async () => {
+            let obj = { userId: userId, noteId: id, jwtToken: retrieveToken() };
+            let js = JSON.stringify(obj);
 
+            var _url = `/api/note/${id}`;
+
+            // Set Axios request configuration
+            const config: AxiosRequestConfig = {
+                method: 'post',
+                url: buildPath(_url),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: js
+            };
+
+            // Send axios request
+            axios(config)
+            .then(function (response: AxiosResponse<SingleNoteResponse>) {
+                const res = response.data;
+                console.log(res);
+            })
+            .catch(function (error) {
+                alert(error.toString());
+                return;
+            });
+
+
+          try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get<SingleNoteResponse>(`/api/notes/${id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            setNote(res.data);
+          } catch (err) {
+            if (axios.isAxiosError(err)) {
+              setError(err.response?.data?.message || 'Error fetching note');
+            } else {
+              setError('An unexpected error occurred');
+            }
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchNote();
+      }, [id]);
 
 
     return(
