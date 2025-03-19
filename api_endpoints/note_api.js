@@ -9,7 +9,7 @@ const Notes = require("../models/notes.js");
 exports.setApp = function ( app, client )
 {
     // Create
-    app.post('/api/addnote', async (req, res, next) =>
+    app.post('/api/create_note', async (req, res, next) =>
     {
         // incoming: userId, title, jwtToken
         // outgoing: error
