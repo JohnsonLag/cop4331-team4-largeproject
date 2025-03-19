@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport(
 );
 
 const sendVerificationEmail = async (email, token) => {
-  const verificationLink = `http://localhost:5000/api/verify_email?token=${token}`;
+  const verificationLink = `http://coolestappever.xyz/api/verify_email?token=${token}`;
 
   console.log(verificationLink);
 
