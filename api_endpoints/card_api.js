@@ -10,7 +10,7 @@ exports.setApp = function ( app, client )
 {
     app.post('/api/addcard', async (req, res, next) =>
     {
-        // incoming: userId, color, jwtToken
+        // incoming: userId, card, jwtToken
         // outgoing: error
         const { userId, card, jwtToken } = req.body;
 
