@@ -24,8 +24,9 @@ card_api.setApp(app, mongoose);
 var user_api = require('./api_endpoints/user_api.js');
 user_api.setApp(app, mongoose);
 
-var card_api = require('./api_endpoints/card_api.js');
-card_api.setApp(app, mongoose);
+var verification_api = require('./api_endpoints/verification_api.js');
+verification_api.setApp(app, mongoose);
+
 
 app.use((req, res, next) =>
 {

@@ -27,12 +27,12 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    RequiresVerification: {
+    Verified: {
         type: Boolean,
         required: true
     },
-    ResettingPassword: {
-        type: Boolean,
+    VerificationToken: {
+        type: String,
         required: true
     },
 });

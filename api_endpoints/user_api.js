@@ -1,13 +1,14 @@
 require('express');
 require('mongodb');
 
-var JWTUtils = require('../JWTUtils.js');
+var JWTUtils = require('../utils/JWTUtils.js');
 
 // Users model
 const Users = require("../models/users.js");
 
 // UserId generator
 const getNextUserId = require("../userIdGenerator.js");
+const { sendVerificationEmail } = require('../utils/sendEmail.js');
 
 /* UTIL FUNCTIONS */
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -47,7 +48,6 @@ exports.setApp = function ( app, client )
         });
 
         if (results.length > 0) {
-            console.log("HAD AADB BAD");
             error = 'Username or email address already exists';
             const ret = { id: -1, firstName: '', lastName: '', error: error };
             res.status(200).json(ret);
@@ -55,11 +55,23 @@ exports.setApp = function ( app, client )
         }
 
         // Insert new user
-        var userId = null;
+        var userId = -1;
         try {
             // Generate new userId
             userId = await getNextUserId();
 
+            // Generate new token for verification
+            const verificationToken = JWTUtils.createVerificationToken(userId);
+
+            // If creating verification token failed
+            if (error in verificationToken)
+            {
+                console.log("ERROR: Could not generate verification code for user sign up!");
+                const ret = { userId: -1, firstName: "", lastName: "", error: verificationToken.error }
+                res.status(200).json(ret);
+            }
+
+            // Create new user
             const newUser = new Users({
                 UserId: userId,
                 Login: login,
@@ -67,11 +79,14 @@ exports.setApp = function ( app, client )
                 FirstName: firstName,
                 LastName: lastName,
                 Email: email,
-                RequiresVerification: true,
-                ResettingPassword: false,
+                Verified: false,
+                VerificationToken: verificationToken.accessToken
             });
-
             newUser.save();
+
+            // Send the verification email
+            await sendVerificationEmail(email, verificationToken.accessToken);
+
         } catch (e) {
             error = e.toString();
         }
