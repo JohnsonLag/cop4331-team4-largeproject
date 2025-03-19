@@ -69,4 +69,18 @@ exports.setApp = function ( app, client )
         var ret = { error: error, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
+
+    // Get single note 
+    app.post('/api/note/:id', async (req, res, next) =>
+    {
+        // incoming: userId noteId jwtToken
+        // outgoing: error
+        const userId = req.body.userId;
+        const jwtToken = req.body.jwtToken;
+        const noteId = req.params.id;
+
+        console.log(userId);
+        console.log(jwtToken);
+        console.log(noteId);
+    });
 }
