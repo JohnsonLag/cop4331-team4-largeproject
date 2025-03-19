@@ -9,8 +9,6 @@ const CardPage = () =>
     return(
         <div>
         <MenuBar />
-        <PageTitle />
-        <LoggedInName />
         <SearchNotes />
         <AddNote/>
         </div>
