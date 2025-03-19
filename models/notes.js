@@ -3,7 +3,12 @@ const Schema = mongoose.Schema;
 //Create Schema
 const NoteSchema = new Schema({
     UserId: {
-        type: Number
+        type: Number,
+        required: true
+    },
+    NoteId: {
+        type: Number,
+        required: true
     },
     Title: {
         type: String,
