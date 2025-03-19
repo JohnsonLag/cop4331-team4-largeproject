@@ -10,14 +10,18 @@ const Users = require("../models/users.js");
 
 exports.setApp = function ( app, client )
 {
-    app.post('/api/verify_email', async (req, res, next) => {
+    app.get('/api/verify_email', async (req, res, next) => {
         // incoming (from req.query, meaning the link): token
         const { token } = req.query;
+
+        console.log(token);
 
         try
         {
             // Decode token 
             const decoded_token = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+            console.log(decoded_token);
 
             // Get corresponding user
             const user = Users.findOne({ UserId: decoded_token.userId })
