@@ -112,7 +112,6 @@ exports.setApp = function ( app, client )
         }
 
         var ret = { results: _ret, error: error, jwtToken: refreshedToken };
-
         res.status(200).json(ret);
     });
 }
