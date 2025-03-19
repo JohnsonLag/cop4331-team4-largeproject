@@ -13,6 +13,8 @@ const transporter = nodemailer.createTransport(
 const sendVerificationEmail = async (email, token) => {
   const verificationLink = `http://localhost:5000/api/verify_email?token=${token}`;
 
+  console.log(verificationLink);
+
   const mailOptions = {
     to: email,
     from: 'clarity-notesapp@outlook.com',

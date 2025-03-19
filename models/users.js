@@ -33,7 +33,7 @@ const UserSchema = new Schema({
     },
     VerificationToken: {
         type: String,
-        required: true
+        required: false
     },
 });
 module.exports = users = mongoose.model("Users", UserSchema, "Users");

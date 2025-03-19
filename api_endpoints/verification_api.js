@@ -14,17 +14,13 @@ exports.setApp = function ( app, client )
         // incoming (from req.query, meaning the link): token
         const { token } = req.query;
 
-        console.log(token);
-
         try
         {
             // Decode token 
             const decoded_token = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-            console.log(decoded_token);
-
             // Get corresponding user
-            const user = Users.findOne({ UserId: decoded_token.userId })
+            const user = await Users.findOne({ UserId: decoded_token.userId })
 
             // If invalid user
             if (!user)
@@ -36,8 +32,7 @@ exports.setApp = function ( app, client )
             user.Verified = true;
             user.VerificationToken = undefined;
             await user.save();
-
-            return res.status(200).json({ message: "Email successfully verified "});
+            res.redirect("http://coolestappever.xyz/")
         }
         catch (e)
         {
