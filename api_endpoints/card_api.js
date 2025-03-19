@@ -62,7 +62,7 @@ exports.setApp = function ( app, client )
 
     app.post('/api/searchcards', async (req, res, next) =>
     {
-        // incoming: userId, jwtToken
+        // incoming: userId, search, jwtToken
         // outgoing: results[], error
         var error = '';
         const { userId, search, jwtToken } = req.body;

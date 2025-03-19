@@ -86,7 +86,7 @@ function AddNote()
             Body: <input type="text" id="noteBodyText" placeholder="Title"
             onChange={handleNoteBodyChange} />
             <button type="button" id="addCardButton" className="buttons"
-            onClick={addNote}> Add Card </button><br />
+            onClick={addNote}> Add Note </button><br />
             <span id="cardAddResult">{message}</span>
         </div>
     );

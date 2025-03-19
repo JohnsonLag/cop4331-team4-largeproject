@@ -70,6 +70,65 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    // Search notes
+    app.post('/api/search_notes/', async (req, res, next) =>
+    {
+        // incoming: userId, search, jwtToken
+        // outgoing: results[[title]], error
+        var error = '';
+        const { userId, search, jwtToken } = req.body;
+
+        // Check Json Web Token
+        try
+        {
+            if( token.isExpired(jwtToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwtToken: ''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Retrieve notes using the search query
+        var _ret = [];
+        try
+        {
+            var _search = search.trim();
+
+            const results = await Notes.find({
+                "UserId": userId, 
+                "Title": { $regex: _search + '.*', $options: 'i' }
+            });
+
+            for ( var i = 0; i < results.length; i++ )
+            {
+                _ret.push([results[i].Title, results[i].Body.length])
+            }
+        }
+        catch (e)
+        {
+            console.log(e);
+        }
+
+        // Refresh token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = { results: _ret, error: error, jwtToken: refreshedToken };
+        res.status(200).json(ret);
+    });
+
     // Get single note 
     app.post('/api/note/:id', async (req, res, next) =>
     {
