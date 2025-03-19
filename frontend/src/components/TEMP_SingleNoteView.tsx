@@ -1,161 +1,98 @@
 import { Token, storeToken, retrieveToken, deleteToken} from "../tokenStorage.tsx";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { buildPath } from './Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { useParams } from "react-router-dom";
+
+interface SingleNoteResponse {
+    userId: number;
+    noteId: number;
+    title: string;
+    body: string[];
+    error: string;
+    jwtToken: Token;
+}
 
 function SingleNoteView()
 {
+    // Get the note ID from the URL
+    const { id } = useParams<{ id: string }>();
+
     const [message,setMessage] = useState('');
-    const [searchResults,setResults] = useState('');
-    const [cardList,setCardList] = useState('');
-    const [search,setSearchValue] = React.useState('');
-    const [card,setCardNameValue] = React.useState('');
-
-    interface AddCardResponse {
-        error: string;
-        jwtToken: Token;
-    }
-
-    interface SearchCardsResponse {
-        results: Array<string>;
-        error: string;
-        jwtToken: Token;
-    }
+    const [note, setNote] = useState<SingleNoteResponse | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     // Get current user information
     let _ud : any = localStorage.getItem('user_data');
     let ud = JSON.parse( _ud );
     let userId : string = ud.id;
 
-    function handleSearchTextChange( e: any ) : void
-    {
-        setSearchValue( e.target.value );
-    }
+    // Fetch the note
+    useEffect(() => {
+        const fetchNote = async () => {
+            let obj = { userId: userId, noteId: id, jwtToken: retrieveToken() };
+            let js = JSON.stringify(obj);
 
-    function handleCardTextChange( e: any ) : void
-    {
-        setCardNameValue( e.target.value );
-    }
+            var _url = `api/note/${id}`;
 
-    async function addCard(e:any) : Promise<void>
-    {
-        e.preventDefault();
-        let obj = { userId: userId, card: card, jwtToken: retrieveToken() };
+            // Set Axios request configuration
+            const config: AxiosRequestConfig = {
+                method: 'post',
+                url: buildPath(_url),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: js
+            };
 
-        let js = JSON.stringify(obj);
-
-        // Set Axios request configuration
-        const config: AxiosRequestConfig = {
-            method: 'post',
-            url: buildPath('api/addCard'),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: js
-        };
-        
-        // Send axios request
-        axios(config)
-        .then(function (response: AxiosResponse<AddCardResponse>) {
-            const res = response.data;
-            
-            if (res.error && res.error.length > 0)
-            {
-                setMessage("API Error: " + res.error );
-                return;
-            }
-            else if (res.jwtToken == null)
-            {
-                setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
-                deleteToken();
-                localStorage.removeItem("user_data");
-                window.location.href = "/";
-                return;
-            }
-            else
-            {
-                setMessage("Card has been added");
-                storeToken(res.jwtToken);
-            }
-        })
-        .catch(function (error) {
-            alert(error.toString());
-            return;
-        });
-    };
-
-    async function searchCard(e:any) : Promise<void>
-    {
-        e.preventDefault();
-
-        let obj = { userId: userId, search: search, jwtToken: retrieveToken() };
-
-        let js = JSON.stringify(obj);
-
-        // Set Axios request configuration
-        const config: AxiosRequestConfig = {
-            method: 'post',
-            url: buildPath('api/searchcards'),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: js
-        };
-        
-        // Send axios request
-        axios(config)
-        .then(function (response: AxiosResponse<SearchCardsResponse>) {
-            const res = response.data;
-
-            if (res.jwtToken == null)
-            {
-                setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
-                deleteToken();
-                localStorage.removeItem("user_data");
-                window.location.href = "/";
-            }
-            else
-            {
-                let _results = res.results;
-                let resultText = "";
-    
-                for (let i = 0; i < _results.length; i++)
+            // Send axios request
+            axios(config)
+            .then(function (response: AxiosResponse<SingleNoteResponse>) {
+                try 
                 {
-                    resultText += _results[i];
-                    if (i < _results.length -1)
-                    {
-                        resultText += ", ";
+                    const res = response.data;
+                    console.log(res);
+                    setNote(res);
+                }
+                catch (e)
+                {
+                    if (axios.isAxiosError(e)) {
+                        setMessage(e.response?.data?.message || 'Error fetching note');
+                    } else {
+                        setMessage('An unexpected error occurred');
                     }
                 }
-    
-                setResults("Cards have been retrieved");
-                setCardList(resultText);
-                storeToken(res.jwtToken);
+                finally
+                {
+                    setLoading(false);
+                }
+            })
+            .catch(function (error) {
+                alert(error.toString());
+                setMessage(error.toString());
                 return;
-            }
-        })
-        .catch(function (error) {
-            alert(error.toString());
-            return;
-        });
-    };
+            });
+        };
+    
+        fetchNote();
+      }, [id]);
+
+    if (loading) return <p>Loading...</p>;
+    if (!note) return <p>Note not found</p>;
 
     return(
-        <div id="cardUIDiv">
-            <br />
-            Search: <input type="text" id="searchText" placeholder="Card To Search For"
-            onChange={handleSearchTextChange} />
-            <button type="button" id="searchCardButton" className="buttons"
-            onClick={searchCard}> Search Card</button><br />
-            <span id="cardSearchResult">{searchResults}</span>
-            <p id="cardList">{cardList}</p><br /><br />
-            Add: <input type="text" id="cardText" placeholder="Card To Add"
-            onChange={handleCardTextChange} />
-            <button type="button" id="addCardButton" className="buttons"
-            onClick={addCard}> Add Card </button><br />
-            <span id="cardAddResult">{message}</span>
+        <div id="singleNoteUIDiv">
+        <br />
+        <h1>{note.title}</h1>
+        <div>
+            {note.body.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+            ))}
         </div>
+        <span id="noteSearchResult">{message}</span>
+        
+    </div>
     );
 }
 

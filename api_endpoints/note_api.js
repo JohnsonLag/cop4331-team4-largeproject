@@ -79,8 +79,67 @@ exports.setApp = function ( app, client )
         const jwtToken = req.body.jwtToken;
         const noteId = req.params.id;
 
-        console.log(userId);
-        console.log(jwtToken);
-        console.log(noteId);
+        // Check Json Web Token
+        try
+        {
+            if( token.isExpired(jwtToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwtToken: ''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Get the note
+        var error = "";
+        var note = null;
+        try
+        {
+            note = await Notes.findOne({ UserId: userId, NoteId: noteId });
+        }
+        catch (e)
+        {
+            console.log(e);
+        }
+
+        // Refresh token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // If the query returned a valid note...
+        if (note)
+        {
+            var ret = { 
+                note: note.UserId, 
+                noteId: note.NoteId, 
+                title: note.Title,
+                body: note.Body,
+                error: error, 
+                jwtToken: refreshedToken 
+            };
+            res.status(200).json(ret);
+        }
+        else
+        {
+            var ret = { 
+                userId: null,
+                noteId: null, 
+                title: null,
+                body: null,
+                error: error, 
+                jwtToken: refreshedToken 
+            };
+        }
     });
 }

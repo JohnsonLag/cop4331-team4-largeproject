@@ -6,7 +6,7 @@ import SignupPage from './pages/SignupPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import CardPage from './pages/CardPage';
 import NotePage from './pages/NotePage';
-import SingleNotePage from './components/TEMP_SingleNoteView';
+import SingleNotePage from './pages/SingleNotePage';
 
 function App() {
   return (
