@@ -52,8 +52,19 @@ function SingleNoteView()
                 try 
                 {
                     const res = response.data;
-                    setNote(res);
-                    storeToken( res.jwtToken );
+
+                    // Check if a note was returned...
+                    if (res.userId == null || res.error != "")
+                    {
+                        setMessage("Note doesn't exist");
+                    }
+                    else
+                    {
+                        setMessage("Note successfully retrieved")
+                        setLoading(false);
+                        setNote(res);
+                        storeToken( res.jwtToken );
+                    }
                 }
                 catch (e)
                 {
@@ -78,22 +89,26 @@ function SingleNoteView()
         fetchNote();
       }, [id]);
 
-    if (loading) return <p>Loading...</p>;
-    if (!note) return <p>Note not found</p>;
-
-    return(
-        <div id="singleNoteUIDiv">
-        <br />
-        <h1>{note.title}</h1>
-        <div>
-            {note.body.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-            ))}
+    if (loading) 
+        return <p>Loading...</p>;
+    if (!note) 
+        return <p>Note not found</p>;
+    else
+    {
+        return(
+            <div id="singleNoteUIDiv">
+            <br />
+            <h1>{note.title}</h1>
+            <div>
+                {note.body.map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                ))}
+            </div>
+            <span id="noteSearchResult">{message}</span>
+    
         </div>
-        <span id="noteSearchResult">{message}</span>
-        
-    </div>
-    );
+        );
+    }
 }
 
 export default SingleNoteView;

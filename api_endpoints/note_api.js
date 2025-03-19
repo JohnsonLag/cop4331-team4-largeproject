@@ -121,7 +121,7 @@ exports.setApp = function ( app, client )
         if (note)
         {
             var ret = { 
-                note: note.UserId, 
+                userId: note.UserId, 
                 noteId: note.NoteId, 
                 title: note.Title,
                 body: note.Body,
@@ -140,6 +140,7 @@ exports.setApp = function ( app, client )
                 error: error, 
                 jwtToken: refreshedToken 
             };
+            res.status(200).json(ret);
         }
     });
 }
