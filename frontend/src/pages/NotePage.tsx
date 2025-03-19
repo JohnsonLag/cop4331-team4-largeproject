@@ -1,3 +1,4 @@
+import MenuBar from '../components/MenuBar';
 import PageTitle from '../components/PageTitle';
 import LoggedInName from '../components/LoggedInName';
 import AddNote from '../components/TEMP_AddNote';
@@ -7,6 +8,7 @@ const CardPage = () =>
 {
     return(
         <div>
+        <MenuBar />
         <PageTitle />
         <LoggedInName />
         <SearchNotes />
