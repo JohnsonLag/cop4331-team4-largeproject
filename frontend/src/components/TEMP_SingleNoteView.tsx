@@ -159,4 +159,4 @@ function SingleNoteView()
     );
 }
 
-export default CardUI;
+export default SingleNoteView;
