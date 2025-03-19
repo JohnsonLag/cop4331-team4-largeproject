@@ -43,7 +43,7 @@ exports.setApp = function ( app, client )
             error = e.toString();   
         }
 
-        // Refresh token
+        // Refresh the token
         var refreshedToken = null;
         try
         {
@@ -55,6 +55,7 @@ exports.setApp = function ( app, client )
             errror = e;
         }
 
+        // Return
         var ret = { error: error, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });

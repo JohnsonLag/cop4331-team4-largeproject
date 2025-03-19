@@ -2,6 +2,7 @@ require('express');
 require('mongodb');
 
 var token = require('../utils/JWTUtils.js');
+const getNextNotesId = require("../utils/notesIdGenerator.js");
 
 // Notes model
 const Notes = require("../models/notes.js");
@@ -13,7 +14,7 @@ exports.setApp = function ( app, client )
     {
         // incoming: userId, title, jwtToken
         // outgoing: error
-        const { userId, title, jwtToken } = req.body;
+        const { userId, title, body, jwtToken } = req.body;
 
         // Check Json Web Token
         try
@@ -31,23 +32,41 @@ exports.setApp = function ( app, client )
         }
 
         // Add a new note document
-        const newNote = new Notes({ UserId: userId, Title: title, Body: [] });
-        
-    });
-    
-    // Retrieve
-    app.post('/api/searchnotes', async (req, res, next) =>
-    {
-        
-    });
-    
-    // Change line of note
+        const notesId = getNextNotesId();
+        var _body = [];
+        _body.push(body);
 
-    // Delete line from note
-    
-    // Delete Note
-    app.post('/api/deletenote', async (req, res, next) =>
-    {
+        const newNote = new Notes({ 
+            UserId: userId, 
+            NotesId: notesId,
+            Title: title, 
+            Body: _body 
+        });
+        
+        var error = '';
+        try
+        {
+            newNote.save();
+        }
+        catch (e)
+        {
+            error = e.toString();
+        }
 
+        // Refresh the token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            errror = e;
+        }
+
+        // Return
+        var ret = { error: error, jwtToken: refreshedToken };
+        res.status(200).json(ret);
     });
 }
