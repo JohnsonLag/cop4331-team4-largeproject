@@ -11,12 +11,14 @@ const transporter = nodemailer.createTransport(
 );
 
 const sendVerificationEmail = async (email, token) => {
-  const verificationLink = `http://coolestappever.xyz/verify-email?token=${token}`;
+  const verificationLink = `http://localhost:5000/api/verify_email?token=${token}`;
+
+  console.log(verificationLink);
 
   const mailOptions = {
     to: email,
-    from: 'no-reply@yourdomain.com',
-    subject: 'Email Verification',
+    from: 'clarity-notesapp@outlook.com',
+    subject: 'Clarity - Email Verification',
     html: `<p>Please click the following link to verify your email:</p>
            <a href="${verificationLink}">Verify Email</a>`,
   };
