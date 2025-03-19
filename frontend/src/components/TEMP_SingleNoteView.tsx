@@ -1,5 +1,5 @@
-import { Token, storeToken, retrieveToken, deleteToken} from "../tokenStorage.tsx";
-import React, { useEffect, useState } from 'react';
+import { Token, storeToken, retrieveToken } from "../tokenStorage.tsx";
+import { useEffect, useState } from 'react';
 
 import { buildPath } from './Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -52,8 +52,8 @@ function SingleNoteView()
                 try 
                 {
                     const res = response.data;
-                    console.log(res);
                     setNote(res);
+                    storeToken( res.jwtToken );
                 }
                 catch (e)
                 {
