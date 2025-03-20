@@ -9,4 +9,4 @@ async function getNextDeckId() {
   return counter.sequence_value;
 }
 
-module.exports = getNextUserId;
+module.exports = getNextDeckId;

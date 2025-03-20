@@ -31,8 +31,6 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // TODO
-
         // Add a new flash card deck
         const deckId = await getNextDeckId();
 
@@ -40,6 +38,7 @@ exports.setApp = function ( app, client )
             UserId: userId,
             DeckId: deckId,
             Title: title,
+            NumCards: 0,
         })
         
         var error = '';

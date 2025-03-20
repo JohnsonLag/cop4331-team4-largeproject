@@ -19,4 +19,4 @@ const FlashCardDeckSchema = new Schema({
         required: true
     },
 });
-module.exports = notes = mongoose.model("FlashCardDecks", FlashCardSchema, "FlashCardDecks");
+module.exports = notes = mongoose.model("FlashCardDecks", FlashCardDeckSchema, "FlashCardDecks");
