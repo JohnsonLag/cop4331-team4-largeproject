@@ -202,4 +202,51 @@ exports.setApp = function ( app, client )
             res.status(200).json(ret);
         }
     });
+
+    app.post('/api/delete_note', async (req, res, next) => 
+    {
+        // incoming: userId noteId jwtToken
+        // outgoing: error
+        const { userId, noteId, jwtToken } = req.body;
+
+        // Check Json Web Token
+        try
+        {
+            if( token.isExpired(jwtToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwtToken: ''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Delete the note
+        var error = "";
+        try 
+        {
+            await Notes.findOneAndDelete({ UserId: userId, NoteId: noteId });
+        }
+        catch (e)
+        {
+            console.log(e);
+        }
+
+        // Refresh token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Return
+        res.status(200).json({ error: error, jwtToken: refreshedToken });
+    });
 }
