@@ -20,7 +20,7 @@ const FlashCardSchema = new Schema({
         required: true
     },
     Answer: {
-        type: [String],
+        type: String,
         required: true
     },
 });

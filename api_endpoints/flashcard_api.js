@@ -2,19 +2,19 @@ require('express');
 require('mongodb');
 
 var token = require('../utils/JWTUtils.js');
-const getNextId = require("../utils/idGenerator.js")
+const getNextId = require("../utils/idGenerator.js");
 
-// FlashCard model
-const FlashCardDecks = require("../models/flashcarddecks.js");
+// FlashCardDecks model
+const FlashCards = require("../models/flashcards.js");
 
 exports.setApp = function ( app, client )
 {
     // Create
-    app.post('/api/create_flashcard_deck', async (req, res, next) =>
+    app.post('/api/add_flash_card', async (req, res, next) =>
     {
-        // incoming: userId, jwtToken
-        // outgoing: error
-        const { userId, title, jwtToken } = req.body;
+        // incoming: userId, deckId, question, answer, jwtToken
+        // outgoing: cardId, error, jwtToken
+        const { userId, deckId, question, answer, jwtToken } = req.body;
 
         // Check Json Web Token
         try
@@ -31,20 +31,21 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // Add a new flash card deck
-        const deckId = await getNextId( "deckId" );
-
-        const newDeck = new FlashCardDecks({
-            UserId: userId,
-            DeckId: deckId,
-            Title: title,
-            NumCards: 0,
-        })
+        // Add a new flash card
+        const cardId = await getNextId( "cardId" );
         
+        const newCard = new FlashCards({
+            UserId: userId,
+            CardId: cardId,
+            DeckId: deckId,
+            Question: question,
+            Answer: answer,
+        })
+
         var error = '';
         try
         {
-            newDeck.save();
+            newCard.save();
         }
         catch (e)
         {
@@ -64,17 +65,17 @@ exports.setApp = function ( app, client )
         }
 
         // Return
-        var ret = { error: error, jwtToken: refreshedToken };
+        var ret = { cardId: cardId, error: error, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 
-    // Search flash card decks
-    app.post('/api/search_flashcard_decks/', async (req, res, next) =>
+    // Search flash cards
+    app.post('/api/search_flash_cards/', async (req, res, next) =>
     {
-        // incoming: userId, search, jwtToken
+        // incoming: userId, deckId, search, jwtToken
         // outgoing: results[[title]], error
         var error = '';
-        const { userId, search, jwtToken } = req.body;
+        const { userId, deckId, search, jwtToken } = req.body;
 
         // Check Json Web Token
         try
@@ -98,15 +99,12 @@ exports.setApp = function ( app, client )
         {
             var _search = search.trim();
 
-            const results = await FlashCardDecks.find({
+            const results = await FlashCards.find({
                 "UserId": userId,
-                "Title": { $regex: _search + '.*', $options: 'i' }
+                "DeckId": deckId,
+                "Question": { $regex: _search + '.*', $options: 'i' }
             });
-
-            for ( var i = 0; i < results.length; i++ )
-            {
-                _ret.push([results[i].Title, results[i].NumCards]);
-            }
+            _ret = results;
         }
         catch (e)
         {
@@ -131,11 +129,11 @@ exports.setApp = function ( app, client )
     });
 
 
-    app.post('/api/delete_flashcard_deck', async (req, res, next) => 
+    app.post('/api/delete_flash_card', async (req, res, next) => 
     {
-        // incoming: userId deckId jwtToken
+        // incoming: userId, deckId, cardId, jwtToken
         // outgoing: error
-        const { userId, deckId, jwtToken } = req.body;
+        const { userId, deckId, cardId, jwtToken } = req.body;
 
         // Check Json Web Token
         try
@@ -156,7 +154,7 @@ exports.setApp = function ( app, client )
         var error = "";
         try 
         {
-            await FlashCardDecks.findOneAndDelete({ UserId: userId, DeckId: deckId });
+            await FlashCards.findOneAndDelete({ UserId: userId, CardId: cardId, DeckId: deckId });
         }
         catch (e)
         {

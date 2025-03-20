@@ -12,8 +12,8 @@ exports.setApp = function ( app, client )
     // Create
     app.post('/api/create_flashcard_deck', async (req, res, next) =>
     {
-        // incoming: userId, jwtToken
-        // outgoing: error
+        // incoming: userId, title, jwtToken
+        // outgoing: deckId, error, jwtToken
         const { userId, title, jwtToken } = req.body;
 
         // Check Json Web Token
@@ -64,7 +64,7 @@ exports.setApp = function ( app, client )
         }
 
         // Return
-        var ret = { error: error, jwtToken: refreshedToken };
+        var ret = { deckId: deckId, error: error, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 

@@ -11,6 +11,7 @@ function AddNote()
     const [noteBodyText,setNoteBody] = React.useState('');
 
     interface AddNoteResponse {
+        noteId: number;
         error: string;
         jwtToken: Token;
     }
