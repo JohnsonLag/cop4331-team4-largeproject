@@ -7,7 +7,7 @@ var JWTUtils = require('../utils/JWTUtils.js');
 const Users = require("../models/users.js");
 
 // UserId generator
-const getNextId = require("../utils/notesIdGenerator.js");
+const getNextId = require("../utils/idGenerator.js");
 const { sendVerificationEmail } = require('../utils/sendEmail.js');
 
 /* UTIL FUNCTIONS */
