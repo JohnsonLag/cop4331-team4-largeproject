@@ -2,7 +2,7 @@ require('express');
 require('mongodb');
 
 var token = require('../utils/JWTUtils.js');
-const getNextCardId = require("../utils/cardIdGenerator.js");
+const getNextId = require("../utils/idGenerator.js")
 
 // FlashCard model
 const FlashCardDecks = require("../models/flashcarddecks.js");
@@ -32,7 +32,7 @@ exports.setApp = function ( app, client )
         }
 
         // Add a new flash card deck
-        const deckId = await getNextDeckId();
+        const deckId = await getNextId( "deckId" );
 
         const newDeck = new FlashCardDecks({
             UserId: userId,

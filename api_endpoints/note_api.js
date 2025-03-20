@@ -2,7 +2,7 @@ require('express');
 require('mongodb');
 
 var token = require('../utils/JWTUtils.js');
-const getNextNotesId = require("../utils/notesIdGenerator.js");
+const getNextId = require("../utils/idGenerator.js");
 
 // Notes model
 const Notes = require("../models/notes.js");
@@ -32,7 +32,7 @@ exports.setApp = function ( app, client )
         }
 
         // Add a new note document
-        const notesId = await getNextNotesId();
+        const notesId = await getNextId( "notesId" );
         var _body = [];
         _body.push(body);
 
