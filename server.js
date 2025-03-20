@@ -33,6 +33,9 @@ notes_api.setApp(app, mongoose);
 var decks_api = require('./api_endpoints/flashcarddeck_api.js');
 decks_api.setApp(app, mongoose);
 
+var flashcards_api = require('./api_endpoints/flashcard_api.js');
+flashcards_api.setApp(app, mongoose);
+
 
 app.use((req, res, next) =>
 {

@@ -12,7 +12,7 @@ exports.setApp = function ( app, client )
     // Create
     app.post('/api/create_flashcard_deck', async (req, res, next) =>
     {
-        // incoming: userId, jwtToken
+        // incoming: userId, title, jwtToken
         // outgoing: error
         const { userId, title, jwtToken } = req.body;
 
