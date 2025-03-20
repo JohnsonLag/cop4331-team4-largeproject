@@ -102,10 +102,9 @@ exports.setApp = function ( app, client )
             const results = await FlashCards.find({
                 "UserId": userId,
                 "DeckId": deckId,
-                "Title": { $regex: _search + '.*', $options: 'i' }
+                "Question": { $regex: _search + '.*', $options: 'i' }
             });
-
-            console.logs(results);
+            _ret = results;
         }
         catch (e)
         {
