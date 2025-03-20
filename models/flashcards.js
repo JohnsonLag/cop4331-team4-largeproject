@@ -7,6 +7,10 @@ const FlashCardSchema = new Schema({
         type: Number,
         required: true
     },
+    CardId: {
+        type: Number,
+        required: true
+    },
     DeckId: {
         type: Number,
         required: true
