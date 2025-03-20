@@ -126,7 +126,7 @@ function MenuBar()
                         color: '#FFFFFF', // White text
                         fontSize: '1rem',
                         }}>
-                        Welcome {firstName}
+                        <i className="bi bi-person me-2 fs-5"></i> Welcome {firstName}
                     </span>
                 </div>
                 <button type="button" id="logoutButton" className="buttons" onClick={doLogout}> Log Out </button>
