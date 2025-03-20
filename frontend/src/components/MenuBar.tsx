@@ -57,7 +57,7 @@ function MenuBar()
             onClick={handleLogoClick}
             >
             <img
-                src="/src/assets/clarity-logo.png"
+                src="images/clarity-logo.png"
                 alt="<>"
                 style={{
                 height: '40px',
