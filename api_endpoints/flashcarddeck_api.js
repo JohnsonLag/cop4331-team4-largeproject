@@ -60,7 +60,7 @@ exports.setApp = function ( app, client )
         catch(e)
         {
             console.log(e.message);
-            errror = e;
+            error = e.toString();
         }
 
         // Return
@@ -88,30 +88,31 @@ exports.setApp = function ( app, client )
         }
         catch(e)
         {
+            error = e.toString();
             console.log(e.message);
         }
 
-        // TODO
-        // // Retrieve notes using the search query
-        // var _ret = [];
-        // try
-        // {
-        //     var _search = search.trim();
+        // Retrieve decks using the search query
+        var _ret = [];
+        try
+        {
+            var _search = search.trim();
 
-        //     const results = await Notes.find({
-        //         "UserId": userId, 
-        //         "Title": { $regex: _search + '.*', $options: 'i' }
-        //     });
+            const results = await FlashCardDecks.find({
+                "UserId": userId,
+                "Title": { $regex: _search + '.*', $options: 'i' }
+            });
 
-        //     for ( var i = 0; i < results.length; i++ )
-        //     {
-        //         _ret.push([results[i].Title, results[i].Body.length])
-        //     }
-        // }
-        // catch (e)
-        // {
-        //     console.log(e);
-        // }
+            for ( var i = 0; i < results.length; i++ )
+            {
+                _ret.push([results[i].Title, results[i].NumCards]);
+            }
+        }
+        catch (e)
+        {
+            error = e.toString();
+            console.log(e);
+        }
 
         // Refresh token
         var refreshedToken = null;
@@ -121,6 +122,7 @@ exports.setApp = function ( app, client )
         }
         catch(e)
         {
+            error = e.toString();
             console.log(e.message);
         }
 

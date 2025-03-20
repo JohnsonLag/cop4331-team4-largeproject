@@ -127,7 +127,7 @@ exports.setApp = function ( app, client )
             }
             catch (e)
             {
-                error = e.message;
+                error = e.toString();
             }
         }
         else
