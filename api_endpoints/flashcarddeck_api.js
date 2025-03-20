@@ -19,7 +19,7 @@ exports.setApp = function ( app, client )
         // Check Json Web Token
         try
         {
-            if ( token.isExpired(jwtToken))
+            if ( token.isExpired(jwtToken) )
             {
                 var r = { error:"The JWT is no longer valid", jwtToken: ""};
                 res.status(200).json(r);
