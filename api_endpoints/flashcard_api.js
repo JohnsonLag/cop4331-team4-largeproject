@@ -13,7 +13,7 @@ exports.setApp = function ( app, client )
     app.post('/api/add_flash_card', async (req, res, next) =>
     {
         // incoming: userId, deckId, question, answer, jwtToken
-        // outgoing: error
+        // outgoing: cardId, error, jwtToken
         const { userId, deckId, question, answer, jwtToken } = req.body;
 
         // Check Json Web Token
@@ -65,7 +65,7 @@ exports.setApp = function ( app, client )
         }
 
         // Return
-        var ret = { error: error, jwtToken: refreshedToken };
+        var ret = { cardId: cardId, error: error, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 

@@ -13,7 +13,7 @@ exports.setApp = function ( app, client )
     app.post('/api/create_note', async (req, res, next) =>
     {
         // incoming: userId, title, jwtToken
-        // outgoing: error
+        // outgoing: noteId, error, jwtToken
         const { userId, title, body, jwtToken } = req.body;
 
         // Check Json Web Token
@@ -66,7 +66,7 @@ exports.setApp = function ( app, client )
         }
 
         // Return
-        var ret = { error: error, jwtToken: refreshedToken };
+        var ret = { notesId: notesId, error: error, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 

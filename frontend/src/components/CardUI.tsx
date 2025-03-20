@@ -13,6 +13,7 @@ function CardUI()
     const [card,setCardNameValue] = React.useState('');
 
     interface AddCardResponse {
+        cardId: string;
         error: string;
         jwtToken: Token;
     }
