@@ -135,7 +135,7 @@ exports.setApp = function ( app, client )
     {
         // incoming: userId deckId jwtToken
         // outgoing: error
-        const { userId, noteId, jwtToken } = req.body;
+        const { userId, deckId, jwtToken } = req.body;
 
         // Check Json Web Token
         try
@@ -152,17 +152,16 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // TODO
-        // // Delete the note
-        // var error = "";
-        // try 
-        // {
-        //     await Notes.findOneAndDelete({ UserId: userId, NoteId: noteId });
-        // }
-        // catch (e)
-        // {
-        //     console.log(e);
-        // }
+        // Delete the deck
+        var error = "";
+        try 
+        {
+            await FlashCardDecks.findOneAndDelete({ UserId: userId, DeckId: deckId });
+        }
+        catch (e)
+        {
+            console.log(e);
+        }
 
         // Refresh token
         var refreshedToken = null;
