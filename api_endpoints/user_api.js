@@ -7,7 +7,7 @@ var JWTUtils = require('../utils/JWTUtils.js');
 const Users = require("../models/users.js");
 
 // UserId generator
-const getNextUserId = require("../utils/userIdGenerator.js");
+const getNextId = require("../utils/notesIdGenerator.js");
 const { sendVerificationEmail } = require('../utils/sendEmail.js');
 
 /* UTIL FUNCTIONS */
@@ -58,7 +58,7 @@ exports.setApp = function ( app, client )
         var userId = -1;
         try {
             // Generate new userId
-            userId = await getNextUserId();
+            userId = await getNextId( "userId" );
 
             // Generate new token for verification
             const verificationToken = JWTUtils.createVerificationToken(userId);
