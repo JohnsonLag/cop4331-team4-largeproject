@@ -52,7 +52,7 @@ exports.setApp = function ( app, client )
         catch(e)
         {
             console.log(e.message);
-            errror = e;
+            error = e.toString();
         }
 
         // Return

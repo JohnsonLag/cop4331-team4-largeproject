@@ -30,6 +30,9 @@ verification_api.setApp(app, mongoose);
 var notes_api = require('./api_endpoints/note_api.js');
 notes_api.setApp(app, mongoose);
 
+var decks_api = require('./api_endpoints/flashcarddeck_api.js');
+decks_api.setApp(app, mongoose);
+
 
 app.use((req, res, next) =>
 {

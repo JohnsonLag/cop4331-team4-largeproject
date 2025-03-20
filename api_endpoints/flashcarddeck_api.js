@@ -2,24 +2,24 @@ require('express');
 require('mongodb');
 
 var token = require('../utils/JWTUtils.js');
-const getNextNotesId = require("../utils/notesIdGenerator.js");
+const getNextDeckId = require("../utils/deckIdGenerator.js");
 
 // Notes model
-const Notes = require("../models/notes.js");
+const FlashCardDecks = require("../models/flashcarddecks.js");
 
 exports.setApp = function ( app, client )
 {
     // Create
-    app.post('/api/create_note', async (req, res, next) =>
+    app.post('/api/create_flashcard_deck', async (req, res, next) =>
     {
-        // incoming: userId, title, jwtToken
+        // incoming: userId, jwtToken
         // outgoing: error
-        const { userId, title, body, jwtToken } = req.body;
+        const { userId, title, jwtToken } = req.body;
 
         // Check Json Web Token
         try
         {
-            if ( token.isExpired(jwtToken))
+            if ( token.isExpired(jwtToken) )
             {
                 var r = { error:"The JWT is no longer valid", jwtToken: ""};
                 res.status(200).json(r);
@@ -31,22 +31,20 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // Add a new note document
-        const notesId = await getNextNotesId();
-        var _body = [];
-        _body.push(body);
+        // Add a new flash card deck
+        const deckId = await getNextDeckId();
 
-        const newNote = new Notes({ 
-            UserId: userId, 
-            NoteId: notesId,
-            Title: title, 
-            Body: _body 
-        });
+        const newDeck = new FlashCardDecks({
+            UserId: userId,
+            DeckId: deckId,
+            Title: title,
+            NumCards: 0,
+        })
         
         var error = '';
         try
         {
-            newNote.save();
+            newDeck.save();
         }
         catch (e)
         {
@@ -62,7 +60,7 @@ exports.setApp = function ( app, client )
         catch(e)
         {
             console.log(e.message);
-            errror = e;
+            error = e.toString();
         }
 
         // Return
@@ -70,8 +68,8 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
-    // Search notes
-    app.post('/api/search_notes/', async (req, res, next) =>
+    // Search flash card decks
+    app.post('/api/search_flashcard_decks/', async (req, res, next) =>
     {
         // incoming: userId, search, jwtToken
         // outgoing: results[[title]], error
@@ -94,24 +92,25 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // Retrieve notes using the search query
+        // Retrieve decks using the search query
         var _ret = [];
         try
         {
             var _search = search.trim();
 
-            const results = await Notes.find({
-                "UserId": userId, 
+            const results = await FlashCardDecks.find({
+                "UserId": userId,
                 "Title": { $regex: _search + '.*', $options: 'i' }
             });
 
             for ( var i = 0; i < results.length; i++ )
             {
-                _ret.push([results[i].Title, results[i].Body.length])
+                _ret.push([results[i].Title, results[i].NumCards]);
             }
         }
         catch (e)
         {
+            error = e.toString();
             console.log(e);
         }
 
@@ -123,6 +122,7 @@ exports.setApp = function ( app, client )
         }
         catch(e)
         {
+            error = e.toString();
             console.log(e.message);
         }
 
@@ -130,14 +130,12 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
-    // Get single note 
-    app.post('/api/note/:id', async (req, res, next) =>
+
+    app.post('/api/delete_flashcard_deck', async (req, res, next) => 
     {
-        // incoming: userId noteId jwtToken
+        // incoming: userId deckId jwtToken
         // outgoing: error
-        const userId = req.body.userId;
-        const jwtToken = req.body.jwtToken;
-        const noteId = req.params.id;
+        const { userId, deckId, jwtToken } = req.body;
 
         // Check Json Web Token
         try
@@ -154,16 +152,14 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // Get the note
+        // Delete the deck
         var error = "";
-        var note = null;
-        try
+        try 
         {
-            note = await Notes.findOne({ UserId: userId, NoteId: noteId });
+            await FlashCardDecks.findOneAndDelete({ UserId: userId, DeckId: deckId });
         }
         catch (e)
         {
-            error = e.toString();
             console.log(e);
         }
 
@@ -175,34 +171,10 @@ exports.setApp = function ( app, client )
         }
         catch(e)
         {
-            error = e.toString();
             console.log(e.message);
         }
 
-        // If the query returned a valid note...
-        if (note)
-        {
-            var ret = { 
-                userId: note.UserId, 
-                noteId: note.NoteId, 
-                title: note.Title,
-                body: note.Body,
-                error: error, 
-                jwtToken: refreshedToken 
-            };
-            res.status(200).json(ret);
-        }
-        else
-        {
-            var ret = { 
-                userId: null,
-                noteId: null, 
-                title: null,
-                body: null,
-                error: error, 
-                jwtToken: refreshedToken 
-            };
-            res.status(200).json(ret);
-        }
+        // Return
+        res.status(200).json({ error: error, jwtToken: refreshedToken });
     });
 }
