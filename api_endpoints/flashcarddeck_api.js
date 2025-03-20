@@ -4,7 +4,7 @@ require('mongodb');
 var token = require('../utils/JWTUtils.js');
 const getNextDeckId = require("../utils/deckIdGenerator.js");
 
-// Notes model
+// FlashCardDecks model
 const FlashCardDecks = require("../models/flashcarddecks.js");
 
 exports.setApp = function ( app, client )
