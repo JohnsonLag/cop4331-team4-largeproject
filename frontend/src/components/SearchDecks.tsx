@@ -161,7 +161,7 @@ function SearchDecks() {
             {/* Deck Cards */}
             <div className="row">
                 {deckList.map((deck, index) => (
-                    <div key={index} className="col-md-4 d-flex" style={{ height: "200px" }}>
+                    <div key={index} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
                         {/* Clickable Card */}
                         <div
                             className="card shadow-sm h-100 d-flex flex-column"

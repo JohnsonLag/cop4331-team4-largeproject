@@ -22,7 +22,7 @@ exports.setApp = function ( app, client )
         // incoming: login, password, firstName, lastName, email
         // outoing: id, firstName, lastName, error
 
-        let error = '';
+        var error = '';
 
         const { login, password, firstName, lastName, email } = req.body;
 
@@ -97,6 +97,7 @@ exports.setApp = function ( app, client )
         // incoming: login, password
         // outgoing: id, firstName, lastName, error
 
+        var token = null;
         var error = '';
 
         const { login, password } = req.body;
@@ -106,9 +107,6 @@ exports.setApp = function ( app, client )
         var id = -1;
         var fn = '';
         var ln = '';
-
-        var token = null;
-        var error = null;
         
         if ( results.length > 0 )
         {
