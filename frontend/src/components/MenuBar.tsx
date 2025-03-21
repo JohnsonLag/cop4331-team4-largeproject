@@ -24,7 +24,17 @@ function MenuBar()
     const navigate = useNavigate();
 
     // Handle navigation
-    const handleLogoClick = () => navigate('/');
+    const handleLogoClick = () => 
+    {
+        if (ud)
+        {
+            navigate('/notes');
+        }
+        else
+        {
+            navigate('/');
+        }
+    };
     const handleNotesClick = () => navigate('/notes');
     const handleFlashcardsClick = () => navigate('/cards');
 

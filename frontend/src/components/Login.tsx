@@ -1,15 +1,18 @@
-import { jwtDecode, JwtPayload } from 'jwt-decode';
 import React, { useState } from 'react';
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { useNavigate } from 'react-router-dom';
+import { storeToken, Token } from '../tokenStorage';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { buildPath } from './Path';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
-import './page-styles.css';
-import { buildPath } from './Path.tsx';
-import { storeToken, Token } from "../tokenStorage.tsx";
+function Login() 
+{
+    // const navigate = useNavigate();
 
-function Login() {
+    // State for form inputs
     const [message,setMessage] = useState('');
-    const [loginName,setLoginName] = React.useState('');
-    const [loginPassword,setPassword] = React.useState('');
+    const [login, setLogin] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
 
     interface LoginResponse {
         error: string;
@@ -28,27 +31,17 @@ function Login() {
         id: string;
     }
 
-    function handleSetLoginName( e: any ) : void
-    {
-        setLoginName( e.target.value );
-    }
-    
-    function handleSetPassword( e: any ) : void
-    {
-        setPassword( e.target.value );
-    }
-
-    async function doLogin(event:any) : Promise<void>
+    async function submitForm(event:any) : Promise<void>
     {
         event.preventDefault();
 		
-		if (loginName === "" || loginPassword === "")
+		if (login === "" || password === "")
 		{
 			setMessage("All fields must be filled out.");
 			return;
 		}
 		
-        var obj = {login:loginName,password:loginPassword};
+        var obj = { login: login, password: password };
         var js = JSON.stringify(obj);
 
         // Set Axios request configuration
@@ -88,30 +81,79 @@ function Login() {
         });
     };
 
-    function goToSignupPage() : void
-    {
-        window.location.href = '/signup';
-    };
-	
-    function goToResetPasswordPage() : void
-    {
-        window.location.href = '/reset-password';
-    };
-
     return (
-        <div className="inputAndButtonsDiv" id="loginDiv">
-            <span id="inner-title">PLEASE LOG IN</span><br></br>
-            <input type="text" id="loginName" placeholder="Username" onChange={handleSetLoginName} />
-            <input type="password" id="loginPassword" placeholder="Password" onChange={handleSetPassword} />
-			<br />
-            <input type="submit" id="loginButton" className="buttons" value = "Login"
-            onClick={doLogin} />
-            <input type="submit" id="signupButton" className="buttons" value = "Signup"
-            onClick={goToSignupPage} />
-            <input type="submit" id="resetPasswordButton" className="buttons" value = "Reset password"
-            onClick={goToResetPasswordPage} />
+    <div className="card shadow-md" style={
+        { backgroundColor: '#F5F5F5', border: 'none', width: '100%', maxWidth: '400px' }}>
+        <div className="card-body p-4">
+        <h3 className="card-title text-center mb-3" style={{ color: '#4A4A4A' }}>
+            Login
+        </h3>
+        <form onSubmit={submitForm}>
+            {/* Login Input */}
+            <div className="mb-3">
+            <label className="form-label" style={{ color: '#4A4A4A' }}>
+                Username
+            </label>
+            <input
+                type="text"
+                className="form-control"
+                id="login"
+                placeholder="Enter your username"
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
+                required
+                style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+            />
+            </div>
+
+            {/* Password Input */}
+            <div className="mb-3">
+            <label htmlFor="password" className="form-label" style={{ color: '#4A4A4A' }}>
+                Password
+            </label>
+            <input
+                type="password"
+                className="form-control"
+                id="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+            />
+            </div>
+
+            {/* Submit Button */}
+            <div className="d-grid">
+            <button
+                type="submit"
+                className="btn"
+                style={{
+                backgroundColor: '#7E24B9',
+                color: '#FFFFFF',
+                border: 'none',
+                transition: 'background-color 0.3s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
+            >
+                Login
+            </button>
             <span id="loginResult">{message}</span>
+            </div>
+
+            {/* Sign Up Link */}
+            <div className="text-center mt-3">
+            <p className="mb-0" style={{ color: '#4A4A4A' }}>
+                Don't have an account?{' '}
+                <a href="/signup" className="text-decoration-none" style={{ color: '#7E24B9' }}>
+                Sign up
+                </a>
+            </p>
+            </div>
+        </form>
         </div>
+    </div>
     );
 };
 
