@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { buildPath } from './Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-function SearchNotes()
+function SearchDecks()
 {
     const [message,setMessage] = useState('');
     const [searchResults,setResults] = useState('');
@@ -91,11 +91,11 @@ function SearchNotes()
                 onChange={handleSearchTextChange} />
             <button type="button" id="searchCardButton" className="buttons"
                 onClick={searchNotes}> Search Notes</button><br />
-            <span id="noteSearchResult">{searchResults}</span>
+            <span id="cardSearchResult">{searchResults}</span>
             <p id="notesList">{cardList}</p><br /><br />
             <span id="noteSearchResult">{message}</span>
         </div>
     );
 }
 
-export default SearchNotes;
+export default SearchDecks;

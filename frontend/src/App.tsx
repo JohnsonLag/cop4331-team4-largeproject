@@ -8,6 +8,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import CardPage from './pages/CardPage';
 import NotePage from './pages/NotePage';
 import SingleNotePage from './pages/SingleNotePage';
+import FlashCardDecksPage from './pages/FlashCardDecksPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path="/cards" element={<CardPage />} />
               <Route path="/notes" element={<NotePage/>} />
               <Route path="/notes/:id" element={<SingleNotePage />} />
+              <Route path="/decks" element={<FlashCardDecksPage />} />
               {/* Default redirect if no route matches */}
               <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>
