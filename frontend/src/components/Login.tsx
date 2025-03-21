@@ -1,23 +1,84 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { storeToken, Token } from '../tokenStorage';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { buildPath } from './Path';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 function Login() 
 {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     // State for form inputs
+    const [message,setMessage] = useState('');
     const [login, setLogin] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-    // Handle form submission
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        // Add your login logic here (e.g., API call, validation)
-        console.log('Username:', login);
-        console.log('Password:', password);
+    interface LoginResponse {
+        error: string;
+        token: Token;
+    }
 
-        // Redirect to the dashboard or home page after login
-        navigate('/dashboard');
+    interface UserPayload extends JwtPayload {
+        userId: string;
+        firstName: string;
+        lastName: string;
+    }
+
+    interface User {
+        firstName: string;
+        lastName: string;
+        id: string;
+    }
+
+    async function submitForm(event:any) : Promise<void>
+    {
+        event.preventDefault();
+		
+		if (login === "" || password === "")
+		{
+			setMessage("All fields must be filled out.");
+			return;
+		}
+		
+        var obj = { login: login, password: password };
+        var js = JSON.stringify(obj);
+
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/login'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<LoginResponse>) {
+            const res = response.data;
+            console.log(res);
+
+            if (res.error) {
+                console.log(res.error);
+                setMessage('User/Password combination incorrect');
+            } else {
+                storeToken(res.token);
+                const decodedUserData = jwtDecode(res.token.accessToken) as UserPayload;
+
+                const userId = decodedUserData.userId;
+                const firstName = decodedUserData.firstName;
+                const lastName = decodedUserData.lastName;
+    
+                const user: User = { firstName: firstName, lastName: lastName, id: userId };
+                localStorage.setItem('user_data', JSON.stringify(user));
+                window.location.href = '/cards';
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     };
 
     return (
@@ -27,14 +88,14 @@ function Login()
         <h3 className="card-title text-center mb-3" style={{ color: '#4A4A4A' }}>
             Login
         </h3>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={submitForm}>
             {/* Login Input */}
             <div className="mb-3">
             <label className="form-label" style={{ color: '#4A4A4A' }}>
                 Username
             </label>
             <input
-                type="login"
+                type="text"
                 className="form-control"
                 id="login"
                 placeholder="Enter your username"
@@ -78,6 +139,7 @@ function Login()
             >
                 Login
             </button>
+            <span id="loginResult">{message}</span>
             </div>
 
             {/* Sign Up Link */}
