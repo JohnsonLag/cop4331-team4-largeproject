@@ -36,7 +36,7 @@ function MenuBar()
         }
     };
     const handleNotesClick = () => navigate('/notes');
-    const handleFlashcardsClick = () => navigate('/cards');
+    const handleFlashcardsClick = () => navigate('/decks');
 
     return (
     <div
