@@ -114,6 +114,7 @@ function SearchDecks() {
     }
 
     return (
+        <div className="d-flex flex-column min-vh-100">
         <div className="container mt-5">
             {/* Title */}
             <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>Decks</h1>
@@ -242,6 +243,7 @@ function SearchDecks() {
                     {message}
                 </div>
             )}
+        </div>
         </div>
     );
 }
