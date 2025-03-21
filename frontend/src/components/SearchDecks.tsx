@@ -1,5 +1,5 @@
 import { Token, storeToken, retrieveToken, deleteToken } from "../tokenStorage.tsx";
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { buildPath } from './Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
