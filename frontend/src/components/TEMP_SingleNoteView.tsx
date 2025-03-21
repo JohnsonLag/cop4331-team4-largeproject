@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { buildPath } from './Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useParams } from "react-router-dom";
-import { MarkdownPanel } from './MarkdownPanel.tsx';
 
 interface SingleNoteResponse {
     userId: number;
@@ -102,7 +101,7 @@ function SingleNoteView()
             <h1>{note.title}</h1>
             <div>
                 {note.body.map((paragraph, index) => (
-					<MarkdownPanel text={paragraph} id={index} />
+                    <p key={index}>{paragraph}</p>
                 ))}
             </div>
             <span id="noteSearchResult">{message}</span>
