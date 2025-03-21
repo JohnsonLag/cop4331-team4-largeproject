@@ -102,7 +102,7 @@ function SingleNoteView()
             <h1>{note.title}</h1>
             <div>
                 {note.body.map((paragraph, index) => (
-					<MarkdownPanel text={paragraph} id={index}}>
+					<MarkdownPanel text={paragraph} id={index} />
                 ))}
             </div>
             <span id="noteSearchResult">{message}</span>
