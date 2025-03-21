@@ -160,6 +160,7 @@ exports.setApp = function ( app, client )
         }
         catch (e)
         {
+            error = e.toString();
             console.log(e);
         }
 
@@ -171,6 +172,7 @@ exports.setApp = function ( app, client )
         }
         catch(e)
         {
+            error = e.toString();
             console.log(e.message);
         }
 
