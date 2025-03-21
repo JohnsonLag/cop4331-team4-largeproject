@@ -5,6 +5,7 @@ var token = require('../utils/JWTUtils.js');
 const getNextId = require("../utils/idGenerator.js");
 
 // FlashCardDecks model
+const FlashCardDecks = require("../models/flashcarddecks.js");
 const FlashCards = require("../models/flashcards.js");
 
 exports.setApp = function ( app, client )
@@ -31,6 +32,12 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
+        // Find corresponding flashcard deck
+        const deck = await FlashCardDecks.findOne({
+            UserId: userId,
+            DeckId: deckId
+        })
+
         // Add a new flash card
         const cardId = await getNextId( "cardId" );
         
@@ -46,6 +53,10 @@ exports.setApp = function ( app, client )
         try
         {
             newCard.save();
+
+            // Update number of cards in deck
+            deck.NumCards += 1;
+            deck.save();
         }
         catch (e)
         {
@@ -150,11 +161,21 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        // Delete the deck
+        // Find the corresponding deck
+        const deck = await FlashCardDecks.findOne({
+            UserId: userId,
+            DeckId: deckId
+        })
+
+        // Delete the flashcard
         var error = "";
         try 
         {
             await FlashCards.findOneAndDelete({ UserId: userId, CardId: cardId, DeckId: deckId });
+
+            // Update the number of cards in the deck
+            deck.NumCards -= 1;
+            deck.save();
         }
         catch (e)
         {
