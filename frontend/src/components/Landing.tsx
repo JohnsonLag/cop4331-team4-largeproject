@@ -1,13 +1,7 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import Login from './Login.tsx';
 
-const Landing: React.FC = () => {
-  const navigate = useNavigate();
-
-  // Handle navigation
-  const handleLoginClick = () => navigate('/login');
-  const handleSignUpClick = () => navigate('/signup');
-
+function Landing()
+{
   return (
     <div
       style={{
@@ -16,93 +10,45 @@ const Landing: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Left Section: Light Grey Background with Diagonal Slant */}
+      {/* Left Section: Login section, uses login component */}
       <div
         style={{
-          flex: 1,
-          backgroundColor: '#F5F5F5', // Light Grey
+          flex: 45,
+          backgroundColor: '#FFFFF', // Background : White
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
-          clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0% 100%)', // Diagonal slant to the right
         }}
       >
-        <div
-          style={{
-            textAlign: 'center',
-          }}
-        >
-          <h1
-            style={{
-              color: '#4A4A4A', // Dark Grey
-              fontSize: '2.5rem',
-              marginBottom: '20px',
-            }}
-          >
-            Welcome to Clarity
-          </h1>
-          <button
-            onClick={handleLoginClick}
-            style={{
-              backgroundColor: '#7E24B9', // Logo Purple
-              color: '#FFFFFF', // White text
-              border: 'none',
-              padding: '10px 20px',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              borderRadius: '5px',
-              margin: '10px',
-              transition: 'background-color 0.3s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')} // Darker Purple on hover
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
-          >
-            Login
-          </button>
-          <button
-            onClick={handleSignUpClick}
-            style={{
-              backgroundColor: '#7E24B9', // Logo Purple
-              color: '#FFFFFF', // White text
-              border: 'none',
-              padding: '10px 20px',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              borderRadius: '5px',
-              margin: '10px',
-              transition: 'background-color 0.3s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')} // Darker Purple on hover
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
-          >
-            Sign Up
-          </button>
-        </div>
+          < Login />
       </div>
 
       {/* Right Section: Soft Lavender Background with Diagonal Slant */}
+      {/* Holds Logo, Title, and Description */}
       <div
         style={{
-          flex: 1,
+          flex: 55,
           backgroundColor: '#E6E1F5', // Soft Lavender
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
-          clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0% 100%)', // Diagonal slant to the left
+          // Diagonal slant to the left on the left side of the bg
+          clipPath: 'polygon(5% 0, 100% 0, 100% 100%, 0% 100%)',
         }}
       >
         <div
           style={{
             textAlign: 'center',
+            height: '500px',
           }}
         >
           <img
-            src="/path/to/logo.png" // Replace with your logo path
+            src="images/clarity-logo.png" // Logo
             alt="Clarity Logo"
             style={{
-              height: '150px', // Adjust size as needed
+              height: '175px', // Adjust size as needed
               marginBottom: '20px',
             }}
           />
@@ -113,7 +59,7 @@ const Landing: React.FC = () => {
               marginBottom: '10px',
             }}
           >
-            Clarity
+            Welcome to Clarity
           </h1>
           <p
             style={{
@@ -121,9 +67,21 @@ const Landing: React.FC = () => {
               fontSize: '1.2rem',
               maxWidth: '400px',
               lineHeight: '1.5',
+              padding: "30px 0px 0px 0px"
             }}
           >
-            Your go-to app for organizing notes and flashcards. Stay focused, stay clear.
+            Your go-to app for organizing notes and flashcards with built-in LLM integration.
+          </p>
+          <br />
+          <p
+            style={{
+              color: '#4A4A4A', // Dark Grey
+              fontSize: '2rem',
+              maxWidth: '400px',
+              lineHeight: '1.5',
+            }}
+          >
+            Stay focused, stay clear.
           </p>
         </div>
       </div>
