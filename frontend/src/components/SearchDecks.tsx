@@ -13,6 +13,11 @@ function SearchDecks() {
     
     const navigate = useNavigate();
 
+    // Get current user information
+    let _ud: any = localStorage.getItem('user_data');
+    let ud = JSON.parse(_ud);
+    let userId: string = ud.id;
+
     interface SearchDecksResponse {
         results: Array<[number, number, string, number]>;
         error: string;
@@ -28,11 +33,6 @@ function SearchDecks() {
         error: string;
         jwtToken: Token;
     }
-
-    // Get current user information
-    let _ud: any = localStorage.getItem('user_data');
-    let ud = JSON.parse(_ud);
-    let userId: string = ud.id;
 
     // Fetch all decks when the component first loads
     useEffect(() => {
