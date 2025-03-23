@@ -31,7 +31,7 @@ function SearchNotes() {
     let ud = JSON.parse(_ud);
     let userId: string = ud.id;
 
-    // Fetch all decks when the component first loads
+    // Fetch all notes when the component first loads
     useEffect(() => {
         fetchAllNotes();
     }, []); // Empty dependency array ensures this runs only once on mount
@@ -44,16 +44,16 @@ function SearchNotes() {
     // Auto-search when search value changes
     useEffect(() => {
         if (search.trim() === "") {
-            fetchAllNotes(); // Fetch all decks if the search query is empty
+            fetchAllNotes(); // Fetch all notes if the search query is empty
         } else {
             searchNotes(); // Perform a search if there's a query
         }
     }, [search]); // Trigger useEffect when `search` changes
 
-    // Function to fetch all decks
+    // Function to fetch all notes
     async function fetchAllNotes(): Promise<void> {
         setLoading(true); // Start loading
-        let obj = { userId: userId, search: "", jwtToken: retrieveToken() }; // Empty search query to fetch all decks
+        let obj = { userId: userId, search: "", jwtToken: retrieveToken() }; // Empty search query to fetch all notes
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
@@ -77,7 +77,7 @@ function SearchNotes() {
                     localStorage.removeItem("user_data");
                     window.location.href = "/";
                 } else {
-                    setNotesList(res.results); // Update the deck list with all results
+                    setNotesList(res.results); // Update the note list with all results
                     storeToken(res.jwtToken);
                 }
             })
@@ -89,7 +89,7 @@ function SearchNotes() {
             });
     }
 
-    // Function to search decks based on the query
+    // Function to search notes based on the query
     async function searchNotes(): Promise<void> {
         setLoading(true); // Start loading
         let obj = { userId: userId, search: search, jwtToken: retrieveToken() };
@@ -118,7 +118,7 @@ function SearchNotes() {
                     // Update the message
                     setMessage("");
 
-                    setNotesList(res.results); // Update the deck list with search results
+                    setNotesList(res.results); // Update the note list with search results
                     storeToken(res.jwtToken);
                 }
             })
@@ -130,7 +130,7 @@ function SearchNotes() {
             });
     }
 
-    // Function to add new deck
+    // Function to add new note
     async function addNote( title: string ): Promise<void> {
         setLoading(true); // Start loading
         let obj = { userId: userId, title: title, body: "", jwtToken: retrieveToken() };
@@ -156,13 +156,13 @@ function SearchNotes() {
                     window.location.href = "/";
                 }
                 else if (res.error != "") {
-                    setMessage("Unable to create deck " + res.error);
+                    setMessage("Unable to create note " + res.error);
                 }
                 else {
-                    // Deck added successfully, update the deck list
+                    // Note added successfully, update the note list
                     fetchAllNotes();
                     setSearchValue("");
-                    setMessage("Deck added successfully.");
+                    setMessage("Note added successfully.");
                     setMessageType('success'); // Set message type to success
                 }
             })
@@ -174,7 +174,7 @@ function SearchNotes() {
             });
     }
 
-    // Function to delete deck
+    // Function to delete note
     async function deleteNote( noteId: number ): Promise<void> {
         setLoading(true); // Start loading
         let obj = { userId: userId, noteId: noteId, jwtToken: retrieveToken() };
@@ -182,7 +182,7 @@ function SearchNotes() {
 
         const config: AxiosRequestConfig = {
             method: 'post',
-            url: buildPath('api/delete_flashcard_deck'),
+            url: buildPath('api/delete_note'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -191,9 +191,29 @@ function SearchNotes() {
 
         axios(config)
             .then(function (response: AxiosResponse<DeleteNoteResponse>) {
+                const res = response.data;
 
-            // TODO: This API endpoint does not exist yet
-
+                if (res.jwtToken == null) {
+                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                    deleteToken();
+                    localStorage.removeItem("user_data");
+                    window.location.href = "/";
+                }
+                else if (res.error != "") {
+                    setMessage("Unable to delete note " + res.error);
+                }
+                else {
+                    // Note deleted successfully, update the note list
+                    setNotesList(prevNoteList => prevNoteList.filter(note => note[1] !== noteId)); // Remove the deleted note
+                    setMessage("Note deleted successfully.");
+                    setMessageType('error');
+                }
+            })
+            .catch(function (error) {
+                alert(error.toString());
+            })
+            .finally(() => {
+                setLoading(false); // Stop loading
             });
     }
 
@@ -209,7 +229,7 @@ function SearchNotes() {
                 <input
                     type="text"
                     className="form-control shadow-sm flex-grow-1"
-                    placeholder="Search or add deck title"
+                    placeholder="Search or add note"
                     onChange={handleSearchTextChange}
                     value={search}
                     style={{
@@ -229,7 +249,7 @@ function SearchNotes() {
                         flexShrink: 0, // Prevent button from shrinking
                     }}
                     onClick={() => {
-                        // Handle "Add New Deck" button click
+                        // Handle "Add New Note" button click
                         addNote(search);
                     }}
                 >
@@ -240,10 +260,10 @@ function SearchNotes() {
 
             {/* No Results Message */}
             {!loading && notesList.length === 0 && (
-                <p className="text-center mt-4" style={{ color: '#4A4A4A' }}>No notes found... You can add it with the "Add deck" button</p>
+                <p className="text-center mt-4" style={{ color: '#4A4A4A' }}>No notes found... You can add it with the "Add note" button</p>
             )}
 
-            {/* Deck Cards */}
+            {/* Note Cards */}
             <div className="row">
                 {notesList.map((note, index) => (
                     <div key={index} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
@@ -260,8 +280,8 @@ function SearchNotes() {
                                 transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
                             }}
                             onClick={() => {
-                                // Handle card click (e.g., navigate to deck details)
-                                console.log(`Clicked on deck: ${note[1]}`);
+                                // Handle card click (e.g., navigate to note details)
+                                console.log(`Clicked on note: ${note[1]}`);
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-2px)'; // Lift card on hover
@@ -296,7 +316,7 @@ function SearchNotes() {
                                         }}
                                         onClick={(e) => {
                                             e.stopPropagation(); // Prevent card click event from firing
-                                            console.log(`Edit deck: ${note[0]}`);
+                                            console.log(`Edit note: ${note[0]}`);
                                         }}
                                     >
                                         <i className="bi bi-pen"></i>
@@ -310,7 +330,7 @@ function SearchNotes() {
                                         onClick={(e) => {
                                             e.stopPropagation(); // Prevent card click event from firing
                                             // Show confirmation dialog
-                                            const isConfirmed = window.confirm("Are you sure you want to delete this deck?");
+                                            const isConfirmed = window.confirm("Are you sure you want to delete this note?");
 
                                             if (isConfirmed) {
                                                 // User confirmed, proceed with deletion
