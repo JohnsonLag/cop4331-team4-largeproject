@@ -1,20 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { retrieveToken } from '../tokenStorage';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { deleteToken, retrieveToken, storeToken, Token } from '../tokenStorage';
+import { buildPath } from './Path';
 
-interface FlashCard {
-    CardId: number;
-    DeckId: number;
-    Question: string;
-    Answer: string;
-}
 
 const FlashCardDeckView: React.FC = () => {
-    const { deckId } = useParams<{ deckId: string }>();
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
+    const { _deckId } = useParams<{ _deckId: string }>();
     const [flashcards, setFlashcards] = useState<FlashCard[]>([]);
     const [newQuestion, setNewQuestion] = useState('');
     const [newAnswer, setNewAnswer] = useState('');
+
+    const navigate = useNavigate();
+
+    const deckId = Number(_deckId);
+    
+    interface FlashCard {
+        CardId: number;
+        DeckId: number;
+        Question: string;
+        Answer: string;
+    }
+
+    interface FetchFlashCardsResponse {
+        results: FlashCard[];
+        error: string,
+        jwtToken: Token,
+    }
 
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
@@ -22,17 +36,17 @@ const FlashCardDeckView: React.FC = () => {
     let userId: string = ud.id;
 
     useEffect(() => {
-        fetchAllCards();
+        fetchAllCards( deckId );
     }, [deckId]);
 
     // Function to search decks based on the query
-    async function fetchAllCards(): Promise<void> {
-        let obj = { userId: userId, search: "", jwtToken: retrieveToken() };
+    async function fetchAllCards( deckId : number ): Promise<void> {
+        let obj = { userId: userId, deckId, search: "", jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
             method: 'post',
-            url: buildPath('api/search_flashcard_decks'),
+            url: buildPath('api/search_flash_cards'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -40,7 +54,7 @@ const FlashCardDeckView: React.FC = () => {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<SearchDecksResponse>) {
+            .then(function (response: AxiosResponse<FetchFlashCardsResponse>) {
                 const res = response.data;
 
                 if (res.jwtToken == null) {
@@ -52,87 +66,94 @@ const FlashCardDeckView: React.FC = () => {
                 } else {
                     // Update the message
                     setMessage("");
-
-                    setDeckList(res.results); // Update the deck list with search results
+                    setFlashcards(res.results); // Update the deck list with search results
                     storeToken(res.jwtToken);
                 }
             })
             .catch(function (error) {
                 alert(error.toString());
             })
-            .finally(() => {
-                setLoading(false); // Stop loading
-            });
     }
 
-    // const handleDelete = async (cardId: number) => {
-    //     try {
-    //         await axios.delete(`/api/flashcards/${cardId}`);
-    //         fetchFlashcards();
-    //     } catch (error) {
-    //         console.error('Error deleting flashcard:', error);
-    //     }
-    // };
-
-    // const handleEdit = (cardId: number) => {
-    //     history.push(`/edit-flashcard/${cardId}`);
-    // };
-
-    // const handleAddFlashcard = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     try {
-    //         // await axios.post('/api/flashcards', {
-    //         //     DeckId: parseInt(deckId),
-    //         //     Question: newQuestion,
-    //         //     Answer: newAnswer
-    //         // });
-    //         // setNewQuestion('');
-    //         // setNewAnswer('');
-    //         // fetchFlashcards();
-    //     } catch (error) {
-    //         console.error('Error adding flashcard:', error);
-    //     }
-    // };
-
     return (
-        <div style={{ padding: '20px' }}>
+        <div className="d-flex flex-column min-vh-100">
+        <div className="container mt-5">
+            {/* Play Button */}
             <button
-                style={{ backgroundColor: 'green', color: 'white', padding: '10px 20px', marginBottom: '20px' }}
-                onClick={() => console.log("pressed play") }
+                className="btn btn-success mb-4"
+                onClick={() => navigate(`/practice-deck/${deckId}`)}
+                style={{
+                    backgroundColor: 'green',
+                    color: 'white',
+                    padding: '10px 20px',
+                    marginBottom: '20px',
+                    width: '40%', // Set width to 60% of the container
+                }}
             >
                 Play
             </button>
 
-            <div>
+            {/* Flashcards List */}
+            <div className="row">
                 {flashcards.map((card) => (
-                    <div key={card.CardId} style={{ marginBottom: '10px', padding: '10px', border: '1px solid #D3D3D3', borderRadius: '5px' }}>
-                        <h3>{card.Question}</h3>
-                        <p>{card.Answer}</p>
-                        <button onClick={() => console.log("pressed edit")} style={{ marginRight: '10px' }}>Edit</button>
-                        <button onClick={() => console.log("pressed delete")}>Delete</button>
+                    <div key={card.CardId} className="col-md-6 mb-3">
+                        <div className="card">
+                            <div className="card-body">
+                                <h5 className="card-title">{card.Question}</h5>
+                                <p className="card-text">{card.Answer}</p>
+                                <button
+                                    className="btn btn-primary me-2"
+                                    onClick={() => {}}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={() => {}}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </div>
 
-            <form onSubmit={() => {}} style={{ marginTop: '20px' }}>
-                <input
-                    type="text"
-                    placeholder="Question"
-                    value={newQuestion}
-                    onChange={(e) => setNewQuestion(e.target.value)}
-                    required
-                    style={{ marginRight: '10px', padding: '5px' }}
-                />
-                <input
-                    type="text"
-                    placeholder="Answer"
-                    value={newAnswer}
-                    onChange={(e) => setNewAnswer(e.target.value)}
-                    required
-                    style={{ marginRight: '10px', padding: '5px' }}
-                />
-                <button type="submit" style={{ padding: '5px 10px' }}>Add Flashcard</button>
+            {/* Add Flashcard Form */}
+            <form onSubmit={() => {}} className="mt-4">
+                <div className="row mb-3 align-items-center"> {/* Added align-items-center */}
+                    <div className="col-md-5"> {/* Adjusted column width */}
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Question"
+                            value={newQuestion}
+                            onChange={(e) => setNewQuestion(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="col-md-5"> {/* Adjusted column width */}
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Answer"
+                            value={newAnswer}
+                            onChange={(e) => setNewAnswer(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="col-md-2"> {/* Added column for the button */}
+                        <button
+                            type="submit"
+                            className="btn w-100" // Full width within the column
+                            style={{ backgroundColor: '#7E24B9', color: 'white' }} // Logo purple color
+                        >
+                            Add
+                        </button>
+                    </div>
+                </div>
             </form>
+        </div>
         </div>
     );
 };

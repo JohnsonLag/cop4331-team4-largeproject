@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { deleteToken } from "../tokenStorage.tsx";
 
+import logoImg  from "/images/clarity-logo.png";
+
 function MenuBar()
 {
     // Grab current user information
@@ -67,7 +69,7 @@ function MenuBar()
             onClick={handleLogoClick}
             >
             <img
-                src="images/clarity-logo.png"
+                src={logoImg}
                 alt="<>"
                 style={{
                 height: '40px',
