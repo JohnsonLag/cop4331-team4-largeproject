@@ -9,6 +9,7 @@ import CardPage from './pages/CardPage';
 import NotePage from './pages/NotePage';
 import SingleNotePage from './pages/SingleNotePage';
 import FlashCardDecksPage from './pages/FlashCardDecksPage';
+import FlashCardDeckPage from './pages/FlashCardDeckPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/notes" element={<NotePage/>} />
               <Route path="/notes/:id" element={<SingleNotePage />} />
               <Route path="/decks" element={<FlashCardDecksPage />} />
+              <Route path="/decks/:deckId" element={<FlashCardDeckPage />} />
               {/* Default redirect if no route matches */}
               <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>

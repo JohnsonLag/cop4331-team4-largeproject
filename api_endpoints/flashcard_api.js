@@ -52,6 +52,8 @@ exports.setApp = function ( app, client )
         var error = '';
         try
         {
+            // console.log(deck);
+
             newCard.save();
 
             // Update number of cards in deck

@@ -2,6 +2,7 @@ import { Token, storeToken, retrieveToken, deleteToken } from "../tokenStorage.t
 import { useState, useEffect } from 'react';
 import { buildPath } from './Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { useNavigate } from "react-router-dom";
 
 function SearchDecks() {
     const [message, setMessage] = useState('');
@@ -9,6 +10,13 @@ function SearchDecks() {
     const [deckList, setDeckList] = useState<Array<[number, number, string, number]>>([]);
     const [search, setSearchValue] = useState('');
     const [loading, setLoading] = useState(false); // Loading state
+    
+    const navigate = useNavigate();
+
+    // Get current user information
+    let _ud: any = localStorage.getItem('user_data');
+    let ud = JSON.parse(_ud);
+    let userId: string = ud.id;
 
     interface SearchDecksResponse {
         results: Array<[number, number, string, number]>;
@@ -25,11 +33,6 @@ function SearchDecks() {
         error: string;
         jwtToken: Token;
     }
-
-    // Get current user information
-    let _ud: any = localStorage.getItem('user_data');
-    let ud = JSON.parse(_ud);
-    let userId: string = ud.id;
 
     // Fetch all decks when the component first loads
     useEffect(() => {
@@ -281,7 +284,7 @@ function SearchDecks() {
                             }}
                             onClick={() => {
                                 // Handle card click (e.g., navigate to deck details)
-                                console.log(`Clicked on deck: ${deck[1]}`);
+                                navigate(`/decks/${deck[1]}?title=${encodeURIComponent(deck[2])}`);
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-2px)'; // Lift card on hover
