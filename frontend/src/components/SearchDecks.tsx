@@ -16,6 +16,16 @@ function SearchDecks() {
         jwtToken: Token;
     }
 
+    interface CreateDeckResponse {
+        error: string;
+        jwtToken: Token;
+    }
+
+    interface DeleteDeckResponse {
+        error: string;
+        jwtToken: Token;
+    }
+
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
     let ud = JSON.parse(_ud);
@@ -136,7 +146,7 @@ function SearchDecks() {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<SearchDecksResponse>) {
+            .then(function (response: AxiosResponse<CreateDeckResponse>) {
                 const res = response.data;
 
                 if (res.jwtToken == null) {
@@ -180,7 +190,7 @@ function SearchDecks() {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<SearchDecksResponse>) {
+            .then(function (response: AxiosResponse<DeleteDeckResponse>) {
                 const res = response.data;
 
                 if (res.jwtToken == null) {
