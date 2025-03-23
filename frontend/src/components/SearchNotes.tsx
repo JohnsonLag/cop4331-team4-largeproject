@@ -146,7 +146,7 @@ function SearchNotes() {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<SearchNotesResponse>) {
+            .then(function (response: AxiosResponse<AddNoteResponse>) {
                 const res = response.data;
 
                 if (res.jwtToken == null) {
