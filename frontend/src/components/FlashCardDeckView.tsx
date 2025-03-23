@@ -13,10 +13,14 @@ function FlashCardDeckView () {
     const [flashcards, setFlashcards] = useState<FlashCard[]>([]);
     const [newQuestion, setNewQuestion] = useState('');
     const [newAnswer, setNewAnswer] = useState('');
-
     const deckTitle = searchParams.get("title");
 
     const navigate = useNavigate();
+
+    // Get current user information
+    let _ud: any = localStorage.getItem('user_data');
+    let ud = JSON.parse(_ud);
+    let userId: string = ud.id;
     
     interface FlashCard {
         CardId: number;
@@ -41,11 +45,6 @@ function FlashCardDeckView () {
         error: string,
         jwtToken: Token
     }
-
-    // Get current user information
-    let _ud: any = localStorage.getItem('user_data');
-    let ud = JSON.parse(_ud);
-    let userId: string = ud.id;
 
     useEffect(() => {
         fetchAllCards();
