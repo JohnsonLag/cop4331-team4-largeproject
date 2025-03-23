@@ -2,21 +2,20 @@ import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-d
 import './App.css';
 
 import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import SignupPage from './pages/User/SignupPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import CardPage from './pages/CardPage';
-import NotePage from './pages/NotePage';
-import SingleNotePage from './pages/SingleNotePage';
-import FlashCardDecksPage from './pages/FlashCardDecksPage';
-import FlashCardDeckPage from './pages/FlashCardDeckPage';
+import CardPage from './pages/Cards/CardPage';
+import NotePage from './pages/Notes/NotePage';
+import SingleNotePage from './pages/Notes/SingleNotePage';
+import FlashCardDecksPage from './pages/FlashCardDecks/FlashCardDecksPage';
+import FlashCardDeckPage from './pages/FlashCardDecks/FlashCardDeckPage';
 
 function App() {
   return (
       <Router>
           <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginPage />} />
+              {/* <Route path="/login" element={<LoginPage />} /> */}
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/cards" element={<CardPage />} />

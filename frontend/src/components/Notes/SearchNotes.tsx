@@ -1,42 +1,39 @@
-import { Token, storeToken, retrieveToken, deleteToken } from "../tokenStorage.tsx";
+import { Token, storeToken, retrieveToken, deleteToken } from "../../tokenStorage.tsx";
 import { useState, useEffect } from 'react';
-import { buildPath } from './Path.tsx';
+import { buildPath } from '../Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { useNavigate } from "react-router-dom";
 
-function SearchDecks() {
+function SearchNotes() {
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
-    const [deckList, setDeckList] = useState<Array<[number, number, string, number]>>([]);
+    const [notesList, setNotesList] = useState<Array<[number, number, string, number]>>([]);
     const [search, setSearchValue] = useState('');
     const [loading, setLoading] = useState(false); // Loading state
-    
-    const navigate = useNavigate();
+
+    interface SearchNotesResponse {
+        results: Array<[number, number, string, number]>;
+        error: string;
+        jwtToken: Token;
+    }
+
+    interface AddNoteResponse {
+        error: string;
+        jwtToken: Token;
+    }
+
+    interface DeleteNoteResponse {
+        error: string;
+        jwtToken: Token;
+    }
 
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
     let ud = JSON.parse(_ud);
     let userId: string = ud.id;
 
-    interface SearchDecksResponse {
-        results: Array<[number, number, string, number]>;
-        error: string;
-        jwtToken: Token;
-    }
-
-    interface CreateDeckResponse {
-        error: string;
-        jwtToken: Token;
-    }
-
-    interface DeleteDeckResponse {
-        error: string;
-        jwtToken: Token;
-    }
-
-    // Fetch all decks when the component first loads
+    // Fetch all notes when the component first loads
     useEffect(() => {
-        fetchAllDecks();
+        fetchAllNotes();
     }, []); // Empty dependency array ensures this runs only once on mount
 
     // Handle search text change
@@ -47,21 +44,21 @@ function SearchDecks() {
     // Auto-search when search value changes
     useEffect(() => {
         if (search.trim() === "") {
-            fetchAllDecks(); // Fetch all decks if the search query is empty
+            fetchAllNotes(); // Fetch all notes if the search query is empty
         } else {
-            searchDecks(); // Perform a search if there's a query
+            searchNotes(); // Perform a search if there's a query
         }
     }, [search]); // Trigger useEffect when `search` changes
 
-    // Function to fetch all decks
-    async function fetchAllDecks(): Promise<void> {
+    // Function to fetch all notes
+    async function fetchAllNotes(): Promise<void> {
         setLoading(true); // Start loading
-        let obj = { userId: userId, search: "", jwtToken: retrieveToken() }; // Empty search query to fetch all decks
+        let obj = { userId: userId, search: "", jwtToken: retrieveToken() }; // Empty search query to fetch all notes
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
             method: 'post',
-            url: buildPath('api/search_flashcard_decks'),
+            url: buildPath('api/search_notes'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -69,7 +66,7 @@ function SearchDecks() {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<SearchDecksResponse>) {
+            .then(function (response: AxiosResponse<SearchNotesResponse>) {
                 const res = response.data;
 
                 console.log(res)
@@ -80,7 +77,7 @@ function SearchDecks() {
                     localStorage.removeItem("user_data");
                     window.location.href = "/";
                 } else {
-                    setDeckList(res.results); // Update the deck list with all results
+                    setNotesList(res.results); // Update the note list with all results
                     storeToken(res.jwtToken);
                 }
             })
@@ -92,15 +89,15 @@ function SearchDecks() {
             });
     }
 
-    // Function to search decks based on the query
-    async function searchDecks(): Promise<void> {
+    // Function to search notes based on the query
+    async function searchNotes(): Promise<void> {
         setLoading(true); // Start loading
         let obj = { userId: userId, search: search, jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
             method: 'post',
-            url: buildPath('api/search_flashcard_decks'),
+            url: buildPath('api/search_notes'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -108,7 +105,7 @@ function SearchDecks() {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<SearchDecksResponse>) {
+            .then(function (response: AxiosResponse<SearchNotesResponse>) {
                 const res = response.data;
 
                 if (res.jwtToken == null) {
@@ -121,7 +118,7 @@ function SearchDecks() {
                     // Update the message
                     setMessage("");
 
-                    setDeckList(res.results); // Update the deck list with search results
+                    setNotesList(res.results); // Update the note list with search results
                     storeToken(res.jwtToken);
                 }
             })
@@ -133,15 +130,15 @@ function SearchDecks() {
             });
     }
 
-    // Function to add new deck
-    async function addDeck( title: string ): Promise<void> {
+    // Function to add new note
+    async function addNote( title: string ): Promise<void> {
         setLoading(true); // Start loading
-        let obj = { userId: userId, title: title, jwtToken: retrieveToken() };
+        let obj = { userId: userId, title: title, body: "", jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
             method: 'post',
-            url: buildPath('api/create_flashcard_deck'),
+            url: buildPath('api/create_note'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -149,7 +146,7 @@ function SearchDecks() {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<CreateDeckResponse>) {
+            .then(function (response: AxiosResponse<AddNoteResponse>) {
                 const res = response.data;
 
                 if (res.jwtToken == null) {
@@ -159,13 +156,13 @@ function SearchDecks() {
                     window.location.href = "/";
                 }
                 else if (res.error != "") {
-                    setMessage("Unable to create deck " + res.error);
+                    setMessage("Unable to create note " + res.error);
                 }
                 else {
-                    // Deck added successfully, update the deck list
-                    fetchAllDecks();
+                    // Note added successfully, update the note list
+                    fetchAllNotes();
                     setSearchValue("");
-                    setMessage("Deck added successfully.");
+                    setMessage("Note added successfully.");
                     setMessageType('success'); // Set message type to success
                 }
             })
@@ -177,15 +174,15 @@ function SearchDecks() {
             });
     }
 
-    // Function to delete deck
-    async function deleteDeck( deckId: number ): Promise<void> {
+    // Function to delete note
+    async function deleteNote( noteId: number ): Promise<void> {
         setLoading(true); // Start loading
-        let obj = { userId: userId, deckId: deckId, jwtToken: retrieveToken() };
+        let obj = { userId: userId, noteId: noteId, jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
             method: 'post',
-            url: buildPath('api/delete_flashcard_deck'),
+            url: buildPath('api/delete_note'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -193,7 +190,7 @@ function SearchDecks() {
         };
 
         axios(config)
-            .then(function (response: AxiosResponse<DeleteDeckResponse>) {
+            .then(function (response: AxiosResponse<DeleteNoteResponse>) {
                 const res = response.data;
 
                 if (res.jwtToken == null) {
@@ -203,12 +200,12 @@ function SearchDecks() {
                     window.location.href = "/";
                 }
                 else if (res.error != "") {
-                    setMessage("Unable to delete deck " + res.error);
+                    setMessage("Unable to delete note " + res.error);
                 }
                 else {
-                    // Deck deleted successfully, update the deck list
-                    setDeckList(prevDeckList => prevDeckList.filter(deck => deck[1] !== deckId)); // Remove the deleted deck
-                    setMessage("Deck deleted successfully.");
+                    // Note deleted successfully, update the note list
+                    setNotesList(prevNoteList => prevNoteList.filter(note => note[1] !== noteId)); // Remove the deleted note
+                    setMessage("Note deleted successfully.");
                     setMessageType('error');
                 }
             })
@@ -224,15 +221,15 @@ function SearchDecks() {
         <div className="d-flex flex-column min-vh-100">
         <div className="container mt-5">
             {/* Title */}
-            <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>Decks</h1>
+            <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>Notes</h1>
 
-            {/* Search Bar and Add New Deck Button */}
+            {/* Search Bar and Add New Note Button */}
             <div className="d-flex align-items-center mb-4 gap-3">
                 {/* Search Bar */}
                 <input
                     type="text"
                     className="form-control shadow-sm flex-grow-1"
-                    placeholder="Search or add deck title"
+                    placeholder="Search or add note"
                     onChange={handleSearchTextChange}
                     value={search}
                     style={{
@@ -242,7 +239,7 @@ function SearchDecks() {
                     }}
                 />
 
-                {/* Add New Deck Button */}
+                {/* Add New Note Button */}
                 <button
                     className="btn shadow-sm"
                     style={{
@@ -252,23 +249,23 @@ function SearchDecks() {
                         flexShrink: 0, // Prevent button from shrinking
                     }}
                     onClick={() => {
-                        // Handle "Add New Deck" button click
-                        addDeck(search);
+                        // Handle "Add New Note" button click
+                        addNote(search);
                     }}
                 >
                     <i className="bi bi-plus-lg me-2"></i> {/* Plus icon */}
-                    Add New Deck
+                    Add New Note
                 </button>
             </div>
 
             {/* No Results Message */}
-            {!loading && deckList.length === 0 && (
-                <p className="text-center mt-4" style={{ color: '#4A4A4A' }}>No decks found... You can add it with the "Add deck" button</p>
+            {!loading && notesList.length === 0 && (
+                <p className="text-center mt-4" style={{ color: '#4A4A4A' }}>No notes found... You can add it with the "Add note" button</p>
             )}
 
-            {/* Deck Cards */}
+            {/* Note Cards */}
             <div className="row">
-                {deckList.map((deck, index) => (
+                {notesList.map((note, index) => (
                     <div key={index} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
                         {/* Clickable Card */}
                         <div
@@ -283,8 +280,8 @@ function SearchDecks() {
                                 transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
                             }}
                             onClick={() => {
-                                // Handle card click (e.g., navigate to deck details)
-                                navigate(`/decks/${deck[1]}?title=${encodeURIComponent(deck[2])}`);
+                                // Handle card click (e.g., navigate to note details)
+                                console.log(`Clicked on note: ${note[1]}`);
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-2px)'; // Lift card on hover
@@ -297,8 +294,8 @@ function SearchDecks() {
                         >
                             {/* Card Body */}
                             <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                                <h5 className="card-title" style={{ color: '#7E24B9' }}>{deck[2]}</h5>
-                                <p className="card-text">{deck[3]} cards</p>
+                                <h5 className="card-title" style={{ color: '#7E24B9' }}>{note[2]}</h5>
+                                <p className="card-text">{note[3]} line(s)</p>
                             </div>
 
                             {/* Card Footer */}
@@ -319,7 +316,7 @@ function SearchDecks() {
                                         }}
                                         onClick={(e) => {
                                             e.stopPropagation(); // Prevent card click event from firing
-                                            console.log(`Edit deck: ${deck[0]}`);
+                                            console.log(`Edit note: ${note[0]}`);
                                         }}
                                     >
                                         <i className="bi bi-pen"></i>
@@ -333,11 +330,11 @@ function SearchDecks() {
                                         onClick={(e) => {
                                             e.stopPropagation(); // Prevent card click event from firing
                                             // Show confirmation dialog
-                                            const isConfirmed = window.confirm("Are you sure you want to delete this deck?");
+                                            const isConfirmed = window.confirm("Are you sure you want to delete this note?");
 
                                             if (isConfirmed) {
                                                 // User confirmed, proceed with deletion
-                                                deleteDeck(deck[1]);
+                                                deleteNote(note[1]);
                                                 // Add your deletion logic here, e.g., calling an API or updating state
                                             } else {
                                                 // User canceled, do nothing
@@ -373,4 +370,4 @@ function SearchDecks() {
     );
 }
 
-export default SearchDecks;
+export default SearchNotes;

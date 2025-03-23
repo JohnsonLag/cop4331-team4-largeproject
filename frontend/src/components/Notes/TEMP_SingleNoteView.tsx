@@ -1,7 +1,7 @@
-import { Token, storeToken, retrieveToken } from "../tokenStorage.tsx";
+import { Token, storeToken, retrieveToken } from "../../tokenStorage.tsx";
 import { useEffect, useState } from 'react';
 
-import { buildPath } from './Path.tsx';
+import { buildPath } from '../Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useParams } from "react-router-dom";
 

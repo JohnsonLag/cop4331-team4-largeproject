@@ -1,5 +1,5 @@
-import CardUI from '../components/CardUI';
-import MenuBar from '../components/MenuBar';
+import CardUI from '../../components/Cards (OLD)/CardUI';
+import MenuBar from '../../components/MenuBar';
 
 const CardPage = () =>
 {

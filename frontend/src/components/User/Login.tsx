@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { storeToken, Token } from '../tokenStorage';
+import { storeToken, Token } from '../../tokenStorage';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { buildPath } from './Path';
+import { buildPath } from '../Path';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 function Login() 

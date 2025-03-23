@@ -1,4 +1,4 @@
-import { deleteToken } from "../tokenStorage.tsx";
+import { deleteToken } from "../../tokenStorage.tsx";
 
 function LoggedInName()
 {
