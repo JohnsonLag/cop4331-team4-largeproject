@@ -271,7 +271,7 @@ function SearchDecks() {
                             }}
                             onClick={() => {
                                 // Handle card click (e.g., navigate to deck details)
-                                console.log(`Clicked on deck: ${deck[0]}`);
+                                console.log(`Clicked on deck: ${deck[1]}`);
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-2px)'; // Lift card on hover
