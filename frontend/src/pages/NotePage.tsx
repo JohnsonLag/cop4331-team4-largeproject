@@ -1,6 +1,6 @@
 import MenuBar from '../components/MenuBar';
 import AddNote from '../components/TEMP_AddNote';
-import SearchNotes from '../components/TEMP_SearchNotes';
+import SearchNotes from '../components/SearchNotes';
 
 const CardPage = () =>
 {
