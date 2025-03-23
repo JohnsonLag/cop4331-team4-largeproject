@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { deleteToken, retrieveToken, storeToken, Token } from '../tokenStorage';
@@ -317,44 +317,6 @@ function FlashCardDeckView () {
                     </div>
                 ))}
             </div>
-
-            {/* <div className="row">
-                {flashcards.map((card) => (
-                    <div key={card.CardId} className="col-md-6 mb-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <h5 className="card-title">{card.Question}</h5>
-                                <p className="card-text">{card.Answer}</p>
-                                <button
-                                    className="btn btn-primary me-2"
-                                    onClick={() => {}}
-                                >
-                                    <i className="bi bi-pen"></i>
-                                </button>
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Prevent card click event from firing
-                                            // Show confirmation dialog
-                                            const isConfirmed = window.confirm("Are you sure you want to delete this flash card?");
-
-                                            if (isConfirmed) {
-                                                // User confirmed, proceed with deletion
-                                                deleteCard(card.CardId);
-                                                // Add your deletion logic here, e.g., calling an API or updating state
-                                            } else {
-                                                // User canceled, do nothing
-                                                console.log("Deletion canceled.");
-                                            }
-                                    }}
-                                >
-                                     <i className="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div> */}
 
             {/* Message */}
             {message && (
