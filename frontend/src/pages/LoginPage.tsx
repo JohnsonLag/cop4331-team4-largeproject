@@ -1,5 +1,4 @@
 import PageTitle from '../components/PageTitle.tsx';
-import Login from '../components/OLD_Login.tsx';
 import MenuBar from '../components/MenuBar.tsx';
 
 const LoginPage = () =>
@@ -8,7 +7,7 @@ const LoginPage = () =>
         <div>
         <MenuBar />
         <PageTitle />
-        <Login />
+        {/* <Login /> */}
         </div>
     );
 };
