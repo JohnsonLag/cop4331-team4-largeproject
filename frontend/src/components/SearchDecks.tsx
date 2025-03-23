@@ -250,7 +250,7 @@ function SearchDecks() {
 
             {/* No Results Message */}
             {!loading && deckList.length === 0 && (
-                <p className="text-center mt-4" style={{ color: '#4A4A4A' }}>No decks found.</p>
+                <p className="text-center mt-4" style={{ color: '#4A4A4A' }}>No decks found... You can add it with the "Add deck" button</p>
             )}
 
             {/* Deck Cards */}
