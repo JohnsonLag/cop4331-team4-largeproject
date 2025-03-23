@@ -1,5 +1,5 @@
-import MenuBar from '../components/MenuBar';
-import SearchDecks from '../components/SearchDecks';
+import MenuBar from '../../components/MenuBar';
+import SearchDecks from '../../components/FlashCardDecks/SearchDecks';
 
 const CardPage = () =>
 {

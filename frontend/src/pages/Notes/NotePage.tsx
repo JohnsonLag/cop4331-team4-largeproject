@@ -1,5 +1,5 @@
-import MenuBar from '../components/MenuBar';
-import SearchNotes from '../components/SearchNotes';
+import MenuBar from '../../components/MenuBar';
+import SearchNotes from '../../components/Notes/SearchNotes';
 
 const CardPage = () =>
 {

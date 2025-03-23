@@ -1,7 +1,7 @@
-import { Token, storeToken, retrieveToken, deleteToken} from "../tokenStorage.tsx";
+import { Token, storeToken, retrieveToken, deleteToken} from "../../tokenStorage.tsx";
 import React, { useState } from 'react';
 
-import { buildPath } from './Path.tsx';
+import { buildPath } from '../Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 function CardUI()

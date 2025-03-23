@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import './page-styles.css';
-import { buildPath } from "./Path.tsx";
+import '../page-styles.css';
+import { buildPath } from "../Path.tsx"
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 function Signup() {

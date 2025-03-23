@@ -1,4 +1,4 @@
-import Login from './Login.tsx';
+import Login from "./User/Login";
 
 function Landing()
 {

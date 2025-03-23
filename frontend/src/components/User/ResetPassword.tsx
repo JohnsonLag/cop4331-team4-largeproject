@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import './page-styles.css';
-import { buildPath } from "./Path.tsx";
+import '../page-styles.css';
+import { buildPath } from "../Path.tsx";
 
 function ResetPassword() {
     const [message,setMessage] = useState('');

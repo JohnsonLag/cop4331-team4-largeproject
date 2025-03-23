@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { deleteToken, retrieveToken, storeToken, Token } from '../tokenStorage';
-import { buildPath } from './Path';
+import { deleteToken, retrieveToken, storeToken, Token } from '../../tokenStorage';
+import { buildPath } from '../Path';
 
 
 function FlashCardDeckView () {
@@ -190,7 +190,7 @@ function FlashCardDeckView () {
                     color: 'white',
                     padding: '10px 20px',
                     marginBottom: '20px',
-                    width: '40%', // Set width to 60% of the container
+                    width: '40%',
                 }}
             >
                 Practice
@@ -221,7 +221,7 @@ function FlashCardDeckView () {
                     </div>
                     <div className="col-md-2">
                         <button
-                            type="button" // Change type to "button" to prevent form submission
+                            type="button" 
                             className="btn w-100"
                             style={{ backgroundColor: '#7E24B9', color: 'white' }}
                             onClick={() => {
