@@ -5,12 +5,7 @@ function Landing()
     // Grab current user information
     let _ud : any = localStorage.getItem('user_data');
     let ud = JSON.parse( _ud );
-    let firstName = "";
-    if (ud)
-    {
-        firstName = ud.firstName;
-    }
-
+  
     return (
       <div
         style={{
