@@ -105,7 +105,12 @@ exports.setApp = function ( app, client )
 
             for ( var i = 0; i < results.length; i++ )
             {
-                _ret.push([results[i].Title, results[i].NumCards]);
+                _ret.push([
+                    results[i].UserId,
+                    results[i].DeckId,
+                    results[i].Title,
+                    results[i].NumCards,
+                ]);
             }
         }
         catch (e)

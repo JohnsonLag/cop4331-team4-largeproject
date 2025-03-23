@@ -5,12 +5,13 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 function SearchDecks() {
     const [message, setMessage] = useState('');
-    const [deckList, setDeckList] = useState<Array<[string, number]>>([]);
+    const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
+    const [deckList, setDeckList] = useState<Array<[number, number, string, number]>>([]);
     const [search, setSearchValue] = useState('');
     const [loading, setLoading] = useState(false); // Loading state
 
     interface SearchDecksResponse {
-        results: Array<[string, number]>;
+        results: Array<[number, number, string, number]>;
         error: string;
         jwtToken: Token;
     }
@@ -58,6 +59,8 @@ function SearchDecks() {
             .then(function (response: AxiosResponse<SearchDecksResponse>) {
                 const res = response.data;
 
+                console.log(res)
+
                 if (res.jwtToken == null) {
                     setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
                     deleteToken();
@@ -97,12 +100,103 @@ function SearchDecks() {
 
                 if (res.jwtToken == null) {
                     setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                    setMessageType("error"); // Set the message to error
                     deleteToken();
                     localStorage.removeItem("user_data");
                     window.location.href = "/";
                 } else {
+                    // Update the message
+                    setMessage("");
+
                     setDeckList(res.results); // Update the deck list with search results
                     storeToken(res.jwtToken);
+                }
+            })
+            .catch(function (error) {
+                alert(error.toString());
+            })
+            .finally(() => {
+                setLoading(false); // Stop loading
+            });
+    }
+
+    // Function to add new deck
+    async function addDeck( title: string ): Promise<void> {
+        setLoading(true); // Start loading
+        let obj = { userId: userId, title: title, jwtToken: retrieveToken() };
+        let js = JSON.stringify(obj);
+
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/create_flashcard_deck'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+
+        axios(config)
+            .then(function (response: AxiosResponse<SearchDecksResponse>) {
+                const res = response.data;
+
+                if (res.jwtToken == null) {
+                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                    deleteToken();
+                    localStorage.removeItem("user_data");
+                    window.location.href = "/";
+                }
+                else if (res.error != "") {
+                    setMessage("Unable to create deck " + res.error);
+                }
+                else {
+                    // Deck added successfully, update the deck list
+                    fetchAllDecks();
+                    setSearchValue("");
+                    setMessage("Deck added successfully.");
+                    setMessageType('success'); // Set message type to success
+                }
+            })
+            .catch(function (error) {
+                alert(error.toString());
+            })
+            .finally(() => {
+                setLoading(false); // Stop loading
+            });
+    }
+
+    // Function to delete deck
+    async function deleteDeck( deckId: number ): Promise<void> {
+        setLoading(true); // Start loading
+        let obj = { userId: userId, deckId: deckId, jwtToken: retrieveToken() };
+        let js = JSON.stringify(obj);
+
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/delete_flashcard_deck'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+
+        axios(config)
+            .then(function (response: AxiosResponse<SearchDecksResponse>) {
+                const res = response.data;
+
+                if (res.jwtToken == null) {
+                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                    deleteToken();
+                    localStorage.removeItem("user_data");
+                    window.location.href = "/";
+                }
+                else if (res.error != "") {
+                    setMessage("Unable to delete deck " + res.error);
+                }
+                else {
+                    // Deck deleted successfully, update the deck list
+                    setDeckList(prevDeckList => prevDeckList.filter(deck => deck[1] !== deckId)); // Remove the deleted deck
+                    setMessage("Deck deleted successfully.");
+                    setMessageType('error');
                 }
             })
             .catch(function (error) {
@@ -125,7 +219,7 @@ function SearchDecks() {
                 <input
                     type="text"
                     className="form-control shadow-sm flex-grow-1"
-                    placeholder="Search deck titles..."
+                    placeholder="Search or add deck title"
                     onChange={handleSearchTextChange}
                     value={search}
                     style={{
@@ -146,7 +240,7 @@ function SearchDecks() {
                     }}
                     onClick={() => {
                         // Handle "Add New Deck" button click
-                        console.log("Add New Deck clicked");
+                        addDeck(search);
                     }}
                 >
                     <i className="bi bi-plus-lg me-2"></i> {/* Plus icon */}
@@ -190,8 +284,8 @@ function SearchDecks() {
                         >
                             {/* Card Body */}
                             <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                                <h5 className="card-title" style={{ color: '#7E24B9' }}>{deck[0]}</h5>
-                                <p className="card-text">{deck[1]} cards</p>
+                                <h5 className="card-title" style={{ color: '#7E24B9' }}>{deck[2]}</h5>
+                                <p className="card-text">{deck[3]} cards</p>
                             </div>
 
                             {/* Card Footer */}
@@ -202,7 +296,7 @@ function SearchDecks() {
                                     borderTop: '1px solid #D3D3D3',
                                 }}
                             >
-                                {/* Right Buttons */}
+                                {/* Edit & Delete Buttons */}
                                 <div className="d-flex">
                                     <button
                                         className="btn btn-sm me-2"
@@ -225,7 +319,17 @@ function SearchDecks() {
                                         }}
                                         onClick={(e) => {
                                             e.stopPropagation(); // Prevent card click event from firing
-                                            console.log(`Delete deck: ${deck[0]}`);
+                                            // Show confirmation dialog
+                                            const isConfirmed = window.confirm("Are you sure you want to delete this deck?");
+
+                                            if (isConfirmed) {
+                                                // User confirmed, proceed with deletion
+                                                deleteDeck(deck[1]);
+                                                // Add your deletion logic here, e.g., calling an API or updating state
+                                            } else {
+                                                // User canceled, do nothing
+                                                console.log("Deletion canceled.");
+                                            }
                                         }}
                                     >
                                         <i className="bi bi-trash"></i>
@@ -237,9 +341,17 @@ function SearchDecks() {
                 ))}
             </div>
 
-            {/* Error Message */}
+            {/* Message */}
             {message && (
-                <div className="alert alert-danger mt-4" role="alert">
+                <div
+                    className="alert mt-4"
+                    role="alert"
+                    style={{
+                        backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
+                        color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
+                        borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
+                    }}
+                >
                     {message}
                 </div>
             )}
