@@ -264,12 +264,12 @@ function SearchNotes() {
             )}
 
             {/* Note Cards */}
+            
             <div className="row">
                 {notesList.map((note, index) => (
-                    <div key={index} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
-                        {/* Clickable Card */}
+                    <div key={index} className="col-md-4 d-flex" style={{ height: "400px", width: "300px", marginTop: "25px" }}>
                         <div
-                            className="card shadow-sm h-100 d-flex flex-column"
+                            className="card shadow-sm h-300 d-flex flex-column"
                             style={{
                                 backgroundColor: '#FFFF',
                                 borderColor: '#D3D3D3',
@@ -302,8 +302,8 @@ function SearchNotes() {
                             <div
                                 className="card-footer d-flex justify-content-end"
                                 style={{
-                                    backgroundColor: '#E6E1F5',
-                                    borderTop: '1px solid #D3D3D3',
+                                    backgroundColor: '#FFFF',
+                                    borderTop: '1px solid #FFFF',
                                 }}
                             >
                                 {/* Edit & Delete Buttons */}
