@@ -23,7 +23,7 @@ function App() {
               <Route path="/notes" element={<NotePage/>} />
               <Route path="/notes/:id" element={<SingleNotePage />} />
               <Route path="/decks" element={<FlashCardDecksPage />} />
-              <Route path="/decks/:id" element={<FlashCardDeckPage />} />
+              <Route path="/decks/:deckId" element={<FlashCardDeckPage />} />
               {/* Default redirect if no route matches */}
               <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>

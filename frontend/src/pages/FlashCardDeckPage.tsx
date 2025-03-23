@@ -1,5 +1,5 @@
-import MenuBar from '../components/MenuBar';
 import FlashCardDeckView from '../components/FlashCardDeckView';
+import MenuBar from '../components/MenuBar';
 
 const CardPage = () =>
 {

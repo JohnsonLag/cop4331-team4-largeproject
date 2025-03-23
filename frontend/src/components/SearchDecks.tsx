@@ -284,7 +284,7 @@ function SearchDecks() {
                             }}
                             onClick={() => {
                                 // Handle card click (e.g., navigate to deck details)
-                                navigate(`/decks/${deck[1]}`);
+                                navigate(`/decks/${deck[1]}?title=${encodeURIComponent(deck[2])}`);
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-2px)'; // Lift card on hover

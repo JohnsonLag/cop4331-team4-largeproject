@@ -21,7 +21,7 @@ const FlashCardSchema = new Schema({
     },
     Answer: {
         type: String,
-        required: true
+        required: false
     },
 });
 module.exports = notes = mongoose.model("FlashCards", FlashCardSchema, "FlashCards");
