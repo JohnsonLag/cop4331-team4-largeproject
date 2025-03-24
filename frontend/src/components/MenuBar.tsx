@@ -28,14 +28,7 @@ function MenuBar()
     // Handle navigation
     const handleLogoClick = () => 
     {
-        if (ud)
-        {
-            navigate('/notes');
-        }
-        else
-        {
-            navigate('/');
-        }
+        navigate('/');
     };
     const handleNotesClick = () => navigate('/notes');
     const handleFlashcardsClick = () => navigate('/decks');

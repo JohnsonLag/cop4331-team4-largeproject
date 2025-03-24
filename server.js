@@ -18,9 +18,6 @@ const mongoose = require("mongoose");
 mongoose.connect(url).then(() => console.log("Mongo DB connected")).catch(err => console.log(err));
 
 // API Endpoints
-var card_api = require('./api_endpoints/card_api.js');
-card_api.setApp(app, mongoose);
-
 var user_api = require('./api_endpoints/user_api.js');
 user_api.setApp(app, mongoose);
 
