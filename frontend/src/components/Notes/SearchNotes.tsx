@@ -266,45 +266,68 @@ function SearchNotes() {
             {/* Note Cards */}
             <div className="row">
                 {notesList.map((note, index) => (
-                    <div key={index} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
-                        {/* Clickable Card */}
+                    <div key={index} className="col-md-4 d-flex" style={{ height: "400px", width: "300px", marginTop: "25px" }}>
                         <div
-                            className="card shadow-sm h-100 d-flex flex-column"
+                            className="card shadow-sm h-300 d-flex flex-column"
                             style={{
-                                backgroundColor: '#FFFF',
                                 borderColor: '#D3D3D3',
                                 color: '#4A4A4A',
                                 flex: '1',
                                 padding: '0',
-                                cursor: 'pointer', // Change cursor to pointer on hover
-                                transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
+                                cursor: 'pointer',
+                                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                // Lined paper background
+                                backgroundImage: 'linear-gradient(#E7E7E7 1px, transparent 1px)',
+                                backgroundSize: '100% 24px', // Line spacing
+                                backgroundPosition: '0 40px', // Start lines below header
+                                position: 'relative',
+                                borderLeft: '40px solid #7E24B9', // Margin area
+                                boxShadow: 'inset 0 0 10px rgba(0,0,0,0.1)', // Inner shadow for depth
                             }}
                             onClick={() => {
-                                // Handle card click (e.g., navigate to note details)
                                 console.log(`Clicked on note: ${note[1]}`);
                             }}
                             onMouseOver={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-2px)'; // Lift card on hover
-                                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'; // Add shadow on hover
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(0,0,0,0.1)';
                             }}
                             onMouseOut={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)'; // Reset card position
-                                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(0,0,0,0.1)';
                             }}
                         >
+                            {/* Margin area decoration */}
+                            <div style={{
+                                position: 'absolute',
+                                left: '-35px',
+                                top: '0',
+                                height: '100%',
+                                width: '30px',
+                                backgroundColor: '#7E24B9',
+                                backgroundSize: '100% 24px',
+                                opacity: '0.6'
+                            }}></div>
+                            
                             {/* Card Body */}
-                            <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                                <h5 className="card-title" style={{ color: '#7E24B9' }}>{note[2]}</h5>
-                                <p className="card-text">{note[3]} line(s)</p>
+                            <div className="card-body d-flex flex-column justify-content-center align-items-center text-center" 
+                                style={{
+                                    padding: '20px',
+                                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%)'
+                                }}>
+                                <h5 className="card-title" style={{ 
+                                    color: '#7E24B9',
+                                    fontSize: '2rem',
+                                    marginBottom: '15px'
+                                }}>{note[2]}</h5>
+                                <p className="card-text" style={{
+                                    fontSize: '1.2rem',
+                                    marginLeft: '10px'
+                                }}>{note[3]} line(s)</p>
                             </div>
 
                             {/* Card Footer */}
                             <div
                                 className="card-footer d-flex justify-content-end"
-                                style={{
-                                    backgroundColor: '#E6E1F5',
-                                    borderTop: '1px solid #D3D3D3',
-                                }}
                             >
                                 {/* Edit & Delete Buttons */}
                                 <div className="d-flex">
@@ -315,7 +338,7 @@ function SearchNotes() {
                                             color: '#353839',
                                         }}
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Prevent card click event from firing
+                                            e.stopPropagation();
                                             console.log(`Edit note: ${note[0]}`);
                                         }}
                                     >
@@ -328,17 +351,10 @@ function SearchNotes() {
                                             color: '#FFFFFF',
                                         }}
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Prevent card click event from firing
-                                            // Show confirmation dialog
+                                            e.stopPropagation();
                                             const isConfirmed = window.confirm("Are you sure you want to delete this note?");
-
                                             if (isConfirmed) {
-                                                // User confirmed, proceed with deletion
                                                 deleteNote(note[1]);
-                                                // Add your deletion logic here, e.g., calling an API or updating state
-                                            } else {
-                                                // User canceled, do nothing
-                                                console.log("Deletion canceled.");
                                             }
                                         }}
                                     >
