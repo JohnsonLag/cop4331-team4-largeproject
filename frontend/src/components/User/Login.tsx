@@ -72,7 +72,7 @@ function Login()
     
                 const user: User = { firstName: firstName, lastName: lastName, id: userId };
                 localStorage.setItem('user_data', JSON.stringify(user));
-                window.location.href = '/cards';
+                window.location.href = '/notes';
             }
         })
         .catch(function (error) {

@@ -28,7 +28,7 @@ function MenuBar()
     // Handle navigation
     const handleLogoClick = () => 
     {
-        if (ud)
+        if (ud != "")
         {
             navigate('/notes');
         }
