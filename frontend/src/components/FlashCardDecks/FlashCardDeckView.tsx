@@ -296,7 +296,7 @@ function FlashCardDeckView () {
                                         onClick={(e) => {
                                             e.stopPropagation(); // Prevent card click event from firing
                                             // Show confirmation dialog
-                                            const isConfirmed = window.confirm("Are you sure you want to delete this deck?");
+                                            const isConfirmed = window.confirm("Are you sure you want to delete this card?");
 
                                             if (isConfirmed) {
                                                 // User confirmed, proceed with deletion
