@@ -181,10 +181,10 @@ function FlashCardDeckView () {
             {/* Title */}
             <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>{ deckTitle }</h1>
 
-            {/* Play Button */}
+            {/* Review Button */}
             <button
                 className="btn btn-success mb-4"
-                onClick={() => navigate(`/practice-deck/${deckId}`)}
+                onClick={() => navigate(`/decks/${deckId}/review`)}
                 style={{
                     backgroundColor: '#7E24B9',
                     color: 'white',
@@ -193,7 +193,7 @@ function FlashCardDeckView () {
                     width: '40%',
                 }}
             >
-                Practice
+                Review
             </button>
 
             {/* Add Flashcard Section */}

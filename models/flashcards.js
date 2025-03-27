@@ -23,5 +23,18 @@ const FlashCardSchema = new Schema({
         type: String,
         required: false
     },
+    // Fields for reviewing / quantifying user confidence in card's contents
+    ConfidenceScore: {
+        type: Number, 
+        default: 0,
+    },
+    LastReviewed: {
+        type: Date,
+        default: null,
+    },
+    ReviewCount: {
+        type: Number,
+        default: 0,
+    },
 });
 module.exports = notes = mongoose.model("FlashCards", FlashCardSchema, "FlashCards");
