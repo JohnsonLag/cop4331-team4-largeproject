@@ -8,6 +8,10 @@ const getNextId = require("../utils/idGenerator.js");
 const FlashCardDecks = require("../models/flashcarddecks.js");
 const FlashCards = require("../models/flashcards.js");
 
+// Variables for scoring system
+const min_confidence = -5;
+const max_confidence = 5;
+
 exports.setApp = function ( app, client )
 {
     // Create
@@ -82,7 +86,7 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
-    // Search flash cards
+    // Search / Retrieve flash cards
     app.post('/api/search_flash_cards/', async (req, res, next) =>
     {
         // incoming: userId, deckId, search, jwtToken
@@ -141,7 +145,64 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    // Fetch flashcards due for review
+    app.post('/api/get_cards_for_review', async(req, res, next) => {
+        // incoming: userId, deckId, jwtToken
+        // outgoing: cards[], error, jwtToken
+        const { userId, deckId, jwtToken } = req.body;
 
+        // Check Json Web Token
+        try
+        {
+            if( token.isExpired(jwtToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwtToken: ''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Fetch flashcards
+        let error = '';
+        let cards = [];
+        try
+        {
+
+            const query = {
+                UserId: userId,
+                DeckId: deckId,
+            };
+
+            cards = await FlashCards.find(query).sort({ ConfidenceScore: 1 });
+        }
+        catch (e)
+        {
+            error = e.toString();
+            console.log(e);
+        }
+
+        // Refresh token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Return
+        res.status(200).json({ cards: cards, error: error, jwtToken: refreshedToken });
+    });
+
+    // Change confidence score 
+
+    // Delete
     app.post('/api/delete_flash_card', async (req, res, next) => 
     {
         // incoming: userId, deckId, cardId, jwtToken
