@@ -90,11 +90,6 @@ function Signup() {
         });
     };
 
-    function goToLoginPage() : void
-    {
-        window.location.href = '/';
-    };
-
     return (
 	  <div className="card shadow-md" style={{
 	    backgroundColor: '#F5F5F5',
