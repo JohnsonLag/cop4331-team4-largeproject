@@ -14,7 +14,6 @@ function ReviewFlashCards()
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
@@ -168,22 +167,6 @@ function ReviewFlashCards()
                 <span className="visually-hidden">Loading...</span>
             </div>
             <p>Loading your flashcards...</p>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flashcard-container error-container">
-            <div className="alert alert-danger" role="alert">
-                Error: {error}
-            </div>
-            <button 
-                className="btn btn-purple" 
-                onClick={() => window.location.reload()}
-            >
-                Try Again
-            </button>
             </div>
         );
     }
