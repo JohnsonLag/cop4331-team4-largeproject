@@ -33,6 +33,9 @@ decks_api.setApp(app, mongoose);
 var flashcards_api = require('./api_endpoints/flashcard_api.js');
 flashcards_api.setApp(app, mongoose);
 
+var llm_integration_api = require('./api_endpoints/llm_integration_api.js');
+llm_integration_api.setApp(app, mongoose);
+
 
 app.use((req, res, next) =>
 {
