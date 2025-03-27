@@ -201,6 +201,80 @@ exports.setApp = function ( app, client )
     });
 
     // Change confidence score 
+    app.post('/api/rate_flash_card', async (req, res, next) => 
+    {
+        // incoming: userId, deckId, cardId, confidence, jwtToken
+        // outgoing: error, newScore, jwtToken
+        const { userId, deckId, cardId, confidence, jwtToken } = req.body;
+
+        // Check Json Web Token
+        try
+        {
+            if( token.isExpired(jwtToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwtToken: ''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Update flashcard's confidence
+        let error = 0;
+        let newScore = 0;
+        try
+        {
+            const card = await FlashCards.findOne({
+                UserId: userId,
+                DeckId: deckId,
+                CardId: cardId,
+            });
+
+            if (!card)
+            {
+                error = "Card not found or does not exist!";
+            }
+            else
+            {
+                // Calculate new score and clamp
+                newScore = card.ConfidenceScore + confidence;
+                newScore = Math.max(min_confidence, Math.min(max_confidence, newScore));
+
+                // Update the card
+                await FlashCards.findOneAndUpdate(
+                    { UserId: userId, DeckId: deckId, CardId: cardId },
+                    {
+                        ConfidenceScore: newScore,
+                        LastReviewed: new Date(),
+                        $inc: { ReviewCount: 1}, // Increment review count by 1
+                    }
+                )
+            }
+        }
+        catch (e)
+        {
+            error = e.toString();
+            console.log(e);
+        }
+
+        // Refresh token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Return
+        res.status(200).json({ error: error, newScore: newScore, jwtToken: refreshedToken });
+
+    });
 
     // Delete
     app.post('/api/delete_flash_card', async (req, res, next) => 
