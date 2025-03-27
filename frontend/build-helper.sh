@@ -1,1 +1,0 @@
-cp ./src/components/Notes/InsertMarkdownPanel.js ./dist/assets/insert-markdown-panel.js

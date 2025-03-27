@@ -36,6 +36,7 @@ jobs:
           cd /var/www/coolestappever.xyz/html
           git pull origin main
           cd frontend
+          cp ./src/components/Notes/InsertMarkdownPanel.js ./dist/assets/insert-markdown-panel.js
           npm install
           npm run build
           systemctl restart nginx
