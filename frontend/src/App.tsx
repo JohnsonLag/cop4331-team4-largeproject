@@ -9,6 +9,7 @@ import SingleNotePage from './pages/Notes/SingleNotePage';
 import DevPage from './pages/Notes/DevPage';
 import FlashCardDecksPage from './pages/FlashCardDecks/FlashCardDecksPage';
 import FlashCardDeckPage from './pages/FlashCardDecks/FlashCardDeckPage';
+import ReviewFlashCardsPage from './pages/FlashCards/ReviewFlashCardsPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/notes/:id" element={<SingleNotePage />} />
               <Route path="/decks" element={<FlashCardDecksPage />} />
               <Route path="/decks/:deckId" element={<FlashCardDeckPage />} />
+              <Route path="/decks/:deckId/review" element={<ReviewFlashCardsPage/>} />
               <Route path="/dev" element={<DevPage />} />
               {/* Default redirect if no route matches */}
               <Route path="*" element={<Navigate replace to="/" />} />

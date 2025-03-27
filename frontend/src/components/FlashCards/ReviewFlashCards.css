@@ -1,0 +1,194 @@
+/* Main container */
+.flashcard-review-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #F5F5F5; /* Light Grey */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress bar */
+.progress-container {
+  margin-bottom: 1.5rem;
+}
+.progress {
+  height: 1.5rem;
+  background-color: #E6E1F5; /* Soft Lavender */
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 
+.flashcard {
+  position: relative;
+  height: 300px;
+  perspective: 1000px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+} */
+
+/* Flashcard container */
+.flashcard {
+    position: relative;
+    height: 300px;
+    perspective: 1000px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    background-color: #FFFFFF; /* White */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+  
+/* Front and back faces */
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* This hides the back face when flipped */
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 8px;
+}
+
+/* Specifically hide the back face initially */
+.flashcard-back {
+    transform: rotateY(180deg);
+    background-color: #FFFFFF; /* Ensure same background */
+}
+
+/* When flipped, show back face */
+.flashcard.flipped {
+    transform: rotateY(180deg);
+}
+
+.flashcard h3 {
+    color: #4A4A4A; /* Dark Grey */
+    margin-bottom: 1rem;
+}
+
+.flashcard p {
+    font-size: 1.2rem;
+    color: #4A4A4A; /* Dark Grey */
+    margin-bottom: 1.5rem;
+}
+
+.hint {
+    font-size: 0.9rem;
+    color: #7E24B9; /* Logo Purple */
+    margin-top: auto;
+}
+
+/* Confidence rating buttons */
+.confidence-rating-container {
+    text-align: center;
+}
+
+.confidence-rating-container h4 {
+    color: #4A4A4A; /* Dark Grey */
+    margin-bottom: 1rem;
+}
+
+.confidence-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.confidence-btn {
+    min-width: 120px;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-low {
+    background-color: #FFEBEE;
+    color: #C62828;
+}
+
+.btn-neutral {
+    background-color: #E3F2FD;
+    color: #1565C0;
+}
+
+.btn-high {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.btn-purple {
+    background-color: #7E24B9; /* Logo Purple */
+    color: white;
+}
+
+.btn-purple:hover {
+    background-color: #5E1D8C; /* Darker Purple */
+    color: white;
+}
+
+.btn-skip {
+    background-color: transparent;
+    color: #4A4A4A; /* Dark Grey */
+    border: 1px solid #D3D3D3; /* Medium Grey */
+}
+
+.btn-skip:hover {
+    background-color: #E6E1F5; /* Soft Lavender */
+}
+
+/* Loading and error states */
+.loading-container, .error-container, .completed-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    text-align: center;
+}
+
+.text-purple {
+    color: #7E24B9; /* Logo Purple */
+}
+
+.alert-danger {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border-color: #EF9A9A;
+}
