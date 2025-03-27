@@ -211,6 +211,69 @@ exports.setApp = function ( app, client )
         }
     });
 
+    app.post('/api/update_note', async(req, res, next) => 
+    {
+        // incoming: userId, noteId, title, body, jwtToken
+        // outgoing: error, jwtToken
+        const { userId, noteId, title, body, jwtToken } = req.body; 
+
+        // Check json web token
+        try
+        {
+            if (token.isExpired(jwtToken))
+            {
+                var r = {error: 'The JWT is no longer valid', jwtToken: ''}
+            }
+        }
+        catch
+        {
+            error = e.toString();
+            console.log(e.message);
+        }
+
+        // Update note
+        var error = '';
+
+        try
+        {
+            // Find the note and update it
+            const updatedNote = await Notes.findOneAndUpdate(
+                { UserId: userId, NoteId: noteId },
+                { 
+                    $set: { 
+                        // Update title and body
+                        Title: title,
+                        Body: body 
+                    } 
+                },
+                { new: true }  // Return the updated document
+            );
+
+            if (!updatedNote) {
+                error = "Note not found or you don't have permission to edit it";
+            }
+        }
+        catch (e)
+        {
+            error = e.toString();
+        }
+
+        // Refresh token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            error = e.toString();
+            console.log(e.message);
+        }
+
+        // Return
+        res.status(200).json({ error: error, jwtToken: refreshedToken });        
+    });
+
     app.post('/api/delete_note', async (req, res, next) => 
     {
         // incoming: userId noteId jwtToken
