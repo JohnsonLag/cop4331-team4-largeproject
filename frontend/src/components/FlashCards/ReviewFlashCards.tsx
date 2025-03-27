@@ -89,13 +89,13 @@ function ReviewFlashCards()
     }
 
     // Function to update confidence rating
-    async function rateFlashCard( cardId : number, rating : number ): Promise<void> {
+    async function rateFlashCard( cardId : number, confidence : number ): Promise<void> {
         let obj = { 
             userId: userId, 
             deckId: deckId, 
             cardId: cardId, 
-            search: "", jwtToken: 
-            retrieveToken() };
+            confidence: confidence,
+            jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
@@ -242,16 +242,16 @@ function ReviewFlashCards()
             <div className="confidence-rating-container">
                 <h4>How confident are you?</h4>
                 <div className="confidence-buttons">
-                {[-2, -1, 0, 1, 2].map((rating) => (
+                {[-2, -1, 0, 1, 2].map((confidence) => (
                     <button
-                    key={rating}
-                    className={`btn confidence-btn ${rating < 0 ? 'btn-low' : rating === 0 ? 'btn-neutral' : 'btn-high'}`}
+                    key={confidence}
+                    className={`btn confidence-btn ${confidence < 0 ? 'btn-low' : confidence === 0 ? 'btn-neutral' : 'btn-high'}`}
                     onClick={() => rateFlashCard(
                         Number(currentCard.CardId), 
-                        Number(rating)
+                        Number(confidence)
                     )}
                     >
-                    {getConfidenceLabel(rating)}
+                    {getConfidenceLabel(confidence)}
                     </button>
                 ))}
                 </div>
