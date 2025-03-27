@@ -253,7 +253,9 @@ function SearchDecks() {
                     }}
                     onClick={() => {
                         // Handle "Add New Deck" button click
-                        addDeck(search);
+                        if (search != "") {
+                            addDeck(search);
+                        }
                     }}
                 >
                     <i className="bi bi-plus-lg me-2"></i> {/* Plus icon */}

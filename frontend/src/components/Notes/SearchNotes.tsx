@@ -250,7 +250,10 @@ function SearchNotes() {
                     }}
                     onClick={() => {
                         // Handle "Add New Note" button click
-                        addNote(search);
+                        if (search != "")
+                        {
+                            addNote(search);
+                        }
                     }}
                 >
                     <i className="bi bi-plus-lg me-2"></i> {/* Plus icon */}
