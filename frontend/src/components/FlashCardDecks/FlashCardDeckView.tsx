@@ -266,7 +266,17 @@ function FlashCardDeckView () {
                             >
                                 {/* Card Body */}
                                 <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                                <h5 className="card-title" style={{ color: '#7E24B9' }}>
+                                <h5 className="card-title" style=
+                                    {{ 
+                                        color: '#7E24B9',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        width: '100%',
+                                        maxWidth: '100%',
+                                        padding: '0 10px' // Add some padding if needed
+                                    }}
+                                >
                                     {card.Question}
                                 </h5>
                                 <p className="card-text">
