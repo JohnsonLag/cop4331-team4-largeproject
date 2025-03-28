@@ -93,10 +93,19 @@ exports.setApp = function ( app, client )
             else
             {
                 newDeckId = deckId;
+
+                // Find deck and update num cards
+                await FlashCardDecks.findOneAndUpdate(
+                    { 
+                        UserId: userId,
+                        DeckId: deckId,
+                    },
+                    { $inc: { NumCards: flashcards.length } } // increment views by 1
+                  );
             }
 
             // Get the last cardId from global sequence
-            const lastCardId = await getNextSequence('CardId', flashcards.length);
+            const lastCardId = await getNextSequence('cardId', flashcards.length);
 
             // Calculate first cardId in the batch
             const firstCardId = lastCardId - flashcards.length + 1;
