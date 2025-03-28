@@ -1,3 +1,9 @@
+/* Full page background wrapper */
+.full-page-background {
+    background-color: #FFFFFF;
+    min-height: 100vh;
+}
+
 /* Main container */
 .flashcard-review-container {
   max-width: 600px;
