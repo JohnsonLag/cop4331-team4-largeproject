@@ -1,11 +1,11 @@
-// import PageTitle from '../components/PageTitle';
-// import LoggedInName from '../components/LoggedInName';
+import MenuBar from '../../components/MenuBar';
 import SingleNoteView from '../../components/Notes/TEMP_SingleNoteView';
 
 const CardPage = () =>
 {
     return(
         <div>
+        <MenuBar/>
         {/* <PageTitle /> */}
         {/* <LoggedInName /> */}
         <SingleNoteView/>

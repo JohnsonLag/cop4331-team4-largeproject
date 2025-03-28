@@ -274,7 +274,13 @@ function SearchNotes() {
                 marginBottom: '50px',
             }}>
                 {notesList.map((note, index) => (
-                    <div key={index} className="col-md-4 d-flex" style={{ height: "400px", width: "300px", marginTop: "25px" }}>
+                    <div key={index} className="col-md-6 col-lg-4 col-xl-3 d-flex" style=
+                        {{ 
+                            height: "400px", 
+                            marginTop: "25px" 
+
+                        }}
+                    >
                         <div
                             className="card shadow-sm h-300 d-flex flex-column"
                             style={{
@@ -323,11 +329,21 @@ function SearchNotes() {
                                     padding: '20px',
                                     background: 'linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%)'
                                 }}>
-                                <h5 className="card-title" style={{ 
-                                    color: '#7E24B9',
-                                    fontSize: '2rem',
-                                    marginBottom: '15px'
-                                }}>{note[2]}</h5>
+                                <h5 className="card-title" style=
+                                    {{ 
+                                        color: '#7E24B9',
+                                        fontSize: '2rem',
+                                        marginBottom: '15px',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        width: '100%',
+                                        maxWidth: '100%',
+                                        padding: '0 10px' // Add some padding if needed
+                                    }}
+                                >
+                                    {note[2]}
+                                </h5>
                                 <p className="card-text" style={{
                                     fontSize: '1.2rem',
                                     marginLeft: '10px'
