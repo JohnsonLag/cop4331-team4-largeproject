@@ -193,12 +193,15 @@ function ReviewFlashCards()
             <div className="progress-container">
             <div className="progress">
                 <div 
-                className="progress-bar bg-purple" 
-                role="progressbar" 
-                style={{ width: `${((currentCardIndex + 1) / cards.length) * 100}%` }}
-                aria-valuenow={currentCardIndex + 1}
-                aria-valuemin={0}
-                aria-valuemax={cards.length}
+                    className="progress-bar bg-purple" 
+                    role="progressbar" 
+                    style={{ 
+                        width: `${((currentCardIndex + 1) / cards.length) * 100}%`,
+                        backgroundColor: '#7E24B9',
+                    }}
+                    aria-valuenow={currentCardIndex + 1}
+                    aria-valuemin={0}
+                    aria-valuemax={cards.length}
                 >
                 {currentCardIndex + 1}/{cards.length}
                 </div>
