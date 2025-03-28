@@ -6,6 +6,7 @@ const mdp = new EasyMDE({
 	element: document.getElementById(textAreaId),
 	lineNumbers: true,
 	lineWrapping: true,
+	hideIcons: ["image", "upload-image"],
 });
 
 const mytext = document.getElementById(textAreaId).innerText;

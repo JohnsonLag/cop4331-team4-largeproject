@@ -1,8 +1,3 @@
-// Purpose(s):
-//		Renders the Markdown panel.
-//		Is passed the textarea id.
-//		Is passed the note body.
-
 interface MarkdownPanelProps {
     textAreaId: string;
 	noteBody: string;
@@ -61,7 +56,11 @@ export function MarkdownPanel({textAreaId, noteBody} : MarkdownPanelProps)
 	
 	loadAll();
 	
+	const icons = Array.from(document.getElementsByClassName("editor-toolbar")[0].children);
 	
+	icons.forEach(icon => {
+		icon.style.color= "green";
+	});
 	
 	// function sendNoteToServer() : void {
 		

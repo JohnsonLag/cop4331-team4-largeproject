@@ -2,6 +2,7 @@ import { Token, storeToken, retrieveToken } from "../../tokenStorage.tsx";
 import { useEffect, useState } from 'react';
 
 import { buildPath } from '../Path.tsx';
+import MarkdownPanel from '../../components/Notes/MarkdownPanel.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useParams } from "react-router-dom";
 
@@ -22,12 +23,27 @@ function SingleNoteView()
     const [message,setMessage] = useState('');
     const [note, setNote] = useState<SingleNoteResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+	const passedTextAreaId = "textAreaId";
 
     // Get current user information
     let _ud : any = localStorage.getItem('user_data');
     let ud = JSON.parse( _ud );
     let userId : string = ud.id;
-
+	
+	function createNoteBody(body: string[]) : string {
+		let returnedText : string = "";
+	
+		let i : number = 0;
+		let len : number = body.length;
+		
+		// Concatenate.
+		for (i = 0; i < len; i++){
+			returnedText += body.at(i);
+		}
+		
+		return returnedText;
+	}
+	
     // Fetch the note
     useEffect(() => {
         const fetchNote = async () => {
@@ -95,18 +111,17 @@ function SingleNoteView()
         return <p>Note not found</p>;
     else
     {
+		const returnedNoteBody = createNoteBody(note.body);
+		
         return(
             <div id="singleNoteUIDiv">
-            <br />
-            <h1>{note.title}</h1>
-            <div>
-                {note.body.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                ))}
-            </div>
-            <span id="noteSearchResult">{message}</span>
-    
-        </div>
+				<br />
+				<h1>{note.title}</h1>
+				<div>
+					<MarkdownPanel textAreaId={passedTextAreaId} noteBody={returnedNoteBody}/>
+				</div>
+				<span id="noteSearchResult">{message}</span>
+			</div>
         );
     }
 }
