@@ -245,7 +245,8 @@ function FlashCardDeckView () {
                     paddingRight: '10px', // Space for scrollbar
                     marginTop: '20px',
                     paddingBottom: '50px'
-                }}>
+                }}
+            >
                 {/* Flashcards List */}
                 <div className="row">
                     {flashcards.map((card) => (

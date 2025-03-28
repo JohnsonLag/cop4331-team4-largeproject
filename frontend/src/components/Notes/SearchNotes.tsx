@@ -270,6 +270,16 @@ function SearchNotes() {
             )}
 
             {/* Note Cards */}
+            <div 
+                style={{
+                    maxHeight: 'calc(100vh - 400px)',
+                    overflowY: 'auto', // Make div scrollable
+                    overflowX: 'hidden',
+                    paddingRight: '10px', // Space for scrollbar
+                    marginTop: '20px',
+                    paddingBottom: '50px'
+                }}
+            >
             <div className="row">
                 {notesList.map((note, index) => (
                     <div key={index} className="col-md-4 d-flex" style={{ height: "400px", width: "300px", marginTop: "25px" }}>
@@ -373,6 +383,7 @@ function SearchNotes() {
                         </div>
                     </div>
                 ))}
+            </div>
             </div>
 
             {/* Message */}
