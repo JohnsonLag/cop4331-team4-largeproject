@@ -279,7 +279,16 @@ function FlashCardDeckView () {
                                 >
                                     {card.Question}
                                 </h5>
-                                <p className="card-text">
+                                <p className="card-text" style=
+                                    {{
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        width: '100%',
+                                        maxWidth: '100%',
+                                        padding: '0 10px' // Add some padding if needed
+                                    }}
+                                >
                                     {card.Answer}
                                 </p>
                                 </div>
