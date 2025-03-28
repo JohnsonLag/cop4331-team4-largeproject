@@ -1,5 +1,6 @@
 import { Token, storeToken, retrieveToken, deleteToken } from "../../tokenStorage.tsx";
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { buildPath } from '../Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
@@ -9,7 +10,9 @@ function SearchNotes() {
     const [notesList, setNotesList] = useState<Array<[number, number, string, number]>>([]);
     const [search, setSearchValue] = useState('');
     const [loading, setLoading] = useState(false); // Loading state
-
+    
+    const navigate = useNavigate();
+    
     interface SearchNotesResponse {
         results: Array<[number, number, string, number]>;
         error: string;
@@ -289,6 +292,7 @@ function SearchNotes() {
                             }}
                             onClick={() => {
                                 console.log(`Clicked on note: ${note[1]}`);
+                                navigate(`/notes/${note[1]}`);
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -343,6 +347,7 @@ function SearchNotes() {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             console.log(`Edit note: ${note[0]}`);
+                                            navigate(`/notes/${note[1]}`);
                                         }}
                                     >
                                         <i className="bi bi-pen"></i>
