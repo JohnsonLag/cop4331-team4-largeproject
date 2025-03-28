@@ -6,8 +6,6 @@ const CardPage = () =>
     return(
         <div>
         <MenuBar/>
-        {/* <PageTitle /> */}
-        {/* <LoggedInName /> */}
         <SingleNoteView/>
         </div>
     );
