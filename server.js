@@ -51,4 +51,8 @@ app.use((req, res, next) =>
     next();
 });
 
-app.listen(5000); // start Node + Express server on port 5000
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(5000); // start Node + Express server on port 5000
+}
+
+module.exports = app;
