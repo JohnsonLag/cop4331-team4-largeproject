@@ -1,3 +1,5 @@
+import { retrieveToken } from "../../tokenStorage.tsx";
+
 interface MarkdownPanelProps {
     textAreaId: string;
 	noteBody: string;
@@ -6,7 +8,9 @@ interface MarkdownPanelProps {
 export function MarkdownPanel({textAreaId, noteBody} : MarkdownPanelProps)
 {
 	const buttonId : string = "sendNoteButton";
-	const messageAreaId : string = "messageAreaId";
+	const noteSearchResultId : string = "noteSearchResult";
+	const tempLocationId : string = "tempLocationId";
+	const noteTitleId : string = "noteTitleId";
 	const distJsFileName : string = "insert-markdown-panel.js";
 	
 	// // all
@@ -16,7 +20,7 @@ export function MarkdownPanel({textAreaId, noteBody} : MarkdownPanelProps)
 		// };
 	// }
 	
-	// stylesheet
+	// Panel style sheet.
 	// function loadCSS(): void {
 	function loadAll(): void {
 		let styles = document.createElement('link');
@@ -30,7 +34,7 @@ export function MarkdownPanel({textAreaId, noteBody} : MarkdownPanelProps)
 		};
 	}
 	
-	// javascript
+	// Panel source code.
 	function loadEasyMDE() : void {
 		let script = document.createElement('script');
 		script.src = "https://cdn.jsdelivr.net/npm/easymde@2.20.0/dist/easymde.min.js";
@@ -41,7 +45,7 @@ export function MarkdownPanel({textAreaId, noteBody} : MarkdownPanelProps)
 		};
 	}
 	
-	// actual panel
+	// The script that will insert the panel.
 	function loadEasyMDEInstance() : void {
         let script = document.createElement('script');
 		script.type = "module";
@@ -54,23 +58,49 @@ export function MarkdownPanel({textAreaId, noteBody} : MarkdownPanelProps)
 		};
     }
 	
-	loadAll();
 	
-	const icons = Array.from(document.getElementsByClassName("editor-toolbar")[0].children);
-	
-	icons.forEach(icon => {
-		icon.style.color= "green";
-	});
-	
-	// function sendNoteToServer() : void {
+	function sendNoteToServer() : void {
+		let noteSearchResult = document.getElementById(noteSearchResultId);
+		noteSearchResult === null ? console.log("Sending note...") : noteSearchResult.textContent = "Sending note...";
 		
-	// }
+		let requestNoteTitle : HTMLElement | null = document.getElementById(noteTitleId);
+		let requestNoteBody : HTMLElement | null  = document.getElementById(tempLocationId);
+		
+		let requestNoteTitleText : string | null = "";
+		let requestNoteBodyText : string | null = "";
+		
+		if (requestNoteTitle !== null && requestNoteBody !== null)
+		{
+			requestNoteTitleText = requestNoteTitle.textContent;
+			requestNoteBodyText = requestNoteBody.textContent;
+			
+			let obj = { requestNoteTitleText: requestNoteTitleText, requestNoteBodyText: requestNoteBodyText, jwtToken: retrieveToken() };
+			
+			console.log(obj); // Delete later.
+			
+			// Send Axios config.
+			// ...
+			// ...
+			// ...
+			
+			noteSearchResult === null ? console.log("Note sent!") : noteSearchResult.textContent = "Note sent!";
+		}
+		
+		else {
+			noteSearchResult === null ? console.log("Note title and/or note body is null. Could not send note.") : noteSearchResult.textContent = "Note title and/or note body is null. Could not send note.";
+			return;
+		}
+	}
 	
+	loadAll();
+
     return(
         <div>
 			<textarea id={textAreaId}>{noteBody}</textarea>
-			<button id={buttonId}>Send note to server</button>
-			<span id={messageAreaId}></span>
+			<button id={buttonId} onClick={sendNoteToServer}>Send note to server</button>
+			<div id={tempLocationId} style={{
+				display: "none",
+				}}></div>
         </div>
     );
 };

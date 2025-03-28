@@ -24,6 +24,7 @@ function SingleNoteView()
     const [note, setNote] = useState<SingleNoteResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 	const passedTextAreaId = "textAreaId";
+	const noteTitleId = "noteTitleId";
 
     // Get current user information
     let _ud : any = localStorage.getItem('user_data');
@@ -116,7 +117,7 @@ function SingleNoteView()
         return(
             <div id="singleNoteUIDiv">
 				<br />
-				<h1>{note.title}</h1>
+				<h1 id={noteTitleId}>{note.title}</h1>
 				<div>
 					<MarkdownPanel textAreaId={passedTextAreaId} noteBody={returnedNoteBody}/>
 				</div>
