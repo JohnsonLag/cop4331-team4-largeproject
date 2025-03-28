@@ -237,84 +237,94 @@ function FlashCardDeckView () {
                 </div>
             </div>
 
-            {/* Flashcards List */}
-            <div className="row">
-                {flashcards.map((card) => (
-                    <div key={card.CardId} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
-                        {/* Card */}
-                        <div
-                            className="card shadow-sm h-100 d-flex flex-column"
-                            style={{
-                                backgroundColor: '#FFFF',
-                                borderColor: '#D3D3D3',
-                                color: '#4A4A4A',
-                                flex: '1',
-                                padding: '0',
-                                cursor: 'pointer', // Change cursor to pointer on hover
-                                transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
-                            }}
-                        >
-                            {/* Card Body */}
-                            <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                            <h5 className="card-title" style={{ color: '#7E24B9' }}>
-                                {card.Question}
-                            </h5>
-                            <p className="card-text">
-                                {card.Answer}
-                            </p>
-                            </div>
-
-                            {/* Card Footer */}
+            <div 
+                style={{
+                    maxHeight: 'calc(100vh - 400px)',
+                    overflowY: 'auto', // Make div scrollable
+                    overflowX: 'hidden',
+                    paddingRight: '10px', // Space for scrollbar
+                    marginTop: '20px',
+                    paddingBottom: '50px'
+                }}>
+                {/* Flashcards List */}
+                <div className="row">
+                    {flashcards.map((card) => (
+                        <div key={card.CardId} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
+                            {/* Card */}
                             <div
-                                className="card-footer d-flex justify-content-end"
+                                className="card shadow-sm h-100 d-flex flex-column"
                                 style={{
-                                    backgroundColor: '#E6E1F5',
-                                    borderTop: '1px solid #D3D3D3',
+                                    backgroundColor: '#FFFF',
+                                    borderColor: '#D3D3D3',
+                                    color: '#4A4A4A',
+                                    flex: '1',
+                                    padding: '0',
+                                    cursor: 'pointer', // Change cursor to pointer on hover
+                                    transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
                                 }}
                             >
-                                {/* Edit & Delete Buttons */}
-                                <div className="d-flex">
-                                    <button
-                                        className="btn btn-sm me-2"
-                                        style={{
-                                            backgroundColor: '#D3D3D3',
-                                            color: '#353839',
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // Prevent card click event from firing
-                                            console.log(`Edit deck: ${card.CardId}`);
-                                        }}
-                                    >
-                                        <i className="bi bi-pen"></i>
-                                    </button>
-                                    <button
-                                        className="btn btn-sm"
-                                        style={{
-                                            backgroundColor: '#DE6464',
-                                            color: '#FFFFFF',
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // Prevent card click event from firing
-                                            // Show confirmation dialog
-                                            const isConfirmed = window.confirm("Are you sure you want to delete this card?");
+                                {/* Card Body */}
+                                <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                                <h5 className="card-title" style={{ color: '#7E24B9' }}>
+                                    {card.Question}
+                                </h5>
+                                <p className="card-text">
+                                    {card.Answer}
+                                </p>
+                                </div>
 
-                                            if (isConfirmed) {
-                                                // User confirmed, proceed with deletion
-                                                deleteCard(card.CardId);
-                                                // Add your deletion logic here, e.g., calling an API or updating state
-                                            } else {
-                                                // User canceled, do nothing
-                                                console.log("Deletion canceled.");
-                                            }
-                                        }}
-                                    >
-                                        <i className="bi bi-trash"></i>
-                                    </button>
+                                {/* Card Footer */}
+                                <div
+                                    className="card-footer d-flex justify-content-end"
+                                    style={{
+                                        backgroundColor: '#E6E1F5',
+                                        borderTop: '1px solid #D3D3D3',
+                                    }}
+                                >
+                                    {/* Edit & Delete Buttons */}
+                                    <div className="d-flex">
+                                        <button
+                                            className="btn btn-sm me-2"
+                                            style={{
+                                                backgroundColor: '#D3D3D3',
+                                                color: '#353839',
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent card click event from firing
+                                                console.log(`Edit deck: ${card.CardId}`);
+                                            }}
+                                        >
+                                            <i className="bi bi-pen"></i>
+                                        </button>
+                                        <button
+                                            className="btn btn-sm"
+                                            style={{
+                                                backgroundColor: '#DE6464',
+                                                color: '#FFFFFF',
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent card click event from firing
+                                                // Show confirmation dialog
+                                                const isConfirmed = window.confirm("Are you sure you want to delete this card?");
+
+                                                if (isConfirmed) {
+                                                    // User confirmed, proceed with deletion
+                                                    deleteCard(card.CardId);
+                                                    // Add your deletion logic here, e.g., calling an API or updating state
+                                                } else {
+                                                    // User canceled, do nothing
+                                                    console.log("Deletion canceled.");
+                                                }
+                                            }}
+                                        >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
 
             {/* Message */}

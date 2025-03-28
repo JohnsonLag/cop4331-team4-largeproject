@@ -91,131 +91,133 @@ function Signup() {
     };
 
     return (
-	  <div className="card shadow-md" style={{
-	    backgroundColor: '#F5F5F5',
-	    border: 'none',
-	    width: '100%',
-	    maxWidth: '400px',
-	    margin: 'auto',
-	  }}>
-	    <div className="card-body p-4">
-	      <h3 className="card-title text-center mb-3" style={{ color: '#4A4A4A' }}>
-	        Sign Up
-	      </h3>
-	      <form onSubmit={doSignup}>
-	
-	        {/* Email */}
-	        <div className="mb-3">
-	          <label className="form-label" style={{ color: '#4A4A4A' }}>
-	            Email
-	          </label>
-	          <input
-	            type="email"
-	            className="form-control"
-	            id="signupEmail"
-	            placeholder="Enter your email"
-	            onChange={handleSetSignupEmail}
-	            required
-	            style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
-	          />
-	        </div>
-	
-	        {/* Username */}
-	        <div className="mb-3">
-	          <label className="form-label" style={{ color: '#4A4A4A' }}>
-	            Username
-	          </label>
-	          <input
-	            type="text"
-	            className="form-control"
-	            id="signupName"
-	            placeholder="Choose a username"
-	            onChange={handleSetSignupName}
-	            required
-	            style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
-	          />
-	        </div>
-	
-	        {/* First Name */}
-	        <div className="mb-3">
-	          <label className="form-label" style={{ color: '#4A4A4A' }}>
-	            First Name
-	          </label>
-	          <input
-	            type="text"
-	            className="form-control"
-	            id="signupFirstName"
-	            placeholder="Enter your first name"
-	            onChange={handleSetSignupFirstName}
-	            required
-	            style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
-	          />
-	        </div>
-	
-	        {/* Last Name */}
-	        <div className="mb-3">
-	          <label className="form-label" style={{ color: '#4A4A4A' }}>
-	            Last Name
-	          </label>
-	          <input
-	            type="text"
-	            className="form-control"
-	            id="signupLastName"
-	            placeholder="Enter your last name"
-	            onChange={handleSetSignupLastName}
-	            required
-	            style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
-	          />
-	        </div>
-	
-	        {/* Password */}
-	        <div className="mb-3">
-	          <label className="form-label" style={{ color: '#4A4A4A' }}>
-	            Password
-	          </label>
-	          <input
-	            type="password"
-	            className="form-control"
-	            id="signupPassword"
-	            placeholder="Enter your password"
-	            onChange={handleSetPassword}
-	            required
-	            style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
-	          />
-	        </div>
-	
-	        {/* Submit Button */}
-	        <div className="d-grid">
-	          <button
-	            type="submit"
-	            className="btn"
-	            style={{
-	              backgroundColor: '#7E24B9',
-	              color: '#FFFFFF',
-	              border: 'none',
-	              transition: 'background-color 0.3s',
-	            }}
-	            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')}
-	            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
-	          >
-	            Signup
-	          </button>
-	          <span id="signupResult">{message}</span>
-	        </div>
-	
-	        {/* Back to Login */}
-	        <div className="text-center mt-3">
-	          <p className="mb-0" style={{ color: '#4A4A4A' }}>
-	            Already have an account?{' '}
-	            <a href="/" className="text-decoration-none" style={{ color: '#7E24B9' }}>
-	              Login
-	            </a>
-	          </p>
-	        </div>
-	
-	      </form>
-	    </div>
-	  </div>
+		<div className="container d-flex justify-content-center align-items-center min-vh-100">
+			<div className="card shadow-md" style={{
+				backgroundColor: '#F5F5F5',
+				border: 'none',
+				width: '100%',
+				maxWidth: '400px',
+				margin: 'auto',
+			}}>
+			<div className="card-body p-4">
+				<h3 className="card-title text-center mb-3" style={{ color: '#4A4A4A' }}>
+				Sign Up
+				</h3>
+				<form onSubmit={doSignup}>
+
+				{/* Email */}
+				<div className="mb-3">
+					<label className="form-label" style={{ color: '#4A4A4A' }}>
+					Email
+					</label>
+					<input
+					type="email"
+					className="form-control"
+					id="signupEmail"
+					placeholder="Enter your email"
+					onChange={handleSetSignupEmail}
+					required
+					style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+					/>
+				</div>
+
+				{/* Username */}
+				<div className="mb-3">
+					<label className="form-label" style={{ color: '#4A4A4A' }}>
+					Username
+					</label>
+					<input
+					type="text"
+					className="form-control"
+					id="signupName"
+					placeholder="Choose a username"
+					onChange={handleSetSignupName}
+					required
+					style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+					/>
+				</div>
+
+				{/* First Name */}
+				<div className="mb-3">
+					<label className="form-label" style={{ color: '#4A4A4A' }}>
+					First Name
+					</label>
+					<input
+					type="text"
+					className="form-control"
+					id="signupFirstName"
+					placeholder="Enter your first name"
+					onChange={handleSetSignupFirstName}
+					required
+					style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+					/>
+				</div>
+
+				{/* Last Name */}
+				<div className="mb-3">
+					<label className="form-label" style={{ color: '#4A4A4A' }}>
+					Last Name
+					</label>
+					<input
+					type="text"
+					className="form-control"
+					id="signupLastName"
+					placeholder="Enter your last name"
+					onChange={handleSetSignupLastName}
+					required
+					style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+					/>
+				</div>
+
+				{/* Password */}
+				<div className="mb-3">
+					<label className="form-label" style={{ color: '#4A4A4A' }}>
+					Password
+					</label>
+					<input
+					type="password"
+					className="form-control"
+					id="signupPassword"
+					placeholder="Enter your password"
+					onChange={handleSetPassword}
+					required
+					style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+					/>
+				</div>
+
+				{/* Submit Button */}
+				<div className="d-grid">
+					<button
+					type="submit"
+					className="btn"
+					style={{
+						backgroundColor: '#7E24B9',
+						color: '#FFFFFF',
+						border: 'none',
+						transition: 'background-color 0.3s',
+					}}
+					onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')}
+					onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
+					>
+					Signup
+					</button>
+					<span id="signupResult">{message}</span>
+				</div>
+
+				{/* Back to Login */}
+				<div className="text-center mt-3">
+					<p className="mb-0" style={{ color: '#4A4A4A' }}>
+					Already have an account?{' '}
+					<a href="/" className="text-decoration-none" style={{ color: '#7E24B9' }}>
+						Login
+					</a>
+					</p>
+				</div>
+
+				</form>
+			</div>
+			</div>
+		</div>
 	);
 };
 
