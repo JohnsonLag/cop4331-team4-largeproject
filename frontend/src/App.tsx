@@ -6,7 +6,6 @@ import SignupPage from './pages/User/SignupPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import NotePage from './pages/Notes/NotePage';
 import SingleNotePage from './pages/Notes/SingleNotePage';
-import DevPage from './pages/Notes/DevPage';
 import FlashCardDecksPage from './pages/FlashCardDecks/FlashCardDecksPage';
 import FlashCardDeckPage from './pages/FlashCardDecks/FlashCardDeckPage';
 import ReviewFlashCardsPage from './pages/FlashCards/ReviewFlashCardsPage';
@@ -24,7 +23,6 @@ function App() {
               <Route path="/decks" element={<FlashCardDecksPage />} />
               <Route path="/decks/:deckId" element={<FlashCardDeckPage />} />
               <Route path="/decks/:deckId/review" element={<ReviewFlashCardsPage/>} />
-              <Route path="/dev" element={<DevPage />} />
               {/* Default redirect if no route matches */}
               <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>
