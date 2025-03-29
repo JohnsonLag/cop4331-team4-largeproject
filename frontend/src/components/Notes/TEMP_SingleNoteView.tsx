@@ -18,13 +18,12 @@ interface SingleNoteResponse {
 function SingleNoteView()
 {
     // Get the note ID from the URL
-    const { id } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: string }>() as { id : string };
 
     const [message,setMessage] = useState('');
     const [note, setNote] = useState<SingleNoteResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 	const passedTextAreaId = "textAreaId";
-	const noteTitleId = "noteTitleId";
 
     // Get current user information
     let _ud : any = localStorage.getItem('user_data');
@@ -44,65 +43,64 @@ function SingleNoteView()
 		
 		return returnedText;
 	}
-	
-    // Fetch the note
-    useEffect(() => {
-        const fetchNote = async () => {
-            let obj = { userId: userId, noteId: id, jwtToken: retrieveToken() };
-            let js = JSON.stringify(obj);
 
-            var _url = `api/note/${id}`;
+    async function fetchNote(): Promise<void> {
+        let obj = { userId: userId, noteId: id, jwtToken: retrieveToken() };
+        let js = JSON.stringify(obj);
 
-            // Set Axios request configuration
-            const config: AxiosRequestConfig = {
-                method: 'post',
-                url: buildPath(_url),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: js
-            };
+        var _url = `api/note/${id}`;
 
-            // Send axios request
-            axios(config)
-            .then(function (response: AxiosResponse<SingleNoteResponse>) {
-                try 
+        // Set Axios request configuration
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath(_url),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+
+        // Send axios request
+        axios(config)
+        .then(function (response: AxiosResponse<SingleNoteResponse>) {
+            try 
+            {
+                const res = response.data;
+
+                // Check if a note was returned...
+                if (res.userId == null || res.error != "")
                 {
-                    const res = response.data;
-
-                    // Check if a note was returned...
-                    if (res.userId == null || res.error != "")
-                    {
-                        setMessage("Note doesn't exist");
-                    }
-                    else
-                    {
-                        setMessage("Note successfully retrieved")
-                        setLoading(false);
-                        setNote(res);
-                        storeToken( res.jwtToken );
-                    }
+                    setMessage("Note doesn't exist");
                 }
-                catch (e)
-                {
-                    if (axios.isAxiosError(e)) {
-                        setMessage(e.response?.data?.message || 'Error fetching note');
-                    } else {
-                        setMessage('An unexpected error occurred');
-                    }
-                }
-                finally
+                else
                 {
                     setLoading(false);
+                    setNote(res);
+                    storeToken( res.jwtToken );
                 }
-            })
-            .catch(function (error) {
-                alert(error.toString());
-                setMessage(error.toString());
-                return;
-            });
-        };
-    
+            }
+            catch (e)
+            {
+                if (axios.isAxiosError(e)) {
+                    setMessage(e.response?.data?.message || 'Error fetching note');
+                } else {
+                    setMessage('An unexpected error occurred');
+                }
+            }
+            finally
+            {
+                setLoading(false);
+            }
+        })
+        .catch(function (error) {
+            alert(error.toString());
+            setMessage(error.toString());
+            return;
+        });
+    };
+
+    // Fetch the note
+    useEffect(() => {    
         fetchNote();
       }, [id]);
 
@@ -115,14 +113,16 @@ function SingleNoteView()
 		const returnedNoteBody = createNoteBody(note.body);
 		
         return(
-            <div id="singleNoteUIDiv">
-				<br />
-				<h1 id={noteTitleId}>{note.title}</h1>
+            <div className="d-flex flex-column min-vh-100">
+            <div className="container mt-5">
+                {/* Title */}
+                <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>{note.title}</h1>
 				<div>
-					<MarkdownPanel textAreaId={passedTextAreaId} noteBody={returnedNoteBody}/>
+					<MarkdownPanel noteId={id} textAreaId={passedTextAreaId} note={note} noteBody={returnedNoteBody}/>
 				</div>
-				<span id="noteSearchResult">{message}</span>
+				<span id="noteViewResult">{message}</span>
 			</div>
+            </div>
         );
     }
 }
