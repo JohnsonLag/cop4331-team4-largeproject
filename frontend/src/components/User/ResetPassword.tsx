@@ -51,16 +51,84 @@ function ResetPassword() {
     };
 
     return (
-        <div className="inputAndButtonsDiv" id="resetDiv">
-            <span id="inner-title">PLEASE SIGN UP</span><br></br>
-            <input type="text" id="resetEmail" placeholder="Email" onChange={handleSetResetEmail} />
-            <input type="password" id="resetPassword" placeholder="New Password" onChange={handleSetPassword} />
-			<br />
-            <input type="submit" id="resetButton" className="buttons" value = "Reset password" onClick={doReset} />
-            <input type="submit" id="loginButton" className="buttons" value = "Go to login page" onClick={goToLoginPage} />
-            <span id="resetResult">{message}</span>
+        <div className="card shadow-md" style={{
+          backgroundColor: '#F5F5F5',
+          border: 'none',
+          width: '100%',
+          maxWidth: '400px',
+          margin: 'auto',
+        }}>
+          <div className="card-body p-4">
+            <h3 className="card-title text-center mb-3" style={{ color: '#4A4A4A' }}>
+              Reset Password
+            </h3>
+            <form onSubmit={doReset}>
+      
+              {/* Email */}
+              <div className="mb-3">
+                <label className="form-label" style={{ color: '#4A4A4A' }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="resetEmail"
+                  placeholder="Enter your email"
+                  onChange={handleSetResetEmail}
+                  required
+                  style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+                />
+              </div>
+      
+              {/* New Password */}
+              <div className="mb-3">
+                <label className="form-label" style={{ color: '#4A4A4A' }}>
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="resetPassword"
+                  placeholder="Enter new password"
+                  onChange={handleSetPassword}
+                  required
+                  style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+                />
+              </div>
+      
+              {/* Submit Button */}
+              <div className="d-grid">
+                <button
+                  type="submit"
+                  className="btn"
+                  style={{
+                    backgroundColor: '#7E24B9',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    transition: 'background-color 0.3s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
+                >
+                  Reset Password
+                </button>
+                <span id="resetResult">{message}</span>
+              </div>
+      
+              {/* Back to Login */}
+              <div className="text-center mt-3">
+                <p className="mb-0" style={{ color: '#4A4A4A' }}>
+                  Remembered your password?{' '}
+                  <a href="/" className="text-decoration-none" style={{ color: '#7E24B9' }}>
+                    Login
+                  </a>
+                </p>
+              </div>
+      
+            </form>
+          </div>
         </div>
-    );
+      );
 };
 
 export default ResetPassword;
