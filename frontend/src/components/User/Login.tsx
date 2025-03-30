@@ -151,7 +151,7 @@ function Login()
             </p>
             </div>
 		
-	    {/* Reset Password Link *}
+	    {/* Reset Password Link */}
 	    <div className="text-center mt-3">
             <p className="mb-0" style={{ color: '#4A4A4A' }}>
                 Forgot Password?{' '}
