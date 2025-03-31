@@ -36,6 +36,9 @@ flashcards_api.setApp(app, mongoose);
 var llm_integration_api = require('./api_endpoints/llm_integration_api.js');
 llm_integration_api.setApp(app, mongoose);
 
+var password_reset_api = require('./api_endpoints/password_reset_api.js');
+password_reset_api.setApp(app, mongoose);
+
 
 app.use((req, res, next) =>
 {

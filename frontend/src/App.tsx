@@ -3,12 +3,13 @@ import './App.css';
 
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/User/SignupPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
+import ResetPasswordPage from './pages/User/ResetPasswordPage';
 import NotePage from './pages/Notes/NotePage';
 import SingleNotePage from './pages/Notes/SingleNotePage';
 import FlashCardDecksPage from './pages/FlashCardDecks/FlashCardDecksPage';
 import FlashCardDeckPage from './pages/FlashCardDecks/FlashCardDeckPage';
 import ReviewFlashCardsPage from './pages/FlashCards/ReviewFlashCardsPage';
+import ForgotPasswordPage from './pages/User/ForgotPasswordPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               {/* <Route path="/login" element={<LoginPage />} /> */}
               <Route path="/signup" element={<SignupPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/notes" element={<NotePage/>} />
               <Route path="/notes/:id" element={<SingleNotePage />} />
