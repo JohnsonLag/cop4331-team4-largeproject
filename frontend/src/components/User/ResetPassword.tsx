@@ -1,12 +1,61 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import '../page-styles.css';
 import { buildPath } from "../Path.tsx";
+import { useSearchParams } from 'react-router-dom';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+
+interface TokenVerificationResponse {
+  error: string;
+  valid: boolean;
+}
 
 function ResetPassword() {
     const [message,setMessage] = useState('');
+    const [error, setError] = useState<string>('');
+    const [validToken, setValidToken] = useState<boolean>(false);
     const [resetEmail,setResetEmail] = React.useState('');
     const [resetPassword,setPassword] = React.useState('');
+
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token');
+
+    useEffect(() => {
+      const verifyToken = async () => {
+          var obj = { token: token };
+          var js = JSON.stringify(obj);
+          
+          // Set Axios request configuration
+          const config: AxiosRequestConfig = {
+              method: 'post',
+              url: buildPath('api/verify_reset_token'),
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              data: js
+          };
+
+          // Send axios request
+          axios(config)
+          .then(function (response: AxiosResponse<TokenVerificationResponse>) {
+              const res = response.data;
+
+              if (res.valid) {
+                  setValidToken(true);
+              }
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+      };
+
+      if (token) {
+          verifyToken();
+      } else {
+          setError('No token provided');
+          setValidToken(false);
+      }
+    }, [token]);
 
     function handleSetResetEmail( e: any ) : void
     {
@@ -25,7 +74,7 @@ function ResetPassword() {
         var js = JSON.stringify(obj);
         try
         {
-            const response = await fetch(buildPath('api/resetpassword'),
+            const response = await fetch(buildPath('api/reset_password'),
                 {method:'POST',body:js,headers:{'Content-Type':
                 'application/json'}});
             var res = JSON.parse(await response.text());
@@ -44,6 +93,17 @@ function ResetPassword() {
             return;
         }
     };
+
+    if (!validToken) {
+        return (
+            <div>
+            <h2>Reset Password</h2>
+            <div>
+                {error || 'Invalid reset token'}
+            </div>
+            </div>
+        );
+    }
 
     return (
         <div className="card shadow-md" style={{
@@ -127,3 +187,7 @@ function ResetPassword() {
 };
 
 export default ResetPassword;
+function setValidToken(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+
