@@ -11,7 +11,6 @@ const ForgotPassword: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [message, setMessage] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
 
     async function submitForm(event:any) : Promise<void>
@@ -78,9 +77,7 @@ const ForgotPassword: React.FC = () => {
         </div>
         <button
             type="submit"
-            disabled={isLoading}
-        >
-            {isLoading ? 'Sending...' : 'Send Reset Link'}
+        > 'Send Reset Link'
         </button>
         </form>
     </div>

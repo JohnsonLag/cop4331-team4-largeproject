@@ -187,7 +187,3 @@ function ResetPassword() {
 };
 
 export default ResetPassword;
-function setValidToken(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
-
