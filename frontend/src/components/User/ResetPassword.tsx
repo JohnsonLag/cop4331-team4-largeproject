@@ -6,12 +6,13 @@ import { useSearchParams } from 'react-router-dom';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 interface TokenVerificationResponse {
-  error: string;
-  valid: boolean;
+error: string;
+valid: boolean;
 }
 
 function ResetPassword() {
-    const [message,setMessage] = useState('');
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);    
     const [error, setError] = useState<string>('');
     const [validToken, setValidToken] = useState<boolean>(false);
     const [resetEmail,setResetEmail] = React.useState('');
@@ -21,40 +22,40 @@ function ResetPassword() {
     const token = searchParams.get('token');
 
     useEffect(() => {
-      const verifyToken = async () => {
-          var obj = { token: token };
-          var js = JSON.stringify(obj);
-          
-          // Set Axios request configuration
-          const config: AxiosRequestConfig = {
-              method: 'post',
-              url: buildPath('api/verify_reset_token'),
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              data: js
-          };
+        const verifyToken = async () => {
+            var obj = { token: token };
+            var js = JSON.stringify(obj);
 
-          // Send axios request
-          axios(config)
-          .then(function (response: AxiosResponse<TokenVerificationResponse>) {
-              const res = response.data;
+            // Set Axios request configuration
+            const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/verify_reset_token'),
+            headers: {
+                'Content-Type': 'application/json'  
+            },
+            data: js
+            };
 
-              if (res.valid) {
-                  setValidToken(true);
-              }
-          })
-          .catch(function (error) {
-              console.log(error);
-          });
-      };
+            // Send axios request
+            axios(config)
+            .then(function (response: AxiosResponse<TokenVerificationResponse>) {
+                const res = response.data;
 
-      if (token) {
-          verifyToken();
-      } else {
-          setError('No token provided');
-          setValidToken(false);
-      }
+                if (res.valid) {
+                setValidToken(true);
+            }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        };
+
+        if (token) {
+            verifyToken();
+        } else {
+            setError('No token provided');
+            setValidToken(false);
+        }
     }, [token]);
 
     function handleSetResetEmail( e: any ) : void
@@ -80,10 +81,12 @@ function ResetPassword() {
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
+                setMessageType("error");
                 setMessage('Could not do reset, or error: ' + res.error);
             }
             else
             {
+                setMessageType("success");
                 setMessage('Reset successful. Go back to the login page to login.');
             }
         }
@@ -97,91 +100,93 @@ function ResetPassword() {
     if (!validToken) {
         return (
             <div>
-            <h2>Reset Password</h2>
-            <div>
-                {error || 'Invalid reset token'}
-            </div>
+                <h2>Reset Password</h2>
+                <div>
+                    {error || 'Invalid reset token'}
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="card shadow-md" style={{
-          backgroundColor: '#F5F5F5',
-          border: 'none',
-          width: '100%',
-          maxWidth: '400px',
-          margin: 'auto',
-        }}>
-          <div className="card-body p-4">
-            <h3 className="card-title text-center mb-3" style={{ color: '#4A4A4A' }}>
-              Reset Password
-            </h3>
-            <form onSubmit={doReset}>
-      
-              {/* Email */}
-              <div className="mb-3">
-                <label className="form-label" style={{ color: '#4A4A4A' }}>
-                  Email
-                </label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="resetEmail"
-                  placeholder="Enter your email"
-                  onChange={handleSetResetEmail}
-                  required
-                  style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
-                />
-              </div>
-      
-              {/* New Password */}
-              <div className="mb-3">
-                <label className="form-label" style={{ color: '#4A4A4A' }}>
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="resetPassword"
-                  placeholder="Enter new password"
-                  onChange={handleSetPassword}
-                  required
-                  style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
-                />
-              </div>
-      
-              {/* Submit Button */}
-              <div className="d-grid">
-                <button
-                  type="submit"
-                  className="btn"
-                  style={{
-                    backgroundColor: '#7E24B9',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    transition: 'background-color 0.3s',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
-                >
-                  Reset Password
-                </button>
-                <span id="resetResult">{message}</span>
-              </div>
-      
-              {/* Back to Login */}
-              <div className="text-center mt-3">
-                <p className="mb-0" style={{ color: '#4A4A4A' }}>
-                  Remembered your password?{' '}
-                  <a href="/" className="text-decoration-none" style={{ color: '#7E24B9' }}>
-                    Login
-                  </a>
-                </p>
-              </div>
-      
-            </form>
-          </div>
+        <div className="d-flex flex-column min-vh-100">
+            <div className="card shadow-md" style={{
+            backgroundColor: '#F5F5F5',
+            border: 'none',
+            width: '100%',
+            maxWidth: '400px',
+            margin: 'auto',
+            }}>
+            <div className="card-body p-4">
+                <h3 className="card-title text-center mb-3" style={{ color: '#4A4A4A' }}>
+                Reset Password
+                </h3>
+                <form onSubmit={doReset}>
+
+                {/* Email */}
+                <div className="mb-3">
+                    <label className="form-label" style={{ color: '#4A4A4A' }}>
+                    Email
+                    </label>
+                    <input
+                    type="email"
+                    className="form-control"
+                    id="resetEmail"
+                    placeholder="Enter your email"
+                    onChange={handleSetResetEmail}
+                    required
+                    style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+                    />
+                </div>
+
+                {/* New Password */}
+                <div className="mb-3">
+                    <label className="form-label" style={{ color: '#4A4A4A' }}>
+                    New Password
+                    </label>
+                    <input
+                    type="password"
+                    className="form-control"
+                    id="resetPassword"
+                    placeholder="Enter new password"
+                    onChange={handleSetPassword}
+                    required
+                    style={{ backgroundColor: '#FFFFFF', borderColor: '#D3D3D3' }}
+                    />
+                </div>
+
+                {/* Submit Button */}
+                <div className="d-grid">
+                    <button
+                    type="submit"
+                    className="btn"
+                    style={{
+                        backgroundColor: '#7E24B9',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        transition: 'background-color 0.3s',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#5E1D8C')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#7E24B9')}
+                    >
+                    Reset Password
+                    </button>
+                    <span id="resetResult">{message}</span>
+                </div>
+
+                {/* Back to Login */}
+                <div className="text-center mt-3">
+                    <p className="mb-0" style={{ color: '#4A4A4A' }}>
+                    Remembered your password?{' '}
+                    <a href="/" className="text-decoration-none" style={{ color: '#7E24B9' }}>
+                        Login
+                    </a>
+                    </p>
+                </div>
+
+                </form>
+            </div>
+            </div>
         </div>
       );
 };
