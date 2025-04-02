@@ -62,21 +62,21 @@ const ForgotPassword: React.FC = () => {
                         Reset your password
                     </h3>
 
-                {/* Message */}
-                {message && (
-                    <div
-                        className="alert mt-4"
-                        role="alert"
-                        style={{
-                            backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
-                            color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
-                            borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
-                        }}
-                    >
-                        {message}
-                    </div>
-                )}
-                    
+                    {/* Message */}
+                    {message && (
+                        <div
+                            className="alert mt-4"
+                            role="alert"
+                            style={{
+                                backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
+                                color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
+                                borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
+                            }}
+                        >
+                            {message}
+                        </div>
+                    )}
+                        
                     <form onSubmit={submitForm}>
                         {/* Forgot password Input */}
                         <div className="mb-3">
@@ -111,7 +111,6 @@ const ForgotPassword: React.FC = () => {
                         >
                             Submit
                         </button>
-                        <span id="forgotPasswordResult">{message}</span>
                         </div>
             
                     </form>
