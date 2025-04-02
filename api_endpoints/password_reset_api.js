@@ -38,7 +38,7 @@ exports.setApp = function ( app, client )
             user.save();
 
             // Create reset link
-            const resetLink = `http://coolestappever.xyz/reset-password?token=${token}`;
+            const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
             // Create email
             const mailOptions = {
