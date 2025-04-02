@@ -120,40 +120,6 @@ const ForgotPassword: React.FC = () => {
         </div>
     );
 
-    // return (
-    // <div>
-    //     <h2>Forgot Password</h2>
-    //     {message && (
-    //     <div>
-    //         {message}
-    //     </div>
-    //     )}
-    //     {error && (
-    //     <div>
-    //         {error}
-    //     </div>
-    //     )}
-    //     <form onSubmit={submitForm}>
-    //     <div>
-    //         <label htmlFor="email">
-    //         Email Address
-    //         </label>
-    //         <input
-    //         id="email"
-    //         type="email"
-    //         placeholder="Enter your email"
-    //         value={email}
-    //         onChange={(e) => setEmail(e.target.value)}
-    //         required
-    //         />
-    //     </div>
-    //     <button
-    //         type="submit"
-    //     > 'Send Reset Link'
-    //     </button>
-    //     </form>
-    // </div>
-    // );
 };
 
 export default ForgotPassword;

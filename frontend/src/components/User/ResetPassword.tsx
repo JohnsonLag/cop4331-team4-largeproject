@@ -6,14 +6,13 @@ import { useSearchParams } from 'react-router-dom';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 interface TokenVerificationResponse {
-error: string;
-valid: boolean;
+    error: string;
+    valid: boolean;
 }
 
 function ResetPassword() {
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);    
-    const [error, setError] = useState<string>('');
     const [validToken, setValidToken] = useState<boolean>(false);
     const [resetEmail,setResetEmail] = React.useState('');
     const [resetPassword,setPassword] = React.useState('');
@@ -53,7 +52,8 @@ function ResetPassword() {
         if (token) {
             verifyToken();
         } else {
-            setError('No token provided');
+            setMessageType('error');
+            setMessage("No tooken provided");
             setValidToken(false);
         }
     }, [token]);
@@ -102,7 +102,7 @@ function ResetPassword() {
             <div>
                 <h2>Reset Password</h2>
                 <div>
-                    {error || 'Invalid reset token'}
+                    {'Invalid reset token'}
                 </div>
             </div>
         );
@@ -185,6 +185,21 @@ function ResetPassword() {
                 </div>
 
                 </form>
+
+                {/* Message */}
+                {message && (
+                    <div
+                        className="alert mt-4"
+                        role="alert"
+                        style={{
+                            backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
+                            color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
+                            borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
+                        }}
+                    >
+                        {message}
+                    </div>
+                )}
             </div>
             </div>
         </div>
