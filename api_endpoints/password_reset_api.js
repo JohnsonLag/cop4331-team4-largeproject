@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const sgTransport = require('nodemailer-sendgrid-transport');
 var JWTUtils = require('../utils/JWTUtils.js');
-const generatePath = require('../utils/generatePath.js');
+const pathGen = require('../utils/generatePath.js');
 
 // Users model
 const Users = require("../models/users.js");
@@ -39,7 +39,9 @@ exports.setApp = function ( app, client )
             user.save();
 
             // Create reset link
-            const resetLink = generatePath(`reset-password?token=${token}`);
+            const resetLink = pathGen.generateEmailPath(`reset-password?token=${token}`);
+
+            console.log(resetLink)
 
             // Create email
             const mailOptions = {

@@ -71,7 +71,7 @@ function ResetPassword() {
     async function doReset(event:any) : Promise<void>
     {
         event.preventDefault();
-        var obj = {email:resetEmail,password:resetPassword};
+        var obj = { token: token, email: resetEmail, password:resetPassword};
         var js = JSON.stringify(obj);
         try
         {

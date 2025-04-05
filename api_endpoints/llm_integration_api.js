@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 // Import utilities and models
 var token = require('../utils/JWTUtils.js');
 const getNextId = require("../utils/idGenerator.js");
-const generatePath = require("../utils/generatePath.js");
+const pathGen = require("../utils/generatePath.js");
 
 const FlashCard = require('../models/flashcards.js');
 const FlashCardDecks = require('../models/flashcarddecks.js');
@@ -231,7 +231,7 @@ exports.setApp = function (app, client) {
             flashcardDeckTitle = response2.text;
 
             // Generate path to save_generated_cards endpoint
-            const url = generatePath("api/flashcards/save_generated_cards");
+            const url = pathGen.generatePath("api/flashcards/save_generated_cards");
 
             const userId = note.UserId;
             const deckId = -1;

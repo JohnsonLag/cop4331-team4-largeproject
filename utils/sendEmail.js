@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
-const generatePath = require('./generatePath.js');
+const pathGen = require('./generatePath.js');
 
 // Use SendGrid 
 const transporter = nodemailer.createTransport(
@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport(
 );
 
 const sendVerificationEmail = async (email, token) => {
-  const verificationLink = generatePath(`api/verify_email?token=${token}`);
+  const verificationLink = pathGen.generatePath(`api/verify_email?token=${token}`);
 
   console.log(verificationLink);
 

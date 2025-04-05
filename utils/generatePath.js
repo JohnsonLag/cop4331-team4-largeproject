@@ -1,5 +1,17 @@
 const app_name = 'coolestappever.xyz';
 
+function generateEmailPath(route)
+{
+    if (process.env.NODE_ENV != 'development')
+    {
+        return 'http://' + app_name + '/' + route;
+    }
+    else
+    {
+        return 'http://localhost:5173/' + route;
+    }
+}
+
 function generatePath(route)
 {
     if (process.env.NODE_ENV != 'development')
@@ -12,4 +24,4 @@ function generatePath(route)
     }
 }
 
-module.exports = generatePath
+module.exports = { generatePath, generateEmailPath }
