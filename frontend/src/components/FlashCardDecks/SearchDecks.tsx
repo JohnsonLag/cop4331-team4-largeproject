@@ -269,7 +269,9 @@ function SearchDecks() {
             )}
 
             {/* Deck Cards */}
-            <div className="row">
+            <div className="row" style={{
+                marginBottom: '50px'
+            }}>
                 {deckList.map((deck, index) => (
                     <div key={index} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
                         {/* Clickable Card */}
@@ -299,7 +301,18 @@ function SearchDecks() {
                         >
                             {/* Card Body */}
                             <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                                <h5 className="card-title" style={{ color: '#7E24B9' }}>{deck[2]}</h5>
+                                <h5 className="card-title" style={{
+                                    color: '#7E24B9',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    width: '100%',
+                                    maxWidth: '100%',
+                                    padding: '0 10px' // Add some padding if needed
+                                    }}
+                                >
+                                    {deck[2]}
+                                </h5>
                                 <p className="card-text">{deck[3]} cards</p>
                             </div>
 

@@ -1,5 +1,6 @@
 import { Token, storeToken, retrieveToken, deleteToken } from "../../tokenStorage.tsx";
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { buildPath } from '../Path.tsx';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
@@ -9,7 +10,9 @@ function SearchNotes() {
     const [notesList, setNotesList] = useState<Array<[number, number, string, number]>>([]);
     const [search, setSearchValue] = useState('');
     const [loading, setLoading] = useState(false); // Loading state
-
+    
+    const navigate = useNavigate();
+    
     interface SearchNotesResponse {
         results: Array<[number, number, string, number]>;
         error: string;
@@ -267,9 +270,17 @@ function SearchNotes() {
             )}
 
             {/* Note Cards */}
-            <div className="row">
+            <div className="row" style={{
+                marginBottom: '50px',
+            }}>
                 {notesList.map((note, index) => (
-                    <div key={index} className="col-md-4 d-flex" style={{ height: "400px", width: "300px", marginTop: "25px" }}>
+                    <div key={index} className="col-md-6 col-lg-4 col-xl-3 d-flex" style=
+                        {{ 
+                            height: "400px", 
+                            marginTop: "25px" 
+
+                        }}
+                    >
                         <div
                             className="card shadow-sm h-300 d-flex flex-column"
                             style={{
@@ -289,6 +300,7 @@ function SearchNotes() {
                             }}
                             onClick={() => {
                                 console.log(`Clicked on note: ${note[1]}`);
+                                navigate(`/notes/${note[1]}`);
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -317,11 +329,21 @@ function SearchNotes() {
                                     padding: '20px',
                                     background: 'linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%)'
                                 }}>
-                                <h5 className="card-title" style={{ 
-                                    color: '#7E24B9',
-                                    fontSize: '2rem',
-                                    marginBottom: '15px'
-                                }}>{note[2]}</h5>
+                                <h5 className="card-title" style=
+                                    {{ 
+                                        color: '#7E24B9',
+                                        fontSize: '2rem',
+                                        marginBottom: '15px',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        width: '100%',
+                                        maxWidth: '100%',
+                                        padding: '0 10px' // Add some padding if needed
+                                    }}
+                                >
+                                    {note[2]}
+                                </h5>
                                 <p className="card-text" style={{
                                     fontSize: '1.2rem',
                                     marginLeft: '10px'
@@ -343,6 +365,7 @@ function SearchNotes() {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             console.log(`Edit note: ${note[0]}`);
+                                            navigate(`/notes/${note[1]}`);
                                         }}
                                     >
                                         <i className="bi bi-pen"></i>
