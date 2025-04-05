@@ -62,11 +62,12 @@ exports.setApp = function ( app, client )
 
     app.post('/api/reset_password', async (req, res) => {
         try {
-            const { token, newPassword } = req.body;
+            const { token, email, newPassword } = req.body;
 
             const user = await User.findOne({
-                resetPasswordToken: token,
-                resetPasswordExpires: { $gt: Date.now() }
+                Email: email,
+                ResetPasswordToken: token,
+                ResetPasswordTokenExpires: { $gt: Date.now() }
             });
 
             if (!user) {
@@ -74,9 +75,9 @@ exports.setApp = function ( app, client )
             }
 
             // Update password
-            user.password = newPassword;
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpires = undefined;
+            user.Password = newPassword;
+            user.ResetPasswordToken = undefined;
+            user.ResetPasswordTokenExpires = undefined;
             await user.save();
 
             res.status(200).json({ message: 'Password updated successfully' });
