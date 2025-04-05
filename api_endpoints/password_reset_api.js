@@ -64,7 +64,7 @@ exports.setApp = function ( app, client )
         try {
             const { token, email, newPassword } = req.body;
 
-            const user = await User.findOne({
+            const user = await Users.findOne({
                 Email: email,
                 ResetPasswordToken: token,
                 ResetPasswordTokenExpires: { $gt: Date.now() }
