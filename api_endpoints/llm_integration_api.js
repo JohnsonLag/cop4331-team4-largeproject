@@ -33,8 +33,8 @@ const getNextSequence = async (name, increment = 1) => {
 
 exports.setApp = function (app, client) {
     app.post('/api/flashcards/save_generated_cards', async (req, res) => {
-        // incoming: flashcards[], userId, deckId (optional), jwtToken
-        // outgoing: error, jwtToken
+        // incoming: flashcards[], title, userId, deckId (optional), jwtToken
+        // outgoing: error, savedCount, firstCardId, lastCardId, jwtToken
 
         const session = await mongoose.startSession();
         session.startTransaction();
@@ -43,7 +43,7 @@ exports.setApp = function (app, client) {
 
         try {
             // Incoming: flashcards[], userId, deckId (optional), jwtToken
-            const { flashcards, userId, deckId, jwtToken } = req.body;
+            const { flashcards, title, userId, deckId, jwtToken } = req.body;
 
             // Check JSON Web Token
             try {
@@ -65,6 +65,7 @@ exports.setApp = function (app, client) {
 
                 return res.status(400).json({
                     error: error,
+                    title: "",
                     savedCount: -1,
                     firstCardId: -1,
                     lastCardId: -1,
@@ -80,7 +81,7 @@ exports.setApp = function (app, client) {
                 const newDeck = new FlashCardDecks({
                     UserId: userId,
                     DeckId: newDeckId,
-                    Title: "Newly generated deck",
+                    Title: title,
                     NumCards: flashcards.length,
                 });
 
@@ -90,6 +91,8 @@ exports.setApp = function (app, client) {
                     error = e.toString();
                 }
             } else {
+                // Update a preexising deck
+
                 newDeckId = deckId;
                 // Find deck and update num cards
                 await FlashCardDecks.findOneAndUpdate(
@@ -231,7 +234,6 @@ exports.setApp = function (app, client) {
             // For live deployment-
             // const url = 'http://coolestappever.xyz/api/flashcards/save_generated_cards';
 
-
             const userId = note.UserId;
             const deckId = -1;
 
@@ -249,6 +251,7 @@ exports.setApp = function (app, client) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     flashcards: flashcardData.flashcards,
+                    title: flashcardDeckTitle,
                     userId,
                     deckId,
                     jwtToken
