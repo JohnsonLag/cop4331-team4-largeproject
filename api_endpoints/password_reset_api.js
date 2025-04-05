@@ -64,21 +64,26 @@ exports.setApp = function ( app, client )
         try {
             const { token, email, newPassword } = req.body;
 
-            const user = await Users.findOne({
-                Email: email,
-                ResetPasswordToken: token,
-                ResetPasswordTokenExpires: { $gt: Date.now() }
-            });
+            const user = await Users.findOneAndUpdate(
+                {
+                    Email: email,
+                    ResetPasswordToken: token,
+                    ResetPasswordTokenExpires: { $gt: Date.now() }
+                },
+                { 
+                    $set: {
+                        Password: newPassword,
+                        ResetPasswordToken: null,
+                        ResetPasswordTokenExpires: null,
+                    }
+                },
+                { new: true },
+            );
 
             if (!user) {
                 return res.status(400).json({ message: 'Invalid or expired token' });
             }
 
-            // Update password
-            user.Password = newPassword;
-            user.ResetPasswordToken = undefined;
-            user.ResetPasswordTokenExpires = undefined;
-            await user.save();
 
             res.status(200).json({ message: 'Password updated successfully' });
         } catch (error) {
