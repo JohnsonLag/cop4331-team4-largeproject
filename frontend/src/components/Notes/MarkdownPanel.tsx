@@ -114,7 +114,7 @@ function MarkdownPanel({ noteId, textAreaId, note, noteBody }: MarkdownPanelProp
         if (requestNoteBody && easyMdeRef.current) {
             const requestNoteBodyText = easyMdeRef.current.value();
 
-            await updateNote( note.title, requestNoteBodyText );
+            await updateNote( note.title, requestNoteBodyText );;
             
             if (noteViewResult) {
                 setMessage("Note updated!");
