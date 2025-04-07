@@ -183,6 +183,7 @@ function SingleNoteView() {
         return <p>Note not found</p>;
     else {
         const returnedNoteBody = createNoteBody(note.body);
+		window.addEventListener("load", addStyling);
 
         return (
             <div className="d-flex flex-column min-vh-100">
@@ -227,7 +228,7 @@ function SingleNoteView() {
                     <div>
                         <MarkdownPanel noteId={id} textAreaId={passedTextAreaId} note={note} noteBody={returnedNoteBody} />
                     </div>
-                    <span onLoad={addStyling} id="noteViewResult"></span>
+                    <span id="noteViewResult"></span>
                 </div>
             </div>
         );
