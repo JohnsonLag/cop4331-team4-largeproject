@@ -37,7 +37,6 @@ function FlashCardDeckView () {
         error: string,
         jwtToken: Token,
     }
-
     interface AddFlashCardResponse {
         cardId: number,
         error: string,
@@ -47,6 +46,12 @@ function FlashCardDeckView () {
     interface DeleteFlashCardResponse {
         error: string,
         jwtToken: Token
+    }
+
+    interface UpdateFlashCardResponse {
+        cardId: number,
+        error: string,
+        jwtToken: Token,
     }
 
     useEffect(() => {
@@ -178,14 +183,14 @@ function FlashCardDeckView () {
             })
     }
 
-    // Function to delete card
+    // Function to update card
     async function updateCard( card: FlashCard ): Promise<void> {
         let obj = { userId: userId, deckId: card.DeckId, cardId: card.CardId, question: card.Question, answer: card.Answer, jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
             method: 'post',
-            url: buildPath('api/update_flash_card'),
+            url: buildPath('api/update_flashcard'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -244,108 +249,68 @@ function FlashCardDeckView () {
 			console.log("Could not hide modification buttons.");
 		}
 	}
+	
+	function modifyCardFace(card: FlashCard, command: string) : void {
+		let idQuestion: string = "card-"+card.CardId+"-title";
+		let idAnswer: string = "card-"+card.CardId+"-text";
 		
-	function addInputFields(card: FlashCard) : void {
-		let titleId = "card-"+card.CardId+"-title";
-		let textId = "card-"+card.CardId+"-text";
+		// Current elements.
+		let initialQuestion = document.getElementById(idQuestion);
+		let initialAnswer = document.getElementById(idAnswer);
 		
-		let titleElement = document.getElementById(titleId);
-		let textElement = document.getElementById(textId);
-		
-		if (titleElement && textElement){
-			let titleInput = document.createElement("input");
-			let textInput = document.createElement("textarea");
+		if (initialQuestion && initialAnswer){
+			let updatedQuestion = (command === "edit") ? initialTitleElement : document.createElement("input");
+			let updatedAnswer = (command === "edit") ? initialTextElement : document.createElement("textarea");
 			
-			let titleValue = document.createTextNode(card.Question);
-			let textValue = document.createTextNode(card.Answer);
+			let valueQuestion = (command === "update") ? initialQuestion.innerText : document.createTextNode(card.Question);
+			let valueAnswer = (command === "update") ? initialAnswer.innerText : document.createTextNode(card.Answer);
 			
-			initialTitleElement = titleElement;
-			initialTextElement = textElement;
+			let cardList = document.getElementById("card-"+card.CardId+"-body");
 			
-			titleInput.id = titleId;
-			textInput.id = textId;
+			// Store initial elements.
+			if (command === "edit"){
+				initialTitleElement = initialQuestion;
+				initialTextElement = initialAnswer;
+			}
 			
-			titleInput.appendChild(titleValue);
-			textInput.appendChild(textValue);
+			// Set attributes for updated elements.
+			updatedQuestion.id = idQuestion;
+			updatedAnswer.id = idAnswer;
 			
-			// replaceChild(new, old)
-			cardList.replaceChild(titleInput, titleElement);
-			cardList.replaceChild(textInput, textElement);
+			// Add text to updated elements.
+			updatedQuestion.appendChild(valueQuestion);
+			updatedAnswer.appendChild(valueAnswer);
+			
+			// Replace.
+			cardList.replaceChild(updatedQuestion, initialQuestion);
+			cardList.replaceChild(updatedAnswer, initialAnswer);
 		}
 		
 		else {
-			console.log("Could not add input fields.");
+			if (command === "cancel"){
+				console.log("Could not remove input fields.");
+			} else if (command === "edit"){
+				console.log("Could not add input fields.");
+			} else if (command === "update"){
+				console.log("Could not remove input fields and update card.");
+			}
 		}
 	}
 	
-	function removeInputFields(card: FlashCard) : void {
-		let titleId = "card-"+card.CardId+"-title";
-		let textId = "card-"+card.CardId+"-text";
-		
-		let titleElement = document.getElementById(titleId);
-		let textElement = document.getElementById(textId);
-		
-		if (titleElement && textElement){
-			let titleInput = initialTitleElement;
-			let textInput = initialTextElement;
-			
-			let titleValue = document.createTextNode(titleInput.innerText);
-			let textValue = document.createTextNode(textInput.innerText);
-			
-			titleInput.appendChild(titleValue);
-			textInput.appendChild(textValue);
-			
-			// replaceChild(new, old)
-			cardList.replaceChild(titleInput, titleElement);
-			cardList.replaceChild(textInput, textElement);
-		}
-		
-		else {
-			console.log("Could not remove input fields.");
-		}
-	}
-	
-	function removeInputFieldsAndUpdate(card: FlashCard) : void {
-		let titleId = "card-"+card.CardId+"-title";
-		let textId = "card-"+card.CardId+"-text";
-		
-		let titleElement = document.getElementById(titleId);
-		let textElement = document.getElementById(textId);
-		
-		if (titleElement && textElement){
-			let titleInput = initialTitleElement;
-			let textInput = initialTextElement;
-			
-			let titleValue = document.createTextNode(titleElement.innerText);
-			let textValue = document.createTextNode(textElement.innerText);
-			
-			titleInput.appendChild(titleValue);
-			textInput.appendChild(textValue);
-			
-			// replaceChild(new, old)
-			cardList.replaceChild(titleInput, titleElement);
-			cardList.replaceChild(textInput, textElement);
-		}
-		
-		else {
-			console.log("Could not remove input fields and update card.");
-		}
-	}
-	
-	function doEditActions() : void {
+	function doEditActions(card: FlashCard) : void {
 		showModificationButtons();
-		addInputFields(card);
+		modifyCardFace(card, "edit");
 	}
 	
-	function doCancelActions() : void {
+	function doCancelActions(card: FlashCard) : void {
 		hideModificationButtons();
-		removeInputFields(card);
+		modifyCardFace(card, "cancel");
 	}
 	
-	function doSaveActions(card: FlashCard) : void {
+	function doUpdateActions(card: FlashCard) : void {
 		hideModificationButtons();
 		updateCard(card);		
-		removeInputFieldsAndUpdate(card);
+		modifyCardFace(card, "update");
 	}
 	
     return (
@@ -439,7 +404,7 @@ function FlashCardDeckView () {
                                 }}
                             >
                                 {/* Card Body */}
-                                <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                                <div className="card-body d-flex flex-column justify-content-center align-items-center text-center" id={"card-"+card.CardId+"-body"}>
                                 <h5 className="card-title" id={"card-"+card.CardId+"-title"} style=
                                     {{ 
                                         color: '#7E24B9',
@@ -475,7 +440,7 @@ function FlashCardDeckView () {
                                         borderTop: '1px solid #D3D3D3',
                                     }}
                                 >
-                                    {/* Save, Cancel, Edit & Delete Buttons */}
+                                    {/* Update, Cancel, Edit & Delete Buttons */}
                                     <div className="d-flex">
 										<button
 											id="save-button"
@@ -487,11 +452,11 @@ function FlashCardDeckView () {
 											}}
 											onClick={(e) => {
 												e.stopPropagation(); // Prevent card click event from firing
-												console.log("Save changes");
-												doSaveActions(card);
+												console.log("Update changes");
+												doUpdateActions(card, "update");
 											}}
 										>
-											Save
+											Update
 										</button>
 										<button
 											id="cancel-button"
@@ -504,7 +469,7 @@ function FlashCardDeckView () {
 											onClick={(e) => {
 												e.stopPropagation(); // Prevent card click event from firing
 												console.log("Cancel changes");
-												doCancelActions();
+												doCancelActions(card, "cancel");
 											}}
 										>
 											Cancel
@@ -519,7 +484,7 @@ function FlashCardDeckView () {
                                             onClick={(e) => {
                                                 e.stopPropagation(); // Prevent card click event from firing
                                                 console.log(`Edit deck: ${card.CardId}`);
-												doEditActions();
+												doEditActions(card, "edit");
                                             }}
                                         >
                                             <i className="bi bi-pen"></i>
