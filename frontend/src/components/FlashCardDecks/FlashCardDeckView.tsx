@@ -174,7 +174,47 @@ function FlashCardDeckView () {
                 alert(error.toString());
             })
     }
-
+	
+	function showModificationButtons() : void {
+		let saveButton = document.getElementById("save-button");
+		let cancelButton = document.getElementById("cancel-button");
+		
+		if (saveButton && cancelButton){
+			saveButton.style.visibility = "visible";
+			cancelButton.style.visibility = "visible";
+		}
+		
+		else {
+			console.log("Could not show modification buttons.");
+		}
+	}	
+	
+	function hideModificationButtons() : void {
+		let saveButton = document.getElementById("save-button");
+		let cancelButton = document.getElementById("cancel-button");
+		
+		if (saveButton && cancelButton){
+			saveButton.style.visibility = "hidden";
+			cancelButton.style.visibility = "hidden";
+		}
+		
+		else {
+			console.log("Could not hide modification buttons.");
+		}
+	}
+	
+	function doEditActions() : void {
+		showModificationButtons();
+	}
+	
+	function doCancelActions() : void {
+		hideModificationButtons();
+	}
+	
+	function doSaveActions() : void {
+		hideModificationButtons();
+	}
+	
     return (
         <div className="d-flex flex-column min-vh-100">
         <div className="container mt-5">
@@ -301,9 +341,42 @@ function FlashCardDeckView () {
                                         borderTop: '1px solid #D3D3D3',
                                     }}
                                 >
-                                    {/* Edit & Delete Buttons */}
+                                    {/* Save, Cancel, Edit & Delete Buttons */}
                                     <div className="d-flex">
+										<button
+											id="save-button"
+											className="btn btn-sm"
+											style={{
+												backgroundColor: '#9B59B6',  // Purple color
+												color: '#FFFFFF',
+												visibility: 'hidden',  // Hidden by default
+											}}
+											onClick={(e) => {
+												e.stopPropagation(); // Prevent card click event from firing
+												console.log("Save changes");
+												doSaveActions();
+											}}
+										>
+											Save
+										</button>
+										<button
+											id="cancel-button"
+											className="btn btn-sm"
+											style={{
+												backgroundColor: '#D3D3D3',  // Grey color
+												color: '#353839',
+												visibility: 'hidden',  // Hidden by default
+											}}
+											onClick={(e) => {
+												e.stopPropagation(); // Prevent card click event from firing
+												console.log("Cancel changes");
+												doCancelActions();
+											}}
+										>
+											Cancel
+										</button>
                                         <button
+											id="edit-button"
                                             className="btn btn-sm me-2"
                                             style={{
                                                 backgroundColor: '#D3D3D3',
@@ -312,6 +385,7 @@ function FlashCardDeckView () {
                                             onClick={(e) => {
                                                 e.stopPropagation(); // Prevent card click event from firing
                                                 console.log(`Edit deck: ${card.CardId}`);
+												doEditActions();
                                             }}
                                         >
                                             <i className="bi bi-pen"></i>
