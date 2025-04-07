@@ -52,7 +52,7 @@ function MarkdownPanel({ noteId, textAreaId, note, noteBody }: MarkdownPanelProp
                 'bold', 'italic', 'heading', '|',
                 'quote', 'unordered-list', 'ordered-list', '|',
                 'link', 'image', '|',
-                'side-by-side', 'preview', '|',
+                'side-by-side', 'preview', 'fullscreen', '|',
             ]
         });
 
