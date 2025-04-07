@@ -163,19 +163,6 @@ function SingleNoteView() {
     useEffect(() => {
         fetchNote();
     }, [id]);
-	
-	function addStyling() : void {
-		// Change the icon colors.
-		const icons = document.getElementsByClassName("editor-toolbar")[0].children;
-		
-		for (let i = 0; i < icons.length; i++){
-			icons[i].setAttribute("style", "color:blue;");
-		}
-		
-		// Text alignment.
-		document.getElementsByClassName("CodeMirror")[0].setAttribute("style", "text-align:left;");
-		document.getElementsByClassName("editor-preview-side")[0].setAttribute("style", "text-align:left;");
-	}
 
     if (loading)
         return <p>Loading...</p>;
@@ -183,7 +170,6 @@ function SingleNoteView() {
         return <p>Note not found</p>;
     else {
         const returnedNoteBody = createNoteBody(note.body);
-		window.addEventListener("load", addStyling);
 
         return (
             <div className="d-flex flex-column min-vh-100">
