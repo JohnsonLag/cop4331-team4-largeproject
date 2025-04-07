@@ -16,6 +16,9 @@ function FlashCardDeckView () {
     const deckTitle = searchParams.get("title");
 
     const navigate = useNavigate();
+	
+	let initialTitleElement;
+	let initialTextElement;
 
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
@@ -202,17 +205,112 @@ function FlashCardDeckView () {
 			console.log("Could not hide modification buttons.");
 		}
 	}
+		
+	function addInputFields(card: FlashCard) : void {
+		let titleId = "card-"+card.CardId+"-title";
+		let textId = "card-"+card.CardId+"-text";
+		
+		let titleElement = document.getElementById(titleId);
+		let textElement = document.getElementById(textId);
+		
+		if (titleElement && textElement){
+			let titleInput = document.createElement("input");
+			let textInput = document.createElement("textarea");
+			
+			let titleValue = document.createTextNode(card.Question);
+			let textValue = document.createTextNode(card.Answer);
+			
+			initialTitleElement = titleElement;
+			initialTextElement = textElement;
+			
+			titleInput.id = titleId;
+			textInput.id = textId;
+			
+			titleInput.appendChild(titleValue);
+			textInput.appendChild(textValue);
+			
+			// replaceChild(new, old)
+			cardList.replaceChild(titleInput, titleElement);
+			cardList.replaceChild(textInput, textElement);
+		}
+		
+		else {
+			console.log("Could not add input fields.");
+		}
+	}
+	
+	function removeInputFields(card: FlashCard) : void {
+		let titleId = "card-"+card.CardId+"-title";
+		let textId = "card-"+card.CardId+"-text";
+		
+		let titleElement = document.getElementById(titleId);
+		let textElement = document.getElementById(textId);
+		
+		if (titleElement && textElement){
+			let titleInput = initialTitleElement;
+			let textInput = initialTextElement;
+			
+			let titleValue = document.createTextNode(titleInput.innerText);
+			let textValue = document.createTextNode(textInput.innerText);
+			
+			titleInput.appendChild(titleValue);
+			textInput.appendChild(textValue);
+			
+			// replaceChild(new, old)
+			cardList.replaceChild(titleInput, titleElement);
+			cardList.replaceChild(textInput, textElement);
+		}
+		
+		else {
+			console.log("Could not remove input fields.");
+		}
+	}
+	
+	function removeInputFieldsAndUpdate(card: FlashCard) : void {
+		let titleId = "card-"+card.CardId+"-title";
+		let textId = "card-"+card.CardId+"-text";
+		
+		let titleElement = document.getElementById(titleId);
+		let textElement = document.getElementById(textId);
+		
+		if (titleElement && textElement){
+			let titleInput = initialTitleElement;
+			let textInput = initialTextElement;
+			
+			let titleValue = document.createTextNode(titleInput.innerText);
+			let textValue = document.createTextNode(textInput.innerText);
+			
+			titleInput.appendChild(titleValue);
+			textInput.appendChild(textValue);
+			
+			// replaceChild(new, old)
+			cardList.replaceChild(titleInput, titleElement);
+			cardList.replaceChild(textInput, textElement);
+		}
+		
+		else {
+			console.log("Could not remove input fields.");
+		}
+	}
 	
 	function doEditActions() : void {
 		showModificationButtons();
+		addInputFields(card);
 	}
 	
 	function doCancelActions() : void {
 		hideModificationButtons();
+		removeInputFields(card);
 	}
 	
-	function doSaveActions() : void {
+	function doSaveActions(card: FlashCard) : void {
 		hideModificationButtons();
+
+		// send updated to server
+		// ...
+		
+		removeInputFieldsAndUpdate(card);
+		
 	}
 	
     return (
@@ -294,6 +392,7 @@ function FlashCardDeckView () {
                             {/* Card */}
                             <div
                                 className="card shadow-sm h-100 d-flex flex-column"
+								id="card-list"
                                 style={{
                                     backgroundColor: '#FFFF',
                                     borderColor: '#D3D3D3',
@@ -306,7 +405,7 @@ function FlashCardDeckView () {
                             >
                                 {/* Card Body */}
                                 <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                                <h5 className="card-title" style=
+                                <h5 className="card-title" id={"card-"+card.CardId+"-title"} style=
                                     {{ 
                                         color: '#7E24B9',
                                         whiteSpace: 'nowrap',
@@ -319,7 +418,7 @@ function FlashCardDeckView () {
                                 >
                                     {card.Question}
                                 </h5>
-                                <p className="card-text" style=
+                                <p className="card-text" id={"card-"+card.CardId+"-text"} style=
                                     {{
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
@@ -354,7 +453,7 @@ function FlashCardDeckView () {
 											onClick={(e) => {
 												e.stopPropagation(); // Prevent card click event from firing
 												console.log("Save changes");
-												doSaveActions();
+												doSaveActions(card);
 											}}
 										>
 											Save
