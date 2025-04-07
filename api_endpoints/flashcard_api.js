@@ -280,8 +280,8 @@ exports.setApp = function ( app, client )
     // Update
     app.post('/api/update_flashcard', async (req, res, next) =>
     {
-        // incoming: userId, cardId, title, jwtToken
-        // outgoing: deckId, error, jwtToken
+        // incoming: userId, cardId, question, answer, jwtToken
+        // outgoing: cardId, error, jwtToken
         const { userId, cardId, question, answer, jwtToken } = req.body;
 
         // Check Json Web Token
@@ -338,7 +338,7 @@ exports.setApp = function ( app, client )
         }
 
         // Return
-        var ret = { cardId: deckId, error: error, jwtToken: refreshedToken };
+        var ret = { cardId: cardId, error: error, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 
