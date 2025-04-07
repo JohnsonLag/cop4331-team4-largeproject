@@ -344,10 +344,6 @@ function SearchNotes() {
                                 >
                                     {note[2]}
                                 </h5>
-                                <p className="card-text" style={{
-                                    fontSize: '1.2rem',
-                                    marginLeft: '10px'
-                                }}>{note[3]} line(s)</p>
                             </div>
 
                             {/* Card Footer */}
