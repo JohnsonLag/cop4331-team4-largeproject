@@ -163,6 +163,23 @@ function SingleNoteView() {
     useEffect(() => {
         fetchNote();
     }, [id]);
+	
+	function addStyling() : void {
+		
+		// Change the icon colors.
+		const icons = Array.from(document.getElementsByClassName("editor-toolbar")[0].children) as HTMLElement[];
+			
+		icons.forEach(icon => {
+			icon.style.color= "blue";
+		});
+		
+		// Text alignment.
+		let textbox = document.getElementsByClassName("CodeMirror")[0] as HTMLElement;
+		let alignment = document.getElementsByClassName("editor-preview-side")[0] as HTMLElement;
+		
+		textbox.style.textAlign="left";
+		alignment.style.textAlign="left";
+	}
 
     if (loading)
         return <p>Loading...</p>;
@@ -214,7 +231,7 @@ function SingleNoteView() {
                     <div>
                         <MarkdownPanel noteId={id} textAreaId={passedTextAreaId} note={note} noteBody={returnedNoteBody} />
                     </div>
-                    <span id="noteViewResult"></span>
+                    <span onLoad={addStyling} id="noteViewResult"></span>
                 </div>
             </div>
         );
