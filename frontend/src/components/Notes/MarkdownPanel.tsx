@@ -55,7 +55,9 @@ function MarkdownPanel({ noteId, textAreaId, note, noteBody }: MarkdownPanelProp
                 'side-by-side', 'preview', 'fullscreen', '|',
             ]
         });
-
+		
+		addStyling();
+		
         return () => {
             // Cleanup on unmount
             if (easyMdeRef.current) {
@@ -142,7 +144,7 @@ function MarkdownPanel({ noteId, textAreaId, note, noteBody }: MarkdownPanelProp
 	}
 	
 	return (
-		<div className="container" onLoad={addStyling}>
+		<div className="container">
 			<div className="row justify-content-center">
 				<div className="col-md-10 col-lg-8">
 					{/* Textarea with proper spacing */}
