@@ -177,6 +177,45 @@ function FlashCardDeckView () {
                 alert(error.toString());
             })
     }
+
+    // Function to delete card
+    async function updateCard( card: FlashCard ): Promise<void> {
+        let obj = { userId: userId, deckId: card.DeckId, cardId: card.CardId, question: card.Question, answer: card.Answer, jwtToken: retrieveToken() };
+        let js = JSON.stringify(obj);
+
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/update_flash_card'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: js
+        };
+
+        axios(config)
+            .then(function (response: AxiosResponse<UpdateFlashCardResponse>) {
+                const res = response.data;
+
+                if (res.jwtToken == null) {
+                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                    deleteToken();
+                    localStorage.removeItem("user_data");
+                    window.location.href = "/";
+                }
+                else if (res.error != "") {
+                    setMessage("Unable to update deck " + res.error);
+                }
+                else {
+                    // Deck updated successfully, update the deck list
+                    // setFlashcards(prevCardList => prevCardList.filter(card => card.CardId !== cardId)); // Remove the deleted deck
+                    setMessage("Card updated successfully.");
+                    setMessageType('error');
+                }
+            })
+            .catch(function (error) {
+                alert(error.toString());
+            })
+    }
 	
 	function showModificationButtons() : void {
 		let saveButton = document.getElementById("save-button");
@@ -277,8 +316,8 @@ function FlashCardDeckView () {
 			let titleInput = initialTitleElement;
 			let textInput = initialTextElement;
 			
-			let titleValue = document.createTextNode(titleInput.innerText);
-			let textValue = document.createTextNode(textInput.innerText);
+			let titleValue = document.createTextNode(titleElement.innerText);
+			let textValue = document.createTextNode(textElement.innerText);
 			
 			titleInput.appendChild(titleValue);
 			textInput.appendChild(textValue);
@@ -289,7 +328,7 @@ function FlashCardDeckView () {
 		}
 		
 		else {
-			console.log("Could not remove input fields.");
+			console.log("Could not remove input fields and update card.");
 		}
 	}
 	
@@ -305,12 +344,8 @@ function FlashCardDeckView () {
 	
 	function doSaveActions(card: FlashCard) : void {
 		hideModificationButtons();
-
-		// send updated to server
-		// ...
-		
+		updateCard(card);		
 		removeInputFieldsAndUpdate(card);
-		
 	}
 	
     return (
