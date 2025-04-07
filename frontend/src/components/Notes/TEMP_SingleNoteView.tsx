@@ -165,20 +165,16 @@ function SingleNoteView() {
     }, [id]);
 	
 	function addStyling() : void {
-		
 		// Change the icon colors.
-		const icons = Array.from(document.getElementsByClassName("editor-toolbar")[0].children) as HTMLElement[];
-			
-		icons.forEach(icon => {
-			icon.style.color= "blue";
-		});
+		const icons = document.getElementsByClassName("editor-toolbar")[0].children;
+		
+		for (let i = 0; i < icons.length; i++){
+			icons[i].setAttribute("style", "color:blue;");
+		}
 		
 		// Text alignment.
-		let textbox = document.getElementsByClassName("CodeMirror")[0] as HTMLElement;
-		let alignment = document.getElementsByClassName("editor-preview-side")[0] as HTMLElement;
-		
-		textbox.style.textAlign="left";
-		alignment.style.textAlign="left";
+		document.getElementsByClassName("CodeMirror")[0].setAttribute("style", "text-align:left;");
+		document.getElementsByClassName("editor-preview-side")[0].setAttribute("style", "text-align:left;");
 	}
 
     if (loading)
