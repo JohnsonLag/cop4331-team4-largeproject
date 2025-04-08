@@ -247,21 +247,27 @@ function FlashCardDeckView () {
 	
 	// Command should either be "disable" or "enable".
 	function toggleAllEditButtons(command: string) : void {
-		const editButtons = document.querySelectorAll("edit-buttons");
-		let booleanVal: string = "true";
+		const editButtons = document.querySelectorAll(".edit-buttons");
 		
-		if (command !== null)
+		if (command !== null && editButtons != null)
 		{
-			booleanVal = (command === "disable") ? "true" : "false";
-		}
-		
-		if (editButtons != null)
-		{
-			for (let i = 0; i < editButtons.length; i++)
+			if (command === "disable")
 			{
-				editButtons[i].setAttribute("disabled", booleanVal);
+				for (let i = 0; i < editButtons.length; i++)
+				{
+					editButtons[i].setAttribute("disabled", "true");
+				}
+				return;
 			}
-			return;
+			
+			else // (command === "enable")
+			{
+				for (let i = 0; i < editButtons.length; i++)
+				{
+					editButtons[i].removeAttribute("disabled");
+				}
+				return;
+			}
 		}
 		
 		else
@@ -311,8 +317,8 @@ function FlashCardDeckView () {
 					let updatedQuestion: HTMLElement | null;
 					let updatedAnswer: HTMLElement| null;
 					
-					let valueQuestion: Text | null;
-					let valueAnswer: Text | null;
+					let valueQuestion: Text | string | null;
+					let valueAnswer: Text | string | null;
 					
 					// Textareas with original text.
 					if (command === "edit")
@@ -320,8 +326,8 @@ function FlashCardDeckView () {
 						updatedQuestion = document.createElement("textarea");
 						updatedAnswer = document.createElement("textarea");
 						
-						valueQuestion = document.createTextNode(card.Question);
-						valueAnswer = document.createTextNode(card.Answer);
+						valueQuestion = card.Question;
+						valueAnswer = card.Answer;
 					}
 					
 					// "Flat" areas with updated text.
@@ -330,8 +336,8 @@ function FlashCardDeckView () {
 						updatedQuestion = initialTitleElement;
 						updatedAnswer = initialTextElement;
 						
-						valueQuestion = document.createTextNode(initialQuestion.innerText);
-						valueAnswer =  document.createTextNode(initialAnswer.innerText);
+						valueQuestion = initialQuestion.innerText;
+						valueAnswer =  initialAnswer.innerText;
 					}
 					
 					// "Flat" areas with original text.
@@ -340,8 +346,8 @@ function FlashCardDeckView () {
 						updatedQuestion = initialTitleElement;
 						updatedAnswer = initialTextElement;
 						
-						valueQuestion = document.createTextNode(card.Question);
-						valueAnswer =  document.createTextNode(card.Answer);
+						valueQuestion = card.Question;
+						valueAnswer =  card.Answer;
 					}
 					
 					
@@ -359,12 +365,21 @@ function FlashCardDeckView () {
 						if (valueQuestion !== null && valueAnswer !== null)
 						{
 							// Add text to updated elements.
-							updatedQuestion.appendChild(valueQuestion);
-							updatedAnswer.appendChild(valueAnswer);
+							updatedQuestion.innerText = valueQuestion;
+							updatedAnswer.innerText = valueAnswer;
 							
 							// Replace.
-							singleCard.replaceChild(updatedQuestion, initialQuestion);
-							singleCard.replaceChild(updatedAnswer, initialAnswer);
+							if (command === "cancel")
+							{
+								singleCard.replaceChild(initialTitleElement, initialQuestion);
+								singleCard.replaceChild(initialTextElement, initialAnswer);
+							}
+							
+							else
+							{
+								singleCard.replaceChild(updatedAnswer, initialAnswer);
+								singleCard.replaceChild(updatedQuestion, initialQuestion);
+							}
 							return;
 						}
 					}
@@ -392,11 +407,11 @@ function FlashCardDeckView () {
 	function doCancelActions(card: FlashCard) : void {
 		toggleCardModificationButtons(card, "hide");
 		modifyCardFace(card, "cancel");
-		toggleAllEditButtons("disable");
+		toggleAllEditButtons("enable");
 	}
 	
 	function doUpdateActions(card: FlashCard) : void {
-		toggleCardModificationButtons(card), "hide");
+		toggleCardModificationButtons(card, "hide");
 		modifyCardFace(card, "update");
 		// updateCard(card);
 		toggleAllEditButtons("enable");
