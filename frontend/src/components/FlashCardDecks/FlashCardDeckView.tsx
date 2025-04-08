@@ -17,8 +17,8 @@ function FlashCardDeckView () {
 
     const navigate = useNavigate();
 	
-	let initialTitleElement;
-	let initialTextElement;
+	let initialTitleElement: HTMLElement | null;
+	let initialTextElement: HTMLElement | null;
 
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
@@ -251,70 +251,85 @@ function FlashCardDeckView () {
 	}
 	
 	function modifyCardFace(card: FlashCard, command: string) : void {
-		let idQuestion: string = "card-"+card.CardId+"-title";
-		let idAnswer: string = "card-"+card.CardId+"-text";
-		let idCard: string = "card-"+card.CardId+"-body";
 		
-		// Current elements.
-		let initialQuestion = document.getElementById(idQuestion);
-		let initialAnswer = document.getElementById(idAnswer);
-		let singleCard = document.getElementById(idCard);
-		
-		//
-		// edit
-		// 		change flat text to modifiable (createElement).
-		// 		keep original text.
-		//
-		// cancel
-		// 		change modifiable text to flat.
-		// 		keep original text.
-		//
-		// update
-		// 		change modifiable text to flat.
-		// 		keep updated text.
-		//
-		if (initialQuestion && initialAnswer && singleCard){
+		if (card != null)
+		{
+			let idQuestion: string = "card-"+card.CardId+"-title";
+			let idAnswer: string = "card-"+card.CardId+"-text";
+			let idCard: string = "card-"+card.CardId+"-body";
 			
-			// Change to textarea elements or the original element types.
-			let updatedQuestion = (command === "update") ? document.createElement("textarea") : initialTitleElement;
-			let updatedAnswer = (command === "update") ? document.createElement("textarea") : initialTextElement;
+			// Current elements.
+			let initialQuestion = document.getElementById(idQuestion);
+			let initialAnswer = document.getElementById(idAnswer);
+			let singleCard = document.getElementById(idCard);
 			
-			// Get the updated text (pulled from the current textareas)
-			// or the original text (pulled from the passed card).
-			let valueQuestion = (command === "update") ? document.createTextNode(initialQuestion.innerText) : document.createTextNode(card.Question);
-			let valueAnswer = (command === "update") ? document.createTextNode(initialAnswer.innerText) : document.createTextNode(card.Answer);
+			//
+			// edit
+			// 		change flat text to modifiable (createElement).
+			// 		keep original text.
+			//
+			// cancel
+			// 		change modifiable text to flat.
+			// 		keep original text.
+			//
+			// update
+			// 		change modifiable text to flat.
+			// 		keep updated text.
+			//
+			if (initialQuestion && initialAnswer && singleCard){
+				
+				if (initialTitleElement && initialTextElement)
+				{
+					// Use textareas or the original elements.
+					let updatedQuestion = (command === "update") ? document.createElement("textarea") : initialTitleElement;
+					let updatedAnswer = (command === "update") ? document.createElement("textarea") : initialTextElement;
+					
+					// Get the updated text (pulled from the current textareas)
+					// or the original text (pulled from the passed card).
+					let valueQuestion = (command === "update") ? document.createTextNode(initialQuestion.innerText) : document.createTextNode(card.Question);
+					let valueAnswer = (command === "update") ? document.createTextNode(initialAnswer.innerText) : document.createTextNode(card.Answer);
+					
+					// Store initial elements.
+					if (command === "edit"){
+						initialTitleElement = initialQuestion;
+						initialTextElement = initialAnswer;
+					}
+					
+					if (updatedQuestion && updatedAnswer)
+					{
+						// Set attributes for updated elements.
+						// Mainly used to give the textareas the same
+						// ids as the original elements.
+						if (command === "update"){
+							updatedQuestion.id = idQuestion;
+							updatedAnswer.id = idAnswer;
+						}
+						
+						if (valueQuestion && valueAnswer)
+						{
+							// Add text to updated elements.
+							updatedQuestion.appendChild(valueQuestion);
+							updatedAnswer.appendChild(valueAnswer);
+							
+							// Replace.
+							singleCard.replaceChild(updatedQuestion, initialQuestion);
+							singleCard.replaceChild(updatedAnswer, initialAnswer);
+							return;
+						}
+					}
+				}
 			
-			
-			// Store initial elements.
-			if (command === "edit"){
-				initialTitleElement = initialQuestion;
-				initialTextElement = initialAnswer;
 			}
-			
-			// Set attributes for updated elements.
-			if (command === "update"){
-				updatedQuestion.id = idQuestion;
-				updatedAnswer.id = idAnswer;
-			}
-			
-			// Add text to updated elements.
-			updatedQuestion.appendChild(valueQuestion);
-			updatedAnswer.appendChild(valueAnswer);
-			
-			// Replace.
-			singleCard.replaceChild(updatedQuestion, initialQuestion);
-			singleCard.replaceChild(updatedAnswer, initialAnswer);
 		}
 		
-		else {
-			if (command === "cancel"){
-				console.log("Could not remove input fields.");
-			} else if (command === "edit"){
-				console.log("Could not add input fields.");
-			} else if (command === "update"){
-				console.log("Could not remove input fields and update card.");
-			}
+		if (command === "cancel"){
+			console.log("Could not remove input fields.");
+		} else if (command === "edit"){
+			console.log("Could not add input fields.");
+		} else if (command === "update"){
+			console.log("Could not remove input fields and update card.");
 		}
+		
 	}
 	
 	function doEditActions(card: FlashCard) : void {
