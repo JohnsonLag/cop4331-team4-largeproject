@@ -24,7 +24,7 @@ describe('User API Tests', () => {
     lastName: 'User',
     login: `testuser${Date.now()}`,
     email: `test${Date.now()}@example.com`,
-    password: 'TestPassword123!'
+    password: 'TestPassword123'
   };
 
   afterAll(async () => {
