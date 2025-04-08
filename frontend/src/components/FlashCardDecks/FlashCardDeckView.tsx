@@ -252,7 +252,8 @@ function FlashCardDeckView () {
 	
 	// Command should either be "disable" or "enable".
 	function toggleEditButtons(command: string) : void {
-		let editButtons = document.getElementsByClassName("edit-buttons");
+		const editButtons = document.querySelectorAll("edit-buttons");
+
 		let booleanVal: string = "true";
 		
 		if (command !== null)
@@ -260,9 +261,18 @@ function FlashCardDeckView () {
 			booleanVal = (command === "disable") ? "true" : "false";
 		}
 		
-		for (let i = 0; i < editButtons.length; i++)
+		if (editButtons != null)
 		{
-			editButtons[i].disabled = booleanVal;
+			for (let i = 0; i < editButtons.length; i++)
+			{
+				editButtons[i].setAttribute("disabled", booleanVal);
+			}
+			return;
+		}
+		
+		else
+		{
+			console.log("Could not toggle edit buttons.");
 		}
 	}
 	
@@ -304,8 +314,8 @@ function FlashCardDeckView () {
 				if (initialTitleElement !== null && initialTextElement !== null)
 				{
 					// Use textareas or the original elements.
-					let updatedQuestion: Node | null;
-					let updatedAnswer: Node| null;
+					let updatedQuestion: HTMLElement | null;
+					let updatedAnswer: HTMLElement| null;
 					
 					let valueQuestion: Text | null;
 					let valueAnswer: Text | null;
