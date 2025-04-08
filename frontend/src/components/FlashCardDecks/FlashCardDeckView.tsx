@@ -222,9 +222,9 @@ function FlashCardDeckView () {
             })
     }
 	
-	function showModificationButtons() : void {
-		let saveButton = document.getElementById("save-button");
-		let cancelButton = document.getElementById("cancel-button");
+	function showModificationButtons(card: FlashCard) : void {
+		let saveButton = document.getElementById("save-button-"+card.CardId);
+		let cancelButton = document.getElementById("cancel-button-"+card.CardId);
 		
 		if (saveButton && cancelButton){
 			saveButton.style.visibility = "visible";
@@ -236,9 +236,9 @@ function FlashCardDeckView () {
 		}
 	}	
 	
-	function hideModificationButtons() : void {
-		let saveButton = document.getElementById("save-button");
-		let cancelButton = document.getElementById("cancel-button");
+	function hideModificationButtons(card: FlashCard) : void {
+		let saveButton = document.getElementById("save-button-"+card.CardId);
+		let cancelButton = document.getElementById("cancel-button-"+card.CardId);
 		
 		if (saveButton && cancelButton){
 			saveButton.style.visibility = "hidden";
@@ -249,6 +249,30 @@ function FlashCardDeckView () {
 			console.log("Could not hide modification buttons.");
 		}
 	}
+	
+	function disableAllEditButtons() : void {
+		let editButtons = document.getElementsByClassName("edit-buttons");
+		
+		for (let i = 0; i < editButtons.length; i++)
+		{
+			editButtons[i].disabled = "true";
+		}
+	}
+	
+	function enableAllEditButtons() : void {
+		let editButtons = document.getElementsByClassName("edit-buttons");
+		
+		for (let i = 0; i < editButtons.length; i++)
+		{
+			editButtons[i].disabled = "false";
+		}
+	}
+	
+	// function checkIfPreviousModificationButtonsAreDisabled() : string {
+		// // if disabled, allow this editing
+		
+		// // if enabled, throw error
+	// }
 	
 	function modifyCardFace(card: FlashCard, command: string) : void {
 		
@@ -276,36 +300,65 @@ function FlashCardDeckView () {
 			// 		change modifiable text to flat.
 			// 		keep updated text.
 			//
-			if (initialQuestion !== null && initialAnswer !== null && singleCard !== null){
+			if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
+			{
+				// Store initial elements.
+				if (command === "edit")
+				{
+					initialTitleElement = initialQuestion;
+					initialTextElement = initialAnswer;
+				}
 				
 				if (initialTitleElement !== null && initialTextElement !== null)
 				{
 					// Use textareas or the original elements.
-					let updatedQuestion: HTMLElement | null = (command === "update") ? document.createElement("textarea") : initialTitleElement;
-					let updatedAnswer: HTMLElement | null = (command === "update") ? document.createElement("textarea") : initialTextElement;
+					let updatedQuestion: Node | null;
+					let updatedAnswer: Node| null;
 					
-					// Get the updated text (pulled from the current textareas)
-					// or the original text (pulled from the passed card).
-					let valueQuestion: Text | null = (command === "update") ? document.createTextNode(initialQuestion.innerText) : document.createTextNode(card.Question);
-					let valueAnswer: Text | null = (command === "update") ? document.createTextNode(initialAnswer.innerText) : document.createTextNode(card.Answer);
+					let valueQuestion: Text | null;
+					let valueAnswer: Text | null;
 					
-					// Store initial elements.
+					// Textareas with original text.
 					if (command === "edit")
 					{
-						initialTitleElement = initialQuestion;
-						initialTextElement = initialAnswer;
+						updatedQuestion = document.createElement("textarea");
+						updatedAnswer = document.createElement("textarea");
+						
+						valueQuestion = document.createTextNode(card.Question);
+						valueAnswer = document.createTextNode(card.Answer);
 					}
+					
+					// "Flat" areas with updated text.
+					else if (command === "update")
+					{
+						updatedQuestion = initialTitleElement;
+						updatedAnswer = initialTextElement;
+						
+						valueQuestion = document.createTextNode(initialQuestion.innerText);
+						valueAnswer =  document.createTextNode(initialAnswer.innerText);
+					}
+					
+					// "Flat" areas with original text.
+					else // (command === "cancel")
+					{
+						updatedQuestion = initialTitleElement;
+						updatedAnswer = initialTextElement;
+						
+						valueQuestion = document.createTextNode(card.Question);
+						valueAnswer =  document.createTextNode(card.Answer);
+					}
+					
 					
 					if (updatedQuestion !== null && updatedAnswer !== null)
 					{
 						// Set attributes for updated elements.
 						// Mainly used to give the textareas the same
 						// ids as the original elements.
-						if (command === "update")
-						{
+						// if (command === "update")
+						// {
 							updatedQuestion.id = idQuestion;
 							updatedAnswer.id = idAnswer;
-						}
+						// }
 						
 						if (valueQuestion !== null && valueAnswer !== null)
 						{
@@ -335,19 +388,24 @@ function FlashCardDeckView () {
 	}
 	
 	function doEditActions(card: FlashCard) : void {
-		showModificationButtons();
+		showModificationButtons(card);
+		disableAllEditButtons();
 		modifyCardFace(card, "edit");
 	}
 	
 	function doCancelActions(card: FlashCard) : void {
-		hideModificationButtons();
+		hideModificationButtons(card);
+		disableAllEditButtons();
 		modifyCardFace(card, "cancel");
+		enableAllEditButtons(card);
 	}
 	
 	function doUpdateActions(card: FlashCard) : void {
-		hideModificationButtons();
+		hideModificationButtons(card);
+		disableAllEditButtons();
 		updateCard(card);		
 		modifyCardFace(card, "update");
+		enableAllEditButtons(card);
 	}
 	
     return (
@@ -480,8 +538,8 @@ function FlashCardDeckView () {
                                     {/* Update, Cancel, Edit & Delete Buttons */}
                                     <div className="d-flex">
 										<button
-											id="save-button"
-											className="btn btn-sm"
+											id={"update-button-"+card.CardId}
+											className="btn btn-sm update-buttons"
 											style={{
 												backgroundColor: '#9B59B6',  // Purple color
 												color: '#FFFFFF',
@@ -496,8 +554,8 @@ function FlashCardDeckView () {
 											Update
 										</button>
 										<button
-											id="cancel-button"
-											className="btn btn-sm"
+											id={"cancel-button-"+card.CardId}
+											className="btn btn-sm cancel-buttons"
 											style={{
 												backgroundColor: '#D3D3D3',  // Grey color
 												color: '#353839',
@@ -512,8 +570,8 @@ function FlashCardDeckView () {
 											Cancel
 										</button>
                                         <button
-											id="edit-button"
-                                            className="btn btn-sm me-2"
+											id={"edit-button-"+card.CardId}
+                                            className="btn btn-sm me-2 edit-buttons"
                                             style={{
                                                 backgroundColor: '#D3D3D3',
                                                 color: '#353839',
@@ -527,7 +585,7 @@ function FlashCardDeckView () {
                                             <i className="bi bi-pen"></i>
                                         </button>
                                         <button
-                                            className="btn btn-sm"
+                                            className="btn btn-sm delete-buttons"
                                             style={{
                                                 backgroundColor: '#DE6464',
                                                 color: '#FFFFFF',
