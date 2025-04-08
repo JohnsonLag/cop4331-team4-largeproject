@@ -69,6 +69,5 @@ jobs:
           cd frontend
           npm install
           npm run build
-          cp ./src/components/Notes/InsertMarkdownPanel.js ./dist/assets/insert-markdown-panel.js
           systemctl restart nginx
           EOF

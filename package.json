@@ -12,6 +12,7 @@
     "dependencies": {
         "body-parser": "^1.20.3",
         "cors": "^2.8.5",
+        "crypto": "^1.0.1",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
         "jsonwebtoken": "^9.0.2",
@@ -20,7 +21,10 @@
         "nodemailer": "^6.10.0",
         "nodemailer-sendgrid-transport": "^0.2.0",
         "react-jwt": "^1.2.2",
-        "sendgrid": "^5.2.3"
+        "sendgrid": "^5.2.3",
+        "axios": "^1.8.4",
+        "@google/genai": "^0.7.0",
+        "jsonrepair": "^3.12.0" 
     },
     "devDependencies": {
         "@babel/core": "^7.26.10",
