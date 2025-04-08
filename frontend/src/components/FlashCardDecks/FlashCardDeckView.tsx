@@ -253,10 +253,12 @@ function FlashCardDeckView () {
 	function modifyCardFace(card: FlashCard, command: string) : void {
 		let idQuestion: string = "card-"+card.CardId+"-title";
 		let idAnswer: string = "card-"+card.CardId+"-text";
+		let idCard: string = "card-"+card.CardId+"-body";
 		
 		// Current elements.
 		let initialQuestion = document.getElementById(idQuestion);
 		let initialAnswer = document.getElementById(idAnswer);
+		let singleCard = document.getElementById(idCard);
 		
 		//
 		// edit
@@ -271,7 +273,7 @@ function FlashCardDeckView () {
 		// 		change modifiable text to flat.
 		// 		keep updated text.
 		//
-		if (initialQuestion && initialAnswer){
+		if (initialQuestion && initialAnswer && singleCard){
 			
 			// Change to textarea elements or the original element types.
 			let updatedQuestion = (command === "update") ? document.createElement("textarea") : initialTitleElement;
@@ -282,7 +284,6 @@ function FlashCardDeckView () {
 			let valueQuestion = (command === "update") ? document.createTextNode(initialQuestion.innerText) : document.createTextNode(card.Question);
 			let valueAnswer = (command === "update") ? document.createTextNode(initialAnswer.innerText) : document.createTextNode(card.Answer);
 			
-			let cardList = document.getElementById("card-"+card.CardId+"-body");
 			
 			// Store initial elements.
 			if (command === "edit"){
@@ -301,8 +302,8 @@ function FlashCardDeckView () {
 			updatedAnswer.appendChild(valueAnswer);
 			
 			// Replace.
-			cardList.replaceChild(updatedQuestion, initialQuestion);
-			cardList.replaceChild(updatedAnswer, initialAnswer);
+			singleCard.replaceChild(updatedQuestion, initialQuestion);
+			singleCard.replaceChild(updatedAnswer, initialAnswer);
 		}
 		
 		else {
