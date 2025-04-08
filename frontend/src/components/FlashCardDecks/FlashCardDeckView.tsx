@@ -472,7 +472,7 @@ function FlashCardDeckView () {
 											onClick={(e) => {
 												e.stopPropagation(); // Prevent card click event from firing
 												console.log("Update changes");
-												doUpdateActions(card, "update");
+												doUpdateActions(card);
 											}}
 										>
 											Update
@@ -488,7 +488,7 @@ function FlashCardDeckView () {
 											onClick={(e) => {
 												e.stopPropagation(); // Prevent card click event from firing
 												console.log("Cancel changes");
-												doCancelActions(card, "cancel");
+												doCancelActions(card);
 											}}
 										>
 											Cancel
@@ -503,7 +503,7 @@ function FlashCardDeckView () {
                                             onClick={(e) => {
                                                 e.stopPropagation(); // Prevent card click event from firing
                                                 console.log(`Edit deck: ${card.CardId}`);
-												doEditActions(card, "edit");
+												doEditActions(card);
                                             }}
                                         >
                                             <i className="bi bi-pen"></i>
