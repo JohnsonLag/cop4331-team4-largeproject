@@ -258,12 +258,29 @@ function FlashCardDeckView () {
 		let initialQuestion = document.getElementById(idQuestion);
 		let initialAnswer = document.getElementById(idAnswer);
 		
+		//
+		// edit
+		// 		change flat text to modifiable (createElement).
+		// 		keep original text.
+		//
+		// cancel
+		// 		change modifiable text to flat.
+		// 		keep original text.
+		//
+		// update
+		// 		change modifiable text to flat.
+		// 		keep updated text.
+		//
 		if (initialQuestion && initialAnswer){
-			let updatedQuestion = (command === "edit") ? initialTitleElement : document.createElement("input");
-			let updatedAnswer = (command === "edit") ? initialTextElement : document.createElement("textarea");
 			
-			let valueQuestion = (command === "update") ? initialQuestion.innerText : document.createTextNode(card.Question);
-			let valueAnswer = (command === "update") ? initialAnswer.innerText : document.createTextNode(card.Answer);
+			// Change to textarea elements or the original element types.
+			let updatedQuestion = (command === "update") ? document.createElement("textarea") : initialTitleElement;
+			let updatedAnswer = (command === "update") ? document.createElement("textarea") : initialTextElement;
+			
+			// Get the updated text (pulled from the current textareas)
+			// or the original text (pulled from the passed card).
+			let valueQuestion = (command === "update") ? document.createTextNode(initialQuestion.innerText) : document.createTextNode(card.Question);
+			let valueAnswer = (command === "update") ? document.createTextNode(initialAnswer.innerText) : document.createTextNode(card.Answer);
 			
 			let cardList = document.getElementById("card-"+card.CardId+"-body");
 			
@@ -274,8 +291,10 @@ function FlashCardDeckView () {
 			}
 			
 			// Set attributes for updated elements.
-			updatedQuestion.id = idQuestion;
-			updatedAnswer.id = idAnswer;
+			if (command === "update"){
+				updatedQuestion.id = idQuestion;
+				updatedAnswer.id = idAnswer;
+			}
 			
 			// Add text to updated elements.
 			updatedQuestion.appendChild(valueQuestion);
