@@ -222,38 +222,32 @@ function FlashCardDeckView () {
             // })
     // }
 	
-	function showModificationButtons(card: FlashCard) : void {
-		let saveButton = document.getElementById("save-button-"+card.CardId);
+	function toggleCardModificationButtons(card: FlashCard, command: string) : void {
+		let saveButton = document.getElementById("update-button-"+card.CardId);
 		let cancelButton = document.getElementById("cancel-button-"+card.CardId);
+		
+		let visibilityVal: string = "visible";
+		let message: string;
+		
+		if (command !== null)
+		{
+			visibilityVal = (command === "show") ? "visible" : "hidden";
+		}
 
-		if (saveButton && cancelButton){
-			saveButton.style.visibility = "visible";
-			cancelButton.style.visibility = "visible";
+		if (saveButton !== null && cancelButton !== null){
+			saveButton.style.visibility = visibilityVal;
+			cancelButton.style.visibility = visibilityVal;
 		}
 		
 		else {
-			console.log("Could not show modification buttons.");
+			message = (visibilityVal === "visible") ? "Could not show modification buttons." : "Could not hide modification buttons."
+			console.log(message);
 		}
 	}	
 	
-	function hideModificationButtons(card: FlashCard) : void {
-		let saveButton = document.getElementById("save-button-"+card.CardId);
-		let cancelButton = document.getElementById("cancel-button-"+card.CardId);
-		
-		if (saveButton && cancelButton){
-			saveButton.style.visibility = "hidden";
-			cancelButton.style.visibility = "hidden";
-		}
-		
-		else {
-			console.log("Could not hide modification buttons.");
-		}
-	}
-	
 	// Command should either be "disable" or "enable".
-	function toggleEditButtons(command: string) : void {
+	function toggleAllEditButtons(command: string) : void {
 		const editButtons = document.querySelectorAll("edit-buttons");
-
 		let booleanVal: string = "true";
 		
 		if (command !== null)
@@ -390,22 +384,22 @@ function FlashCardDeckView () {
 	}
 	
 	function doEditActions(card: FlashCard) : void {
-		showModificationButtons(card);
-		toggleEditButtons("disable");
+		toggleCardModificationButtons(card, "show");
+		toggleAllEditButtons("disable");
 		modifyCardFace(card, "edit");
 	}
 	
 	function doCancelActions(card: FlashCard) : void {
-		hideModificationButtons(card);
+		toggleCardModificationButtons(card, "hide");
 		modifyCardFace(card, "cancel");
-		toggleEditButtons("disable");
+		toggleAllEditButtons("disable");
 	}
 	
 	function doUpdateActions(card: FlashCard) : void {
-		hideModificationButtons(card);
+		toggleCardModificationButtons(card), "hide");
 		modifyCardFace(card, "update");
 		// updateCard(card);
-		toggleEditButtons("enable");
+		toggleAllEditButtons("enable");
 	}
 	
     return (
