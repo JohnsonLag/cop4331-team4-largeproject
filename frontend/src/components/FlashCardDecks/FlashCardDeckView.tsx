@@ -48,11 +48,11 @@ function FlashCardDeckView () {
         jwtToken: Token
     }
 
-    interface UpdateFlashCardResponse {
-        cardId: number,
-        error: string,
-        jwtToken: Token,
-    }
+    // interface UpdateFlashCardResponse {
+        // cardId: number,
+        // error: string,
+        // jwtToken: Token,
+    // }
 
     useEffect(() => {
         fetchAllCards();
@@ -183,49 +183,49 @@ function FlashCardDeckView () {
             })
     }
 
-    // Function to update card
-    async function updateCard( card: FlashCard ): Promise<void> {
-        let obj = { userId: userId, deckId: card.DeckId, cardId: card.CardId, question: card.Question, answer: card.Answer, jwtToken: retrieveToken() };
-        let js = JSON.stringify(obj);
+    // // Function to update card
+    // async function updateCard( card: FlashCard ): Promise<void> {
+        // let obj = { userId: userId, deckId: card.DeckId, cardId: card.CardId, question: card.Question, answer: card.Answer, jwtToken: retrieveToken() };
+        // let js = JSON.stringify(obj);
 
-        const config: AxiosRequestConfig = {
-            method: 'post',
-            url: buildPath('api/update_flashcard'),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: js
-        };
+        // const config: AxiosRequestConfig = {
+            // method: 'post',
+            // url: buildPath('api/update_flashcard'),
+            // headers: {
+                // 'Content-Type': 'application/json'
+            // },
+            // data: js
+        // };
 
-        axios(config)
-            .then(function (response: AxiosResponse<UpdateFlashCardResponse>) {
-                const res = response.data;
+        // axios(config)
+            // .then(function (response: AxiosResponse<UpdateFlashCardResponse>) {
+                // const res = response.data;
 
-                if (res.jwtToken == null) {
-                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
-                    deleteToken();
-                    localStorage.removeItem("user_data");
-                    window.location.href = "/";
-                }
-                else if (res.error != "") {
-                    setMessage("Unable to update deck " + res.error);
-                }
-                else {
-                    // Deck updated successfully, update the deck list
-                    // setFlashcards(prevCardList => prevCardList.filter(card => card.CardId !== cardId)); // Remove the deleted deck
-                    setMessage("Card updated successfully.");
-                    setMessageType('error');
-                }
-            })
-            .catch(function (error) {
-                alert(error.toString());
-            })
-    }
+                // if (res.jwtToken == null) {
+                    // setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+                    // deleteToken();
+                    // localStorage.removeItem("user_data");
+                    // window.location.href = "/";
+                // }
+                // else if (res.error != "") {
+                    // setMessage("Unable to update deck " + res.error);
+                // }
+                // else {
+                    // // Deck updated successfully, update the deck list
+                    // // setFlashcards(prevCardList => prevCardList.filter(card => card.CardId !== cardId)); // Remove the deleted deck
+                    // setMessage("Card updated successfully.");
+                    // setMessageType('error');
+                // }
+            // })
+            // .catch(function (error) {
+                // alert(error.toString());
+            // })
+    // }
 	
 	function showModificationButtons(card: FlashCard) : void {
 		let saveButton = document.getElementById("save-button-"+card.CardId);
 		let cancelButton = document.getElementById("cancel-button-"+card.CardId);
-		
+
 		if (saveButton && cancelButton){
 			saveButton.style.visibility = "visible";
 			cancelButton.style.visibility = "visible";
@@ -250,29 +250,21 @@ function FlashCardDeckView () {
 		}
 	}
 	
-	function disableAllEditButtons() : void {
+	// Command should either be "disable" or "enable".
+	function toggleEditButtons(command: string) : void {
 		let editButtons = document.getElementsByClassName("edit-buttons");
+		let booleanVal: string = "true";
+		
+		if (command !== null)
+		{
+			booleanVal = (command === "disable") ? "true" : "false";
+		}
 		
 		for (let i = 0; i < editButtons.length; i++)
 		{
-			editButtons[i].disabled = "true";
+			editButtons[i].disabled = booleanVal;
 		}
 	}
-	
-	function enableAllEditButtons() : void {
-		let editButtons = document.getElementsByClassName("edit-buttons");
-		
-		for (let i = 0; i < editButtons.length; i++)
-		{
-			editButtons[i].disabled = "false";
-		}
-	}
-	
-	// function checkIfPreviousModificationButtonsAreDisabled() : string {
-		// // if disabled, allow this editing
-		
-		// // if enabled, throw error
-	// }
 	
 	function modifyCardFace(card: FlashCard, command: string) : void {
 		
@@ -389,23 +381,21 @@ function FlashCardDeckView () {
 	
 	function doEditActions(card: FlashCard) : void {
 		showModificationButtons(card);
-		disableAllEditButtons();
+		toggleEditButtons("disable");
 		modifyCardFace(card, "edit");
 	}
 	
 	function doCancelActions(card: FlashCard) : void {
 		hideModificationButtons(card);
-		disableAllEditButtons();
 		modifyCardFace(card, "cancel");
-		enableAllEditButtons(card);
+		toggleEditButtons("disable");
 	}
 	
 	function doUpdateActions(card: FlashCard) : void {
 		hideModificationButtons(card);
-		disableAllEditButtons();
-		updateCard(card);		
 		modifyCardFace(card, "update");
-		enableAllEditButtons(card);
+		// updateCard(card);
+		toggleEditButtons("enable");
 	}
 	
     return (
