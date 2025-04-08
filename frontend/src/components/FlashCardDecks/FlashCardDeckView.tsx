@@ -259,9 +259,9 @@ function FlashCardDeckView () {
 			let idCard: string = "card-"+card.CardId+"-body";
 			
 			// Current elements.
-			let initialQuestion = document.getElementById(idQuestion);
-			let initialAnswer = document.getElementById(idAnswer);
-			let singleCard = document.getElementById(idCard);
+			let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
+			let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
+			let singleCard: HTMLElement | null = document.getElementById(idCard);
 			
 			//
 			// edit
@@ -276,36 +276,38 @@ function FlashCardDeckView () {
 			// 		change modifiable text to flat.
 			// 		keep updated text.
 			//
-			if (initialQuestion && initialAnswer && singleCard){
+			if (initialQuestion !== null && initialAnswer !== null && singleCard !== null){
 				
-				if (initialTitleElement && initialTextElement)
+				if (initialTitleElement !== null && initialTextElement !== null)
 				{
 					// Use textareas or the original elements.
-					let updatedQuestion = (command === "update") ? document.createElement("textarea") : initialTitleElement;
-					let updatedAnswer = (command === "update") ? document.createElement("textarea") : initialTextElement;
+					let updatedQuestion: HTMLElement | null = (command === "update") ? document.createElement("textarea") : initialTitleElement;
+					let updatedAnswer: HTMLElement | null = (command === "update") ? document.createElement("textarea") : initialTextElement;
 					
 					// Get the updated text (pulled from the current textareas)
 					// or the original text (pulled from the passed card).
-					let valueQuestion = (command === "update") ? document.createTextNode(initialQuestion.innerText) : document.createTextNode(card.Question);
-					let valueAnswer = (command === "update") ? document.createTextNode(initialAnswer.innerText) : document.createTextNode(card.Answer);
+					let valueQuestion: Text | null = (command === "update") ? document.createTextNode(initialQuestion.innerText) : document.createTextNode(card.Question);
+					let valueAnswer: Text | null = (command === "update") ? document.createTextNode(initialAnswer.innerText) : document.createTextNode(card.Answer);
 					
 					// Store initial elements.
-					if (command === "edit"){
+					if (command === "edit")
+					{
 						initialTitleElement = initialQuestion;
 						initialTextElement = initialAnswer;
 					}
 					
-					if (updatedQuestion && updatedAnswer)
+					if (updatedQuestion !== null && updatedAnswer !== null)
 					{
 						// Set attributes for updated elements.
 						// Mainly used to give the textareas the same
 						// ids as the original elements.
-						if (command === "update"){
+						if (command === "update")
+						{
 							updatedQuestion.id = idQuestion;
 							updatedAnswer.id = idAnswer;
 						}
 						
-						if (valueQuestion && valueAnswer)
+						if (valueQuestion !== null && valueAnswer !== null)
 						{
 							// Add text to updated elements.
 							updatedQuestion.appendChild(valueQuestion);
