@@ -5,7 +5,7 @@ import { deleteToken, retrieveToken, storeToken, Token } from '../../tokenStorag
 import { buildPath } from '../Path';
 
 
-function FlashCardDeckView () {
+function FlashCardDeckView() {
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
     const { deckId } = useParams();
@@ -16,15 +16,15 @@ function FlashCardDeckView () {
     const deckTitle = searchParams.get("title");
 
     const navigate = useNavigate();
-	
-	let initialTitleElement: HTMLElement | null;
-	let initialTextElement: HTMLElement | null;	
+
+    let initialTitleElement: HTMLElement | null;
+    let initialTextElement: HTMLElement | null;
 
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
     let ud = JSON.parse(_ud);
     let userId: string = ud.id;
-    
+
     interface FlashCard {
         CardId: number;
         DeckId: number;
@@ -49,9 +49,9 @@ function FlashCardDeckView () {
     }
 
     // interface UpdateFlashCardResponse {
-        // cardId: number,
-        // error: string,
-        // jwtToken: Token,
+    // cardId: number,
+    // error: string,
+    // jwtToken: Token,
     // }
 
     useEffect(() => {
@@ -96,12 +96,12 @@ function FlashCardDeckView () {
     }
 
     // Function to add new flash card
-    async function addFlashCard( question: string, answer: string ): Promise<void> {
-        let obj = { 
-            userId: userId, 
+    async function addFlashCard(question: string, answer: string): Promise<void> {
+        let obj = {
+            userId: userId,
             deckId: deckId,
             question: question,
-            answer: answer, 
+            answer: answer,
             jwtToken: retrieveToken()
         };
         let js = JSON.stringify(obj);
@@ -145,7 +145,7 @@ function FlashCardDeckView () {
     }
 
     // Function to delete card
-    async function deleteCard( cardId: number ): Promise<void> {
+    async function deleteCard(cardId: number): Promise<void> {
         let obj = { userId: userId, deckId: deckId, cardId: cardId, jwtToken: retrieveToken() };
         let js = JSON.stringify(obj);
 
@@ -185,669 +185,509 @@ function FlashCardDeckView () {
 
     // // Function to update card
     // async function updateCard( card: FlashCard ): Promise<void> {
-        // let obj = { userId: userId, deckId: card.DeckId, cardId: card.CardId, question: card.Question, answer: card.Answer, jwtToken: retrieveToken() };
-        // let js = JSON.stringify(obj);
+    // let obj = { userId: userId, deckId: card.DeckId, cardId: card.CardId, question: card.Question, answer: card.Answer, jwtToken: retrieveToken() };
+    // let js = JSON.stringify(obj);
 
-        // const config: AxiosRequestConfig = {
-            // method: 'post',
-            // url: buildPath('api/update_flashcard'),
-            // headers: {
-                // 'Content-Type': 'application/json'
-            // },
-            // data: js
-        // };
+    // const config: AxiosRequestConfig = {
+    // method: 'post',
+    // url: buildPath('api/update_flashcard'),
+    // headers: {
+    // 'Content-Type': 'application/json'
+    // },
+    // data: js
+    // };
 
-        // axios(config)
-            // .then(function (response: AxiosResponse<UpdateFlashCardResponse>) {
-                // const res = response.data;
+    // axios(config)
+    // .then(function (response: AxiosResponse<UpdateFlashCardResponse>) {
+    // const res = response.data;
 
-                // if (res.jwtToken == null) {
-                    // setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
-                    // deleteToken();
-                    // localStorage.removeItem("user_data");
-                    // window.location.href = "/";
-                // }
-                // else if (res.error != "") {
-                    // setMessage("Unable to update deck " + res.error);
-                // }
-                // else {
-                    // // Deck updated successfully, update the deck list
-                    // // setFlashcards(prevCardList => prevCardList.filter(card => card.CardId !== cardId)); // Remove the deleted deck
-                    // setMessage("Card updated successfully.");
-                    // setMessageType('error');
-                // }
-            // })
-            // .catch(function (error) {
-                // alert(error.toString());
-            // })
+    // if (res.jwtToken == null) {
+    // setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
+    // deleteToken();
+    // localStorage.removeItem("user_data");
+    // window.location.href = "/";
     // }
-	
-	function toggleCardModificationButtons(card: FlashCard, command: string) : void {
-		let saveButton = document.getElementById("update-button-"+card.CardId);
-		let cancelButton = document.getElementById("cancel-button-"+card.CardId);
-		
-		let visibilityVal: string = "visible";
-		let message: string;
-		
-		if (command !== null)
-		{
-			visibilityVal = (command === "show") ? "visible" : "hidden";
-		}
+    // else if (res.error != "") {
+    // setMessage("Unable to update deck " + res.error);
+    // }
+    // else {
+    // // Deck updated successfully, update the deck list
+    // // setFlashcards(prevCardList => prevCardList.filter(card => card.CardId !== cardId)); // Remove the deleted deck
+    // setMessage("Card updated successfully.");
+    // setMessageType('error');
+    // }
+    // })
+    // .catch(function (error) {
+    // alert(error.toString());
+    // })
+    // }
 
-		if (saveButton !== null && cancelButton !== null){
-			saveButton.style.visibility = visibilityVal;
-			cancelButton.style.visibility = visibilityVal;
-		}
-		
-		else {
-			message = (visibilityVal === "visible") ? "Could not show modification buttons." : "Could not hide modification buttons."
-			console.log(message);
-		}
-	}	
-	
-	// Command should either be "disable" or "enable".
-	function toggleAllEditButtons(command: string) : void {
-		const editButtons = document.querySelectorAll(".edit-buttons");
-		
-		if (command !== null && editButtons != null)
-		{
-			if (command === "disable")
-			{
-				for (let i = 0; i < editButtons.length; i++)
-				{
-					editButtons[i].setAttribute("disabled", "true");
-				}
-				return;
-			}
-			
-			else // (command === "enable")
-			{
-				for (let i = 0; i < editButtons.length; i++)
-				{
-					editButtons[i].removeAttribute("disabled");
-				}
-				return;
-			}
-		}
-		
-		else
-		{
-			console.log("Could not toggle edit buttons.");
-		}
-	}
-	
-	// function modifyCardFace(card: FlashCard, command: string) : void {
-		
-		// if (card != null)
-		// {
-			// let idQuestion: string = "card-"+card.CardId+"-title";
-			// let idAnswer: string = "card-"+card.CardId+"-text";
-			// let idCard: string = "card-"+card.CardId+"-body";
-			
-			// // Current elements.
-			// let initialQuestion: HTMLElement | HTMLInputElement | null = document.getElementById(idQuestion);
-			// let initialAnswer: HTMLElement | HTMLInputElement | null = document.getElementById(idAnswer);
-			// let singleCard: HTMLElement | null = document.getElementById(idCard);
-			
-			// //
-			// // edit
-			// // 		change flat text to modifiable (createElement).
-			// // 		keep original text.
-			// //
-			// // cancel
-			// // 		change modifiable text to flat.
-			// // 		keep original text.
-			// //
-			// // update
-			// // 		change modifiable text to flat.
-			// // 		keep updated text.
-			// //
-			// if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
-			// {
-				// // Store initial elements.
-				// if (command === "edit")
-				// {
-					// initialTitleElement = initialQuestion;
-					// initialTextElement = initialAnswer;
-				// }
-				
-				// if (initialTitleElement !== null && initialTextElement !== null)
-				// {
-					// // Use textareas or the original elements.
-					// let updatedQuestion: HTMLElement | HTMLTextAreaElement | null;
-					// let updatedAnswer: HTMLElement| HTMLTextAreaElement | null;
-					
-					// // let valueQuestion: Text | string | null;
-					// // let valueAnswer: Text | string | null;
-					
-					// let valueQuestion: string | null;
-					// let valueAnswer: string | null;
-					
-					// // Textareas with original text.
-					// if (command === "edit")
-					// {
-						// updatedQuestion = document.createElement("input");
-						// updatedAnswer = document.createElement("input");
-						
-						// valueQuestion = card.Question;
-						// valueAnswer = card.Answer;
-					// }
-					
-					// // "Flat" areas with updated text.
-					// else if (command === "update")
-					// {
-						// updatedQuestion = initialTitleElement;
-						// updatedAnswer = initialTextElement;
-						
-						// valueQuestion = initialQuestion.getAttribute("value");
-						// valueAnswer =  initialAnswer.getAttribute("value");
-					// }
-					
-					// // "Flat" areas with original text.
-					// else // (command === "cancel")
-					// {
-						// updatedQuestion = initialTitleElement;
-						// updatedAnswer = initialTextElement;
-						
-						// valueQuestion = card.Question;
-						// valueAnswer =  card.Answer;
-					// }
-					
-					
-					// if (updatedQuestion !== null && updatedAnswer !== null)
-					// {
-						// // Set attributes for updated elements.
-						// // Mainly used to give the textareas the same
-						// // ids as the original elements.
-						// // if (command === "update")
-						// // {
-							// updatedQuestion.id = idQuestion;
-							// updatedAnswer.id = idAnswer;
-						// // }
-						
-						// if (valueQuestion !== null && valueAnswer !== null)
-						// {
-							// // Add text to updated elements.
-							// updatedQuestion.innerHTML = valueQuestion;
-							// updatedAnswer.innerHTML = valueAnswer;
-							
-							// // Replace.
-							// if (command === "cancel")
-							// {
-								// singleCard.replaceChild(initialTitleElement, initialQuestion);
-								// singleCard.replaceChild(initialTextElement, initialAnswer);
-							// }
-							
-							// else
-							// {
-								// singleCard.replaceChild(updatedAnswer, initialAnswer);
-								// singleCard.replaceChild(updatedQuestion, initialQuestion);
-							// }
-							// return;
-						// }
-					// }
-				// }
-			
-			// }
-		// }
-		
-		// if (command === "cancel"){
-			// console.log("Could not remove input fields.");
-		// } else if (command === "edit"){
-			// console.log("Could not add input fields.");
-		// } else if (command === "update"){
-			// console.log("Could not remove input fields and update card.");
-		// }
-		
-	// }
-		
-	function modifyCardFace(card: FlashCard, command: string) : void {
-		
-		if (card != null && command !== null)
-		{
-			let idQuestion: string = "card-"+card.CardId+"-title";
-			let idAnswer: string = "card-"+card.CardId+"-text";
-			let idCard: string = "card-"+card.CardId+"-body";
-			
-			// flat to input.
-			if (command === "edit")
-			{
-				let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
-				let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
-				let singleCard: HTMLElement | null = document.getElementById(idCard);
-				
-				if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
-			{
-					initialTitleElement = initialQuestion;
-					initialTextElement = initialAnswer;
+    function toggleCardModificationButtons(card: FlashCard, command: string): void {
+        let saveButton = document.getElementById("update-button-" + card.CardId);
+        let cancelButton = document.getElementById("cancel-button-" + card.CardId);
 
-				if (initialTitleElement !== null && initialTextElement !== null)
-				{
-					// let updatedQuestion: HTMLElement | HTMLInputElement | null;
-					// let updatedAnswer: HTMLElement| HTMLInputElement | null;
-					
-					// let updatedQuestion: HTMLInputElement | null;
-					// let updatedAnswer: HTMLInputElement | null;
-					
-					let updatedQuestion: HTMLElement | null;
-					let updatedAnswer: HTMLElement | null;
-					
-					// let valueQuestion: Text | string | null;
-					// let valueAnswer: Text | string | null;
-					
-					let valueQuestion: string | null;
-					let valueAnswer: string | null;
-					
-						updatedQuestion = document.createElement("input");
-						updatedAnswer = document.createElement("input");
-						
-						valueQuestion = card.Question;
-						valueAnswer = card.Answer;
-					
-					
-					if (updatedQuestion !== null && updatedAnswer !== null)
-					{
-							updatedQuestion.id = idQuestion;
-							updatedAnswer.id = idAnswer;
-						
-						if (valueQuestion !== null && valueAnswer !== null)
-						{
-							// // Add text to updated elements.
-							// updatedQuestion.value = valueQuestion;
-							// updatedAnswer.value = valueAnswer;
-							
-							updatedQuestion.setAttribute("value", valueQuestion);
-							updatedAnswer.setAttribute("value", valueAnswer);
-							
-								singleCard.replaceChild(updatedAnswer, initialAnswer);
-								singleCard.replaceChild(updatedQuestion, initialQuestion);
-								
-							return;
-						}
-					}
-				}
-			
-			}
-		
-			}
-			
-			// input to flat.
-			if (command === "cancel")
-			{
-				let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
-				let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
-				let singleCard: HTMLElement | null = document.getElementById(idCard);
-				
-				if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
-			{
+        let visibilityVal: string = "visible";
+        let message: string;
 
-				if (initialTitleElement !== null && initialTextElement !== null)
-				{
-					// let updatedQuestion: HTMLElement | HTMLInputElement | null;
-					// let updatedAnswer: HTMLElement| HTMLInputElement | null;
-					
-					// let updatedQuestion: HTMLInputElement | null;
-					// let updatedAnswer: HTMLInputElement | null;
-					
-					let updatedQuestion: HTMLElement | null;
-					let updatedAnswer: HTMLElement | null;
-					
-					// let valueQuestion: Text | string | null;
-					// let valueAnswer: Text | string | null;
-					
-					let valueQuestion: string | null;
-					let valueAnswer: string | null;
-					
-						updatedQuestion = initialTitleElement;
-						updatedAnswer = initialTextElement;
-						
-						// valueQuestion = initialTitleElement.innerText;
-						// valueAnswer = initialTextElement.innerText;
-						
-						valueQuestion = card.Question;
-						valueAnswer = card.Answer;
-					
-					
-					if (updatedQuestion !== null && updatedAnswer !== null)
-					{
-							updatedQuestion.id = idQuestion;
-							updatedAnswer.id = idAnswer;
-						
-						if (valueQuestion !== null && valueAnswer !== null)
-						{
-							// Add text to updated elements.
-							// updatedQuestion.innerHTML = valueQuestion;
-							// updatedAnswer.innerHTML = valueAnswer;
-							
-							updatedQuestion.textContent = valueQuestion;
-							updatedAnswer.textContent = valueAnswer;
-							
-								singleCard.replaceChild(updatedAnswer, initialAnswer);
-								singleCard.replaceChild(updatedQuestion, initialQuestion);
-								
-							return;
-						}
-					}
-				}
-			
-			}
-		
-			}
-				
-			// input to flat.
-			if (command === "update")
-			{
-				let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
-				let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
-				let singleCard: HTMLElement | null = document.getElementById(idCard);
-				
-				if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
-			{
+        if (command !== null) {
+            visibilityVal = (command === "show") ? "visible" : "hidden";
+        }
 
-				if (initialTitleElement !== null && initialTextElement !== null)
-				{
-					// let updatedQuestion: HTMLElement | HTMLInputElement | null;
-					// let updatedAnswer: HTMLElement| HTMLInputElement | null;
-					
-					// let updatedQuestion: HTMLInputElement | null;
-					// let updatedAnswer: HTMLInputElement | null;
-					
-					let updatedQuestion: HTMLElement | null;
-					let updatedAnswer: HTMLElement | null;
-					
-					// let valueQuestion: Text | string | null;
-					// let valueAnswer: Text | string | null;
-					
-					let valueQuestion: string | null;
-					let valueAnswer: string | null;
-					
-						updatedQuestion = initialTitleElement;
-						updatedAnswer = initialTextElement;
-						
-						valueQuestion = initialQuestion.getAttribute("value");
-						valueAnswer = initialAnswer.getAttribute("value");
-						
-						// valueQuestion = initialQuestion.value;
-						// valueAnswer = initialAnswer.value;
-					
-					
-					if (updatedQuestion !== null && updatedAnswer !== null)
-					{
-							updatedQuestion.id = idQuestion;
-							updatedAnswer.id = idAnswer;
-						
-						if (valueQuestion !== null && valueAnswer !== null)
-						{
-							// Add text to updated elements.
-							updatedQuestion.textContent = valueQuestion;
-							updatedAnswer.textContent = valueAnswer;
-							
-								singleCard.replaceChild(updatedAnswer, initialAnswer);
-								singleCard.replaceChild(updatedQuestion, initialQuestion);
-								
-							return;
-						}
-					}
-				}
-			
-			}
-		
-			}
-			
-			}
-		
-		if (command === "cancel"){
-			console.log("Could not remove input fields.");
-		} else if (command === "edit"){
-			console.log("Could not add input fields.");
-		} else if (command === "update"){
-			console.log("Could not remove input fields and update card.");
-		}
-		
-	}
-	
-	function doEditActions(card: FlashCard) : void {
-		toggleCardModificationButtons(card, "show");
-		toggleAllEditButtons("disable");
-		modifyCardFace(card, "edit");
-	}
-	
-	function doCancelActions(card: FlashCard) : void {
-		toggleCardModificationButtons(card, "hide");
-		modifyCardFace(card, "cancel");
-		toggleAllEditButtons("enable");
-	}
-	
-	function doUpdateActions(card: FlashCard) : void {
-		toggleCardModificationButtons(card, "hide");
-		modifyCardFace(card, "update");
-		// updateCard(card);
-		toggleAllEditButtons("enable");
-	}
-	
+        if (saveButton !== null && cancelButton !== null) {
+            saveButton.style.visibility = visibilityVal;
+            cancelButton.style.visibility = visibilityVal;
+        }
+
+        else {
+            message = (visibilityVal === "visible") ? "Could not show modification buttons." : "Could not hide modification buttons."
+            console.log(message);
+        }
+    }
+
+    // Command should either be "disable" or "enable".
+    function toggleAllEditButtons(command: string): void {
+        const editButtons = document.querySelectorAll(".edit-buttons");
+
+        if (command !== null && editButtons != null) {
+            if (command === "disable") {
+                for (let i = 0; i < editButtons.length; i++) {
+                    editButtons[i].setAttribute("disabled", "true");
+                }
+                return;
+            }
+
+            else // (command === "enable")
+            {
+                for (let i = 0; i < editButtons.length; i++) {
+                    editButtons[i].removeAttribute("disabled");
+                }
+                return;
+            }
+        }
+
+        else {
+            console.log("Could not toggle edit buttons.");
+        }
+    }
+
+
+    function modifyCardFace(card: FlashCard, command: string): void {
+
+        if (card != null && command !== null) {
+            let idQuestion: string = "card-" + card.CardId + "-title";
+            let idAnswer: string = "card-" + card.CardId + "-text";
+            let idCard: string = "card-" + card.CardId + "-body";
+
+            // flat to input.
+            if (command === "edit") {
+                let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
+                let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
+                let singleCard: HTMLElement | null = document.getElementById(idCard);
+
+                if (initialQuestion !== null && initialAnswer !== null && singleCard !== null) {
+                    initialTitleElement = initialQuestion;
+                    initialTextElement = initialAnswer;
+
+                    if (initialTitleElement !== null && initialTextElement !== null) {
+                        let updatedQuestion: HTMLElement | null;
+                        let updatedAnswer: HTMLElement | null;
+
+                        let valueQuestion: string | null;
+                        let valueAnswer: string | null;
+
+                        updatedQuestion = document.createElement("input");
+                        updatedAnswer = document.createElement("input");
+
+                        valueQuestion = card.Question;
+                        valueAnswer = card.Answer;
+
+
+                        if (updatedQuestion !== null && updatedAnswer !== null) {
+                            updatedQuestion.id = idQuestion;
+                            updatedAnswer.id = idAnswer;
+
+                            if (valueQuestion !== null && valueAnswer !== null) {
+                                // Add text to updated elements.
+                                updatedQuestion.setAttribute("value", valueQuestion);
+                                updatedAnswer.setAttribute("value", valueAnswer);
+
+                                singleCard.replaceChild(updatedAnswer, initialAnswer);
+                                singleCard.replaceChild(updatedQuestion, initialQuestion);
+
+                                return;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            // input to flat.
+            if (command === "cancel") {
+                let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
+                let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
+                let singleCard: HTMLElement | null = document.getElementById(idCard);
+
+                if (initialQuestion !== null && initialAnswer !== null && singleCard !== null) {
+
+                    if (initialTitleElement !== null && initialTextElement !== null) {
+                        // let updatedQuestion: HTMLElement | HTMLInputElement | null;
+                        // let updatedAnswer: HTMLElement| HTMLInputElement | null;
+
+                        // let updatedQuestion: HTMLInputElement | null;
+                        // let updatedAnswer: HTMLInputElement | null;
+
+                        let updatedQuestion: HTMLElement | null;
+                        let updatedAnswer: HTMLElement | null;
+
+                        // let valueQuestion: Text | string | null;
+                        // let valueAnswer: Text | string | null;
+
+                        let valueQuestion: string | null;
+                        let valueAnswer: string | null;
+
+                        updatedQuestion = initialTitleElement;
+                        updatedAnswer = initialTextElement;
+
+                        // valueQuestion = initialTitleElement.innerText;
+                        // valueAnswer = initialTextElement.innerText;
+
+                        valueQuestion = card.Question;
+                        valueAnswer = card.Answer;
+
+
+                        if (updatedQuestion !== null && updatedAnswer !== null) {
+                            updatedQuestion.id = idQuestion;
+                            updatedAnswer.id = idAnswer;
+
+                            if (valueQuestion !== null && valueAnswer !== null) {
+                                // Add text to updated elements.
+                                // updatedQuestion.innerHTML = valueQuestion;
+                                // updatedAnswer.innerHTML = valueAnswer;
+
+                                updatedQuestion.textContent = valueQuestion;
+                                updatedAnswer.textContent = valueAnswer;
+
+                                singleCard.replaceChild(updatedAnswer, initialAnswer);
+                                singleCard.replaceChild(updatedQuestion, initialQuestion);
+
+                                return;
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+            // input to flat.
+            if (command === "update") {
+                let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
+                let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
+                let singleCard: HTMLElement | null = document.getElementById(idCard);
+
+                if (initialQuestion !== null && initialAnswer !== null && singleCard !== null) {
+
+                    if (initialTitleElement !== null && initialTextElement !== null) {
+                        // let updatedQuestion: HTMLElement | HTMLInputElement | null;
+                        // let updatedAnswer: HTMLElement| HTMLInputElement | null;
+
+                        // let updatedQuestion: HTMLInputElement | null;
+                        // let updatedAnswer: HTMLInputElement | null;
+
+                        let updatedQuestion: HTMLElement | null;
+                        let updatedAnswer: HTMLElement | null;
+
+                        // let valueQuestion: Text | string | null;
+                        // let valueAnswer: Text | string | null;
+
+                        let valueQuestion: string | null;
+                        let valueAnswer: string | null;
+
+                        updatedQuestion = initialTitleElement;
+                        updatedAnswer = initialTextElement;
+
+                        valueQuestion = initialQuestion.getAttribute("value");
+                        valueAnswer = initialAnswer.getAttribute("value");
+
+                        // valueQuestion = initialQuestion.value;
+                        // valueAnswer = initialAnswer.value;
+
+
+                        if (updatedQuestion !== null && updatedAnswer !== null) {
+                            updatedQuestion.id = idQuestion;
+                            updatedAnswer.id = idAnswer;
+
+                            if (valueQuestion !== null && valueAnswer !== null) {
+                                // Add text to updated elements.
+                                updatedQuestion.textContent = valueQuestion;
+                                updatedAnswer.textContent = valueAnswer;
+
+                                singleCard.replaceChild(updatedAnswer, initialAnswer);
+                                singleCard.replaceChild(updatedQuestion, initialQuestion);
+
+                                return;
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        if (command === "cancel") {
+            console.log("Could not remove input fields.");
+        } else if (command === "edit") {
+            console.log("Could not add input fields.");
+        } else if (command === "update") {
+            console.log("Could not remove input fields and update card.");
+        }
+
+    }
+
+    function doEditActions(card: FlashCard): void {
+        toggleCardModificationButtons(card, "show");
+        toggleAllEditButtons("disable");
+        modifyCardFace(card, "edit");
+    }
+
+    function doCancelActions(card: FlashCard): void {
+        toggleCardModificationButtons(card, "hide");
+        modifyCardFace(card, "cancel");
+        toggleAllEditButtons("enable");
+    }
+
+    function doUpdateActions(card: FlashCard): void {
+        toggleCardModificationButtons(card, "hide");
+        modifyCardFace(card, "update");
+        // updateCard(card);
+        toggleAllEditButtons("enable");
+    }
+
     return (
         <div className="d-flex flex-column min-vh-100">
-        <div className="container mt-5">
-            {/* Title */}
-            <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>{ deckTitle }</h1>
+            <div className="container mt-5">
+                {/* Title */}
+                <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>{deckTitle}</h1>
 
-            {/* Review Button */}
-            <button
-                className="btn btn-success mb-4"
-                onClick={() => navigate(`/decks/${deckId}/review`)}
-                style={{
-                    backgroundColor: '#7E24B9',
-                    color: 'white',
-                    padding: '10px 20px',
-                    marginBottom: '20px',
-                    width: '40%',
-                }}
-            >
-                Review
-            </button>
+                {/* Review Button */}
+                <button
+                    className="btn btn-success mb-4"
+                    onClick={() => navigate(`/decks/${deckId}/review`)}
+                    style={{
+                        backgroundColor: '#7E24B9',
+                        color: 'white',
+                        padding: '10px 20px',
+                        marginBottom: '20px',
+                        width: '40%',
+                    }}
+                >
+                    Review
+                </button>
 
-            {/* Add Flashcard Section */}
-            <div className="mt-4">
-                <div className="row mb-3 align-items-center">
-                    <div className="col-md-5">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Question"
-                            value={newQuestion}
-                            onChange={(e) => setNewQuestion(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-5">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Answer"
-                            value={newAnswer}
-                            onChange={(e) => setNewAnswer(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-2">
-                        <button
-                            type="button" 
-                            className="btn w-100"
-                            style={{ backgroundColor: '#7E24B9', color: 'white' }}
-                            onClick={() => {
-                                if (newQuestion != "")
-                                {
-                                    addFlashCard(newQuestion, newAnswer)
-                                }
-                            }} // Call addFlashCard directly
-                        >
-                            Add
-                        </button>
+                {/* Add Flashcard Section */}
+                <div className="mt-4">
+                    <div className="row mb-3 align-items-center">
+                        <div className="col-md-5">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Question"
+                                value={newQuestion}
+                                onChange={(e) => setNewQuestion(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-5">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Answer"
+                                value={newAnswer}
+                                onChange={(e) => setNewAnswer(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <button
+                                type="button"
+                                className="btn w-100"
+                                style={{ backgroundColor: '#7E24B9', color: 'white' }}
+                                onClick={() => {
+                                    if (newQuestion != "") {
+                                        addFlashCard(newQuestion, newAnswer)
+                                    }
+                                }} // Call addFlashCard directly
+                            >
+                                Add
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div 
-                style={{
-                    maxHeight: 'calc(100vh - 400px)',
-                    overflowY: 'auto', // Make div scrollable
-                    overflowX: 'hidden',
-                    paddingRight: '10px', // Space for scrollbar
-                    marginTop: '20px',
-                    paddingBottom: '50px'
-                }}
-            >
-                {/* Flashcards List */}
-                <div className="row">
-                    {flashcards.map((card) => (
-                        <div key={card.CardId} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
-                            {/* Card */}
-                            <div
-                                className="card shadow-sm h-100 d-flex flex-column"
-								id="card-list"
-                                style={{
-                                    backgroundColor: '#FFFF',
-                                    borderColor: '#D3D3D3',
-                                    color: '#4A4A4A',
-                                    flex: '1',
-                                    padding: '0',
-                                    cursor: 'pointer', // Change cursor to pointer on hover
-                                    transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
-                                }}
-                            >
-                                {/* Card Body */}
-                                <div className="card-body d-flex flex-column justify-content-center align-items-center text-center" id={"card-"+card.CardId+"-body"}>
-                                <h5 className="card-title" id={"card-"+card.CardId+"-title"} style=
-                                    {{ 
-                                        color: '#7E24B9',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        width: '100%',
-                                        maxWidth: '100%',
-                                        padding: '0 10px' // Add some padding if needed
-                                    }}
-                                >
-                                    {card.Question}
-                                </h5>
-                                <p className="card-text" id={"card-"+card.CardId+"-text"} style=
-                                    {{
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        width: '100%',
-                                        maxWidth: '100%',
-                                        padding: '0 10px' // Add some padding if needed
-                                    }}
-                                >
-                                    {card.Answer}
-                                </p>
-                                </div>
-
-                                {/* Card Footer */}
+                <div
+                    style={{
+                        maxHeight: 'calc(100vh - 400px)',
+                        overflowY: 'auto', // Make div scrollable
+                        overflowX: 'hidden',
+                        paddingRight: '10px', // Space for scrollbar
+                        marginTop: '20px',
+                        paddingBottom: '50px'
+                    }}
+                >
+                    {/* Flashcards List */}
+                    <div className="row">
+                        {flashcards.map((card) => (
+                            <div key={card.CardId} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
+                                {/* Card */}
                                 <div
-                                    className="card-footer d-flex justify-content-end"
+                                    className="card shadow-sm h-100 d-flex flex-column"
+                                    id="card-list"
                                     style={{
-                                        backgroundColor: '#E6E1F5',
-                                        borderTop: '1px solid #D3D3D3',
+                                        backgroundColor: '#FFFF',
+                                        borderColor: '#D3D3D3',
+                                        color: '#4A4A4A',
+                                        flex: '1',
+                                        padding: '0',
+                                        cursor: 'pointer', // Change cursor to pointer on hover
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
                                     }}
                                 >
-                                    {/* Update, Cancel, Edit & Delete Buttons */}
-                                    <div className="d-flex">
-										<button
-											id={"update-button-"+card.CardId}
-											className="btn btn-sm update-buttons"
-											style={{
-												backgroundColor: '#9B59B6',  // Purple color
-												color: '#FFFFFF',
-												visibility: 'hidden',  // Hidden by default
-											}}
-											onClick={(e) => {
-												e.stopPropagation(); // Prevent card click event from firing
-												console.log("Update changes");
-												doUpdateActions(card);
-											}}
-										>
-											Update
-										</button>
-										<button
-											id={"cancel-button-"+card.CardId}
-											className="btn btn-sm cancel-buttons"
-											style={{
-												backgroundColor: '#D3D3D3',  // Grey color
-												color: '#353839',
-												visibility: 'hidden',  // Hidden by default
-											}}
-											onClick={(e) => {
-												e.stopPropagation(); // Prevent card click event from firing
-												console.log("Cancel changes");
-												doCancelActions(card);
-											}}
-										>
-											Cancel
-										</button>
-                                        <button
-											id={"edit-button-"+card.CardId}
-                                            className="btn btn-sm me-2 edit-buttons"
-                                            style={{
-                                                backgroundColor: '#D3D3D3',
-                                                color: '#353839',
-                                            }}
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent card click event from firing
-                                                console.log(`Edit deck: ${card.CardId}`);
-												doEditActions(card);
+                                    {/* Card Body */}
+                                    <div className="card-body d-flex flex-column justify-content-center align-items-center text-center" id={"card-" + card.CardId + "-body"}>
+                                        <h5 className="card-title" id={"card-" + card.CardId + "-title"} style=
+                                            {{
+                                                color: '#7E24B9',
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                width: '100%',
+                                                maxWidth: '100%',
+                                                padding: '0 10px' // Add some padding if needed
                                             }}
                                         >
-                                            <i className="bi bi-pen"></i>
-                                        </button>
-                                        <button
-                                            className="btn btn-sm delete-buttons"
-                                            style={{
-                                                backgroundColor: '#DE6464',
-                                                color: '#FFFFFF',
+                                            {card.Question}
+                                        </h5>
+                                        <p className="card-text" id={"card-" + card.CardId + "-text"} style=
+                                            {{
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                width: '100%',
+                                                maxWidth: '100%',
+                                                padding: '0 10px' // Add some padding if needed
                                             }}
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent card click event from firing
-                                                // Show confirmation dialog
-                                                const isConfirmed = window.confirm("Are you sure you want to delete this card?");
+                                        >
+                                            {card.Answer}
+                                        </p>
+                                    </div>
 
-                                                if (isConfirmed) {
-                                                    // User confirmed, proceed with deletion
-                                                    deleteCard(card.CardId);
-													toggleAllEditButtons("enable");
-                                                    // Add your deletion logic here, e.g., calling an API or updating state
-                                                } else {
-                                                    // User canceled, do nothing
-                                                    console.log("Deletion canceled.");
-                                                }
-                                            }}
-                                        >
-                                            <i className="bi bi-trash"></i>
-                                        </button>
+                                    {/* Card Footer */}
+                                    <div
+                                        className="card-footer d-flex justify-content-end"
+                                        style={{
+                                            backgroundColor: '#E6E1F5',
+                                            borderTop: '1px solid #D3D3D3',
+                                        }}
+                                    >
+                                        {/* Update, Cancel, Edit & Delete Buttons */}
+                                        <div className="d-flex">
+                                            <button
+                                                id={"update-button-" + card.CardId}
+                                                className="btn btn-sm update-buttons"
+                                                style={{
+                                                    backgroundColor: '#9B59B6',  // Purple color
+                                                    color: '#FFFFFF',
+                                                    visibility: 'hidden',  // Hidden by default
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Prevent card click event from firing
+                                                    console.log("Update changes");
+                                                    doUpdateActions(card);
+                                                }}
+                                            >
+                                                Update
+                                            </button>
+                                            <button
+                                                id={"cancel-button-" + card.CardId}
+                                                className="btn btn-sm cancel-buttons"
+                                                style={{
+                                                    backgroundColor: '#D3D3D3',  // Grey color
+                                                    color: '#353839',
+                                                    visibility: 'hidden',  // Hidden by default
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Prevent card click event from firing
+                                                    console.log("Cancel changes");
+                                                    doCancelActions(card);
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                id={"edit-button-" + card.CardId}
+                                                className="btn btn-sm me-2 edit-buttons"
+                                                style={{
+                                                    backgroundColor: '#D3D3D3',
+                                                    color: '#353839',
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Prevent card click event from firing
+                                                    console.log(`Edit deck: ${card.CardId}`);
+                                                    doEditActions(card);
+                                                }}
+                                            >
+                                                <i className="bi bi-pen"></i>
+                                            </button>
+                                            <button
+                                                className="btn btn-sm delete-buttons"
+                                                style={{
+                                                    backgroundColor: '#DE6464',
+                                                    color: '#FFFFFF',
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Prevent card click event from firing
+                                                    // Show confirmation dialog
+                                                    const isConfirmed = window.confirm("Are you sure you want to delete this card?");
+
+                                                    if (isConfirmed) {
+                                                        // User confirmed, proceed with deletion
+                                                        deleteCard(card.CardId);
+                                                        toggleAllEditButtons("enable");
+                                                        // Add your deletion logic here, e.g., calling an API or updating state
+                                                    } else {
+                                                        // User canceled, do nothing
+                                                        console.log("Deletion canceled.");
+                                                    }
+                                                }}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            {/* Message */}
-            {message && (
-                <div
-                    className="alert mt-4"
-                    role="alert"
-                    style={{
-                        backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
-                        color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
-                        borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
-                    }}
-                >
-                    {message}
-                </div>
-            )}
-        </div>
+                {/* Message */}
+                {message && (
+                    <div
+                        className="alert mt-4"
+                        role="alert"
+                        style={{
+                            backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
+                            color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
+                            borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
+                        }}
+                    >
+                        {message}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
