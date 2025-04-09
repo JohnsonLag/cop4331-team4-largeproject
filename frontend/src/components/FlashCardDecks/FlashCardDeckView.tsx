@@ -37,6 +37,12 @@ interface UpdateFlashCardResponse {
     jwtToken: Token;
 }
 
+interface UpdateDeckTitleResponse {
+    deckId: string;
+    error: string;
+    jwtToken: Token;
+}
+
 function FlashCardDeckView() {
     const [message, setMessage] = useState<string>('');
     const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
@@ -45,8 +51,8 @@ function FlashCardDeckView() {
     const [flashcards, setFlashcards] = useState<FlashCard[]>([]);
     const [newQuestion, setNewQuestion] = useState<string>('');
     const [newAnswer, setNewAnswer] = useState<string>('');
+	const [deckTitle, setDeckTitle] = useState<string>(searchParams.get("title") || '');
 
-    const deckTitle = searchParams.get("title");
     const navigate = useNavigate();
 
     // Get current user information
@@ -203,6 +209,50 @@ function FlashCardDeckView() {
         }
     }
 
+	async function updateDeckTitle(newTitle: string): Promise<void> {
+        const obj = {
+            userId,
+            deckId,
+            title: newTitle,
+            jwtToken: retrieveToken()
+        };
+
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/update_flashcard_deck'),
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(obj)
+        };
+
+        try {
+            const response = await axios(config);
+            const res: UpdateDeckTitleResponse = response.data;
+
+            if (res.jwtToken === null) {
+                handleInvalidToken(res.error);
+            } else if (res.error) {
+                setMessage(`Unable to update deck title: ${res.error}`);
+                setMessageType('error');
+            } else {
+                setDeckTitle(newTitle);
+                storeToken(res.jwtToken);
+                setMessage('Deck title updated successfully');
+                setMessageType('success');
+            }
+        } catch (error) {
+            console.error('Error updating deck title:', error);
+            setMessage('Failed to update deck title');
+            setMessageType('error');
+        }
+    }
+
+    function handleTitleEdit(): void {
+        const newTitle = prompt("Enter new deck title:", deckTitle);
+        if (newTitle && newTitle.trim() !== deckTitle) {
+            updateDeckTitle(newTitle);
+        }
+    }
+	
     function handleInvalidToken(error: string): void {
         setMessage(`JWT Token no longer valid: ${error}`);
         setMessageType('error');
@@ -264,11 +314,20 @@ function FlashCardDeckView() {
                 : card
         ));
     }
-
+	
     return (
         <div className="d-flex flex-column min-vh-100">
             <div className="container mt-5">
-                <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>{deckTitle}</h1>
+                <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>
+                    {deckTitle}
+                    <button
+                        onClick={handleTitleEdit}
+                        className="btn btn-link ms-2"
+                        style={{ color: '#7E24B9', fontSize: '1.2rem' }}
+                    >
+                        Edit Title
+                    </button>
+                </h1>
 
                 <button
                     className="btn btn-success mb-4"
