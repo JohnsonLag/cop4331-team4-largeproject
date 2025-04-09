@@ -327,19 +327,6 @@ function SearchDecks() {
                                 {/* Edit & Delete Buttons */}
                                 <div className="d-flex">
                                     <button
-                                        className="btn btn-sm me-2"
-                                        style={{
-                                            backgroundColor: '#D3D3D3',
-                                            color: '#353839',
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // Prevent card click event from firing
-                                            console.log(`Edit deck: ${deck[0]}`);
-                                        }}
-                                    >
-                                        <i className="bi bi-pen"></i>
-                                    </button>
-                                    <button
                                         className="btn btn-sm"
                                         style={{
                                             backgroundColor: '#DE6464',

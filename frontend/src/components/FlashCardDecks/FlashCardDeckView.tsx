@@ -1,369 +1,520 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { deleteToken, retrieveToken, storeToken, Token } from '../../tokenStorage';
 import { buildPath } from '../Path';
 
+interface FlashCard {
+    CardId: number;
+    DeckId: number;
+    Question: string;
+    Answer: string;
+    isEditing?: boolean;
+    editQuestion?: string;
+    editAnswer?: string;
+}
 
-function FlashCardDeckView () {
-    const [message, setMessage] = useState('');
+interface FetchFlashCardsResponse {
+    results: FlashCard[];
+    error: string;
+    jwtToken: Token;
+}
+
+interface AddFlashCardResponse {
+    cardId: number;
+    error: string;
+    jwtToken: Token;
+}
+
+interface DeleteFlashCardResponse {
+    error: string;
+    jwtToken: Token;
+}
+
+interface UpdateFlashCardResponse {
+    cardId: number;
+    error: string;
+    jwtToken: Token;
+}
+
+interface UpdateDeckTitleResponse {
+    deckId: string;
+    error: string;
+    jwtToken: Token;
+}
+
+function FlashCardDeckView() {
+    const [message, setMessage] = useState<string>('');
     const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
-    const { deckId } = useParams();
+    const { deckId } = useParams<{ deckId: string }>();
     const [searchParams] = useSearchParams();
     const [flashcards, setFlashcards] = useState<FlashCard[]>([]);
-    const [newQuestion, setNewQuestion] = useState('');
-    const [newAnswer, setNewAnswer] = useState('');
-    const deckTitle = searchParams.get("title");
+    const [newQuestion, setNewQuestion] = useState<string>('');
+    const [newAnswer, setNewAnswer] = useState<string>('');
+	const [deckTitle, setDeckTitle] = useState<string>(searchParams.get("title") || '');
 
     const navigate = useNavigate();
 
     // Get current user information
-    let _ud: any = localStorage.getItem('user_data');
-    let ud = JSON.parse(_ud);
-    let userId: string = ud.id;
-    
-    interface FlashCard {
-        CardId: number;
-        DeckId: number;
-        Question: string;
-        Answer: string;
-    }
-
-    interface FetchFlashCardsResponse {
-        results: FlashCard[];
-        error: string,
-        jwtToken: Token,
-    }
-
-    interface AddFlashCardResponse {
-        cardId: number,
-        error: string,
-        jwtToken: Token,
-    }
-
-    interface DeleteFlashCardResponse {
-        error: string,
-        jwtToken: Token
-    }
+    const userData = localStorage.getItem('user_data');
+    const userId = userData ? JSON.parse(userData).id : '';
 
     useEffect(() => {
-        fetchAllCards();
-    }, [deckId]);
+        if (deckId && userId) {
+            fetchAllCards();
+        }
+    }, [deckId, userId]);
 
-    // Function to search flash cards based on the query
     async function fetchAllCards(): Promise<void> {
-        let obj = { userId: userId, deckId, search: "", jwtToken: retrieveToken() };
-        let js = JSON.stringify(obj);
-
+        const obj = {
+            userId,
+            deckId,
+            search: "",
+            jwtToken: retrieveToken()
+        };
         const config: AxiosRequestConfig = {
             method: 'post',
             url: buildPath('api/search_flash_cards'),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: js
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(obj)
         };
 
-        axios(config)
-            .then(function (response: AxiosResponse<FetchFlashCardsResponse>) {
-                const res = response.data;
+        try {
+            const response = await axios(config);
+            const res: FetchFlashCardsResponse = response.data;
 
-                console.log(res);
-
-                if (res.jwtToken == null) {
-                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
-                    setMessageType("error"); // Set the message to error
-                    deleteToken();
-                    localStorage.removeItem("user_data");
-                    window.location.href = "/";
-                } else {
-                    // Update the cards
-                    setFlashcards(res.results); // Update the card list with search results
-                    storeToken(res.jwtToken);
-                }
-            })
-            .catch(function (error) {
-                alert(error.toString());
-            })
+            if (res.jwtToken === null) {
+                handleInvalidToken(res.error);
+            } else {
+                setFlashcards(res.results);
+                storeToken(res.jwtToken);
+            }
+        } catch (error) {
+            console.error('Error fetching cards:', error);
+            setMessage('Failed to fetch cards');
+            setMessageType('error');
+        }
     }
 
-    // Function to add new flash card
-    async function addFlashCard( question: string, answer: string ): Promise<void> {
-        let obj = { 
-            userId: userId, 
-            deckId: deckId,
-            question: question,
-            answer: answer, 
+    async function addFlashCard(question: string, answer: string): Promise<void> {
+        if (!question.trim() || !answer.trim()) return;
+
+        const obj = {
+            userId,
+            deckId,
+            question,
+            answer,
             jwtToken: retrieveToken()
         };
-        let js = JSON.stringify(obj);
 
         const config: AxiosRequestConfig = {
             method: 'post',
             url: buildPath('api/add_flash_card'),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: js
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(obj)
         };
 
-        axios(config)
-            .then(function (response: AxiosResponse<AddFlashCardResponse>) {
-                const res = response.data;
+        try {
+            const response = await axios(config);
+            const res: AddFlashCardResponse = response.data;
 
-                if (res.jwtToken == null) {
-                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
-                    deleteToken();
-                    localStorage.removeItem("user_data");
-                    window.location.href = "/";
-                }
-                else if (res.error != "") {
-                    setMessage("Unable to create flashcard " + res.error);
-                }
-                else {
-                    // Deck added successfully, update the deck list
-                    fetchAllCards();
-                    setMessage("Card added successfully.");
-                    setMessageType('success'); // Set message type to success
-
-                    // Refresh / Clear the form fields
-                    setNewQuestion('');
-                    setNewAnswer('');
-                }
-            })
-            .catch(function (error) {
-                alert(error.toString());
-            })
+            if (res.jwtToken === null) {
+                handleInvalidToken(res.error);
+            } else if (res.error) {
+                setMessage(`Unable to create flashcard: ${res.error}`);
+                setMessageType('error');
+            } else {
+                await fetchAllCards();
+                setMessage('Card added successfully');
+                setMessageType('success');
+                setNewQuestion('');
+                setNewAnswer('');
+            }
+        } catch (error) {
+            console.error('Error adding card:', error);
+            setMessage('Failed to add card');
+            setMessageType('error');
+        }
     }
 
-    // Function to delete card
-    async function deleteCard( cardId: number ): Promise<void> {
-        let obj = { userId: userId, deckId: deckId, cardId: cardId, jwtToken: retrieveToken() };
-        let js = JSON.stringify(obj);
+    async function deleteCard(cardId: number): Promise<void> {
+        const obj = {
+            userId,
+            deckId,
+            cardId,
+            jwtToken: retrieveToken()
+        };
 
         const config: AxiosRequestConfig = {
             method: 'post',
             url: buildPath('api/delete_flash_card'),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: js
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(obj)
         };
 
-        axios(config)
-            .then(function (response: AxiosResponse<DeleteFlashCardResponse>) {
-                const res = response.data;
+        try {
+            const response = await axios(config);
+            const res: DeleteFlashCardResponse = response.data;
 
-                if (res.jwtToken == null) {
-                    setMessage("JWT Token no longer valid... Unable to refresh token " + res.error);
-                    deleteToken();
-                    localStorage.removeItem("user_data");
-                    window.location.href = "/";
-                }
-                else if (res.error != "") {
-                    setMessage("Unable to delete deck " + res.error);
-                }
-                else {
-                    // Deck deleted successfully, update the deck list
-                    setFlashcards(prevCardList => prevCardList.filter(card => card.CardId !== cardId)); // Remove the deleted deck
-                    setMessage("Card deleted successfully.");
-                    setMessageType('error');
-                }
-            })
-            .catch(function (error) {
-                alert(error.toString());
-            })
+            if (res.jwtToken === null) {
+                handleInvalidToken(res.error);
+            } else if (res.error) {
+                setMessage(`Unable to delete card: ${res.error}`);
+                setMessageType('error');
+            } else {
+                setFlashcards(prev => prev.filter(card => card.CardId !== cardId));
+                setMessage('Card deleted successfully');
+                setMessageType('success');
+            }
+        } catch (error) {
+            console.error('Error deleting card:', error);
+            setMessage('Failed to delete card');
+            setMessageType('error');
+        }
     }
 
+    async function updateCard(card: FlashCard): Promise<void> {
+        const obj = {
+            userId,
+            cardId: card.CardId,
+            question: card.Question,
+            answer: card.Answer,
+            jwtToken: retrieveToken()
+        };
+
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/update_flashcard'),
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(obj)
+        };
+
+        try {
+            const response = await axios(config);
+            const res: UpdateFlashCardResponse = response.data;
+
+            if (res.jwtToken === null) {
+                handleInvalidToken(res.error);
+            } else if (res.error) {
+                setMessage(`Unable to update card: ${res.error}`);
+                setMessageType('error');
+            } else {
+                setMessage('Card updated successfully');
+                setMessageType('success');
+            }
+        } catch (error) {
+            console.error('Error updating card:', error);
+            setMessage('Failed to update card');
+            setMessageType('error');
+        }
+    }
+
+	async function updateDeckTitle(newTitle: string): Promise<void> {
+        const obj = {
+            userId,
+            deckId,
+            title: newTitle,
+            jwtToken: retrieveToken()
+        };
+
+        const config: AxiosRequestConfig = {
+            method: 'post',
+            url: buildPath('api/update_flashcard_deck'),
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(obj)
+        };
+
+        try {
+            const response = await axios(config);
+            const res: UpdateDeckTitleResponse = response.data;
+
+            if (res.jwtToken === null) {
+                handleInvalidToken(res.error);
+            } else if (res.error) {
+                setMessage(`Unable to update deck title: ${res.error}`);
+                setMessageType('error');
+            } else {
+                setDeckTitle(newTitle);
+                storeToken(res.jwtToken);
+                setMessage('Deck title updated successfully');
+                setMessageType('success');
+            }
+        } catch (error) {
+            console.error('Error updating deck title:', error);
+            setMessage('Failed to update deck title');
+            setMessageType('error');
+        }
+    }
+
+    function handleTitleEdit(): void {
+        const newTitle = prompt("Enter new deck title:", deckTitle);
+        if (newTitle && newTitle.trim() !== deckTitle) {
+            updateDeckTitle(newTitle);
+        }
+    }
+	
+    function handleInvalidToken(error: string): void {
+        setMessage(`JWT Token no longer valid: ${error}`);
+        setMessageType('error');
+        deleteToken();
+        localStorage.removeItem('user_data');
+        window.location.href = '/';
+    }
+
+    function handleEditClick(cardId: number): void {
+        setFlashcards(prev => prev.map(card =>
+            card.CardId === cardId
+                ? {
+                    ...card,
+                    isEditing: true,
+                    editQuestion: card.Question,
+                    editAnswer: card.Answer
+                }
+                : card
+        ));
+    }
+
+    function handleCancelEdit(cardId: number): void {
+        setFlashcards(prev => prev.map(card =>
+            card.CardId === cardId
+                ? { ...card, isEditing: false }
+                : card
+        ));
+    }
+
+    function handleUpdateClick(card: FlashCard): void {
+        if (!card.editQuestion?.trim() || !card.editAnswer?.trim()) {
+            setMessage('Question and answer cannot be empty');
+            setMessageType('error');
+            return;
+        }
+
+        const updatedCard = {
+            ...card,
+            Question: card.editQuestion,
+            Answer: card.editAnswer
+        };
+
+        updateCard(updatedCard);
+        setFlashcards(prev => prev.map(c =>
+            c.CardId === card.CardId
+                ? { ...updatedCard, isEditing: false }
+                : c
+        ));
+    }
+
+    function handleEditChange(
+        cardId: number,
+        field: 'editQuestion' | 'editAnswer',
+        value: string
+    ): void {
+        setFlashcards(prev => prev.map(card =>
+            card.CardId === cardId
+                ? { ...card, [field]: value }
+                : card
+        ));
+    }
+	
     return (
         <div className="d-flex flex-column min-vh-100">
-        <div className="container mt-5">
-            {/* Title */}
-            <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>{ deckTitle }</h1>
+            <div className="container mt-5">
+                <h1 className="text-center mb-4" style={{ color: '#4A4A4A' }}>
+                    {deckTitle}
+                    <button
+                        onClick={handleTitleEdit}
+                        className="btn btn-link ms-2"
+                        style={{ color: '#7E24B9', fontSize: '1.2rem' }}
+                    >
+                        Edit Title
+                    </button>
+                </h1>
 
-            {/* Review Button */}
-            <button
-                className="btn btn-success mb-4"
-                onClick={() => navigate(`/decks/${deckId}/review`)}
-                style={{
-                    backgroundColor: '#7E24B9',
-                    color: 'white',
-                    padding: '10px 20px',
-                    marginBottom: '20px',
-                    width: '40%',
-                }}
-            >
-                Review
-            </button>
+                <button
+                    className="btn btn-success mb-4"
+                    onClick={() => navigate(`/decks/${deckId}/review`)}
+                    style={{
+                        backgroundColor: '#7E24B9',
+                        color: 'white',
+                        padding: '10px 20px',
+                        marginBottom: '20px',
+                        width: '40%',
+                    }}
+                >
+                    Review
+                </button>
 
-            {/* Add Flashcard Section */}
-            <div className="mt-4">
-                <div className="row mb-3 align-items-center">
-                    <div className="col-md-5">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Question"
-                            value={newQuestion}
-                            onChange={(e) => setNewQuestion(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-5">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Answer"
-                            value={newAnswer}
-                            onChange={(e) => setNewAnswer(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-2">
-                        <button
-                            type="button" 
-                            className="btn w-100"
-                            style={{ backgroundColor: '#7E24B9', color: 'white' }}
-                            onClick={() => {
-                                if (newQuestion != "")
-                                {
-                                    addFlashCard(newQuestion, newAnswer)
-                                }
-                            }} // Call addFlashCard directly
-                        >
-                            Add
-                        </button>
+                <div className="mt-4">
+                    <div className="row mb-3 align-items-center">
+                        <div className="col-md-5">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Question"
+                                value={newQuestion}
+                                onChange={(e) => setNewQuestion(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-5">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Answer"
+                                value={newAnswer}
+                                onChange={(e) => setNewAnswer(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <button
+                                type="button"
+                                className="btn w-100"
+                                style={{ backgroundColor: '#7E24B9', color: 'white' }}
+                                onClick={() => addFlashCard(newQuestion, newAnswer)}
+                                disabled={!newQuestion.trim() || !newAnswer.trim()}
+                            >
+                                Add
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div 
-                style={{
-                    maxHeight: 'calc(100vh - 400px)',
-                    overflowY: 'auto', // Make div scrollable
-                    overflowX: 'hidden',
-                    paddingRight: '10px', // Space for scrollbar
-                    marginTop: '20px',
-                    paddingBottom: '50px'
-                }}
-            >
-                {/* Flashcards List */}
-                <div className="row">
-                    {flashcards.map((card) => (
-                        <div key={card.CardId} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
-                            {/* Card */}
-                            <div
-                                className="card shadow-sm h-100 d-flex flex-column"
-                                style={{
-                                    backgroundColor: '#FFFF',
-                                    borderColor: '#D3D3D3',
-                                    color: '#4A4A4A',
-                                    flex: '1',
-                                    padding: '0',
-                                    cursor: 'pointer', // Change cursor to pointer on hover
-                                    transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
-                                }}
-                            >
-                                {/* Card Body */}
-                                <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
-                                <h5 className="card-title" style=
-                                    {{ 
-                                        color: '#7E24B9',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        width: '100%',
-                                        maxWidth: '100%',
-                                        padding: '0 10px' // Add some padding if needed
-                                    }}
-                                >
-                                    {card.Question}
-                                </h5>
-                                <p className="card-text" style=
-                                    {{
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        width: '100%',
-                                        maxWidth: '100%',
-                                        padding: '0 10px' // Add some padding if needed
-                                    }}
-                                >
-                                    {card.Answer}
-                                </p>
-                                </div>
-
-                                {/* Card Footer */}
-                                <div
-                                    className="card-footer d-flex justify-content-end"
+                <div
+                    style={{
+                        maxHeight: 'calc(100vh - 400px)',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        paddingRight: '10px',
+                        marginTop: '20px',
+                        paddingBottom: '50px'
+                    }}
+                >
+                    <div className="row">
+                        {flashcards.map((card) => (
+                            <div key={card.CardId} className="col-md-4 d-flex" style={{ height: "200px", marginTop: "25px" }}>
+                                <div className="card shadow-sm h-100 d-flex flex-column"
                                     style={{
-                                        backgroundColor: '#E6E1F5',
-                                        borderTop: '1px solid #D3D3D3',
-                                    }}
-                                >
-                                    {/* Edit & Delete Buttons */}
-                                    <div className="d-flex">
-                                        <button
-                                            className="btn btn-sm me-2"
-                                            style={{
-                                                backgroundColor: '#D3D3D3',
-                                                color: '#353839',
-                                            }}
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent card click event from firing
-                                                console.log(`Edit deck: ${card.CardId}`);
-                                            }}
-                                        >
-                                            <i className="bi bi-pen"></i>
-                                        </button>
-                                        <button
-                                            className="btn btn-sm"
-                                            style={{
-                                                backgroundColor: '#DE6464',
-                                                color: '#FFFFFF',
-                                            }}
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent card click event from firing
-                                                // Show confirmation dialog
-                                                const isConfirmed = window.confirm("Are you sure you want to delete this card?");
-
-                                                if (isConfirmed) {
-                                                    // User confirmed, proceed with deletion
-                                                    deleteCard(card.CardId);
-                                                    // Add your deletion logic here, e.g., calling an API or updating state
-                                                } else {
-                                                    // User canceled, do nothing
-                                                    console.log("Deletion canceled.");
-                                                }
-                                            }}
-                                        >
-                                            <i className="bi bi-trash"></i>
-                                        </button>
+                                        backgroundColor: '#FFFF',
+                                        borderColor: '#D3D3D3',
+                                        color: '#4A4A4A',
+                                        flex: '1',
+                                        padding: '0',
+                                        cursor: 'pointer', // Change cursor to pointer on hover
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease', // Smooth transition for hover effects
+                                    }}>
+                                    <div className="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                                        {card.isEditing ? (
+                                            <>
+                                                <input
+                                                    type="text"
+                                                    className="form-control mb-2"
+                                                    value={card.editQuestion || ''}
+                                                    onChange={(e) => handleEditChange(card.CardId, 'editQuestion', e.target.value)}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={card.editAnswer || ''}
+                                                    onChange={(e) => handleEditChange(card.CardId, 'editAnswer', e.target.value)}
+                                                />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <h5 className="card-title"
+                                                    style={{
+                                                        color: '#7E24B9',
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        width: '100%',
+                                                        maxWidth: '100%',
+                                                        padding: '0 10px' // Add some padding if needed
+                                                    }}>{card.Question}</h5>
+                                                <p
+                                                    className="card-text"
+                                                    style=
+                                                    {{
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        width: '100%',
+                                                        maxWidth: '100%',
+                                                        padding: '0 10px' // Add some padding if needed
+                                                    }}
+                                                >{card.Answer}</p>
+                                            </>
+                                        )}
+                                    </div>
+                                    <div
+                                        className="card-footer d-flex justify-content-end"
+                                        style={{
+                                            backgroundColor: '#E6E1F5',
+                                            borderTop: '1px solid #D3D3D3',
+                                        }}
+                                    >
+                                        <div className="d-flex">
+                                            {card.isEditing ? (
+                                                <>
+                                                    <button
+                                                        className="btn btn-sm me-2"
+                                                        style={{ backgroundColor: '#9B59B6', color: '#FFFFFF' }}
+                                                        onClick={() => handleUpdateClick(card)}
+                                                    >
+                                                        Update
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-sm"
+                                                        style={{ backgroundColor: '#D3D3D3', color: '#353839' }}
+                                                        onClick={() => handleCancelEdit(card.CardId)}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        className="btn btn-sm me-2"
+                                                        style={{ backgroundColor: '#D3D3D3', color: '#353839' }}
+                                                        onClick={() => handleEditClick(card.CardId)}
+                                                    >
+                                                        <i className="bi bi-pen"></i>
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-sm"
+                                                        style={{ backgroundColor: '#DE6464', color: '#FFFFFF' }}
+                                                        onClick={() => {
+                                                            const isConfirmed = window.confirm("Are you sure you want to delete this card?");
+                                                            if (isConfirmed) deleteCard(card.CardId);
+                                                        }}
+                                                    >
+                                                        <i className="bi bi-trash"></i>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            {/* Message */}
-            {message && (
-                <div
-                    className="alert mt-4"
-                    role="alert"
-                    style={{
-                        backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
-                        color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
-                        borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
-                    }}
-                >
-                    {message}
-                </div>
-            )}
-        </div>
+                {message && (
+                    <div
+                        className="alert mt-4"
+                        role="alert"
+                        style={{
+                            backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA',
+                            color: messageType === 'success' ? '#155724' : '#721C24',
+                            borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB',
+                        }}
+                    >
+                        {message}
+                    </div>
+                )}
+            </div>
         </div>
     );
-};
+}
 
 export default FlashCardDeckView;
