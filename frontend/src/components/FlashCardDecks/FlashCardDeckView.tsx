@@ -18,7 +18,7 @@ function FlashCardDeckView () {
     const navigate = useNavigate();
 	
 	let initialTitleElement: HTMLElement | null;
-	let initialTextElement: HTMLElement | null;
+	let initialTextElement: HTMLElement | null;	
 
     // Get current user information
     let _ud: any = localStorage.getItem('user_data');
@@ -276,117 +276,322 @@ function FlashCardDeckView () {
 		}
 	}
 	
+	// function modifyCardFace(card: FlashCard, command: string) : void {
+		
+		// if (card != null)
+		// {
+			// let idQuestion: string = "card-"+card.CardId+"-title";
+			// let idAnswer: string = "card-"+card.CardId+"-text";
+			// let idCard: string = "card-"+card.CardId+"-body";
+			
+			// // Current elements.
+			// let initialQuestion: HTMLElement | HTMLInputElement | null = document.getElementById(idQuestion);
+			// let initialAnswer: HTMLElement | HTMLInputElement | null = document.getElementById(idAnswer);
+			// let singleCard: HTMLElement | null = document.getElementById(idCard);
+			
+			// //
+			// // edit
+			// // 		change flat text to modifiable (createElement).
+			// // 		keep original text.
+			// //
+			// // cancel
+			// // 		change modifiable text to flat.
+			// // 		keep original text.
+			// //
+			// // update
+			// // 		change modifiable text to flat.
+			// // 		keep updated text.
+			// //
+			// if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
+			// {
+				// // Store initial elements.
+				// if (command === "edit")
+				// {
+					// initialTitleElement = initialQuestion;
+					// initialTextElement = initialAnswer;
+				// }
+				
+				// if (initialTitleElement !== null && initialTextElement !== null)
+				// {
+					// // Use textareas or the original elements.
+					// let updatedQuestion: HTMLElement | HTMLTextAreaElement | null;
+					// let updatedAnswer: HTMLElement| HTMLTextAreaElement | null;
+					
+					// // let valueQuestion: Text | string | null;
+					// // let valueAnswer: Text | string | null;
+					
+					// let valueQuestion: string | null;
+					// let valueAnswer: string | null;
+					
+					// // Textareas with original text.
+					// if (command === "edit")
+					// {
+						// updatedQuestion = document.createElement("input");
+						// updatedAnswer = document.createElement("input");
+						
+						// valueQuestion = card.Question;
+						// valueAnswer = card.Answer;
+					// }
+					
+					// // "Flat" areas with updated text.
+					// else if (command === "update")
+					// {
+						// updatedQuestion = initialTitleElement;
+						// updatedAnswer = initialTextElement;
+						
+						// valueQuestion = initialQuestion.getAttribute("value");
+						// valueAnswer =  initialAnswer.getAttribute("value");
+					// }
+					
+					// // "Flat" areas with original text.
+					// else // (command === "cancel")
+					// {
+						// updatedQuestion = initialTitleElement;
+						// updatedAnswer = initialTextElement;
+						
+						// valueQuestion = card.Question;
+						// valueAnswer =  card.Answer;
+					// }
+					
+					
+					// if (updatedQuestion !== null && updatedAnswer !== null)
+					// {
+						// // Set attributes for updated elements.
+						// // Mainly used to give the textareas the same
+						// // ids as the original elements.
+						// // if (command === "update")
+						// // {
+							// updatedQuestion.id = idQuestion;
+							// updatedAnswer.id = idAnswer;
+						// // }
+						
+						// if (valueQuestion !== null && valueAnswer !== null)
+						// {
+							// // Add text to updated elements.
+							// updatedQuestion.innerHTML = valueQuestion;
+							// updatedAnswer.innerHTML = valueAnswer;
+							
+							// // Replace.
+							// if (command === "cancel")
+							// {
+								// singleCard.replaceChild(initialTitleElement, initialQuestion);
+								// singleCard.replaceChild(initialTextElement, initialAnswer);
+							// }
+							
+							// else
+							// {
+								// singleCard.replaceChild(updatedAnswer, initialAnswer);
+								// singleCard.replaceChild(updatedQuestion, initialQuestion);
+							// }
+							// return;
+						// }
+					// }
+				// }
+			
+			// }
+		// }
+		
+		// if (command === "cancel"){
+			// console.log("Could not remove input fields.");
+		// } else if (command === "edit"){
+			// console.log("Could not add input fields.");
+		// } else if (command === "update"){
+			// console.log("Could not remove input fields and update card.");
+		// }
+		
+	// }
+		
 	function modifyCardFace(card: FlashCard, command: string) : void {
 		
-		if (card != null)
+		if (card != null && command !== null)
 		{
 			let idQuestion: string = "card-"+card.CardId+"-title";
 			let idAnswer: string = "card-"+card.CardId+"-text";
 			let idCard: string = "card-"+card.CardId+"-body";
 			
-			// Current elements.
-			let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
-			let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
-			let singleCard: HTMLElement | null = document.getElementById(idCard);
-			
-			//
-			// edit
-			// 		change flat text to modifiable (createElement).
-			// 		keep original text.
-			//
-			// cancel
-			// 		change modifiable text to flat.
-			// 		keep original text.
-			//
-			// update
-			// 		change modifiable text to flat.
-			// 		keep updated text.
-			//
-			if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
+			// flat to input.
+			if (command === "edit")
 			{
-				// Store initial elements.
-				if (command === "edit")
-				{
+				let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
+				let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
+				let singleCard: HTMLElement | null = document.getElementById(idCard);
+				
+				if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
+			{
 					initialTitleElement = initialQuestion;
 					initialTextElement = initialAnswer;
-				}
-				
+
 				if (initialTitleElement !== null && initialTextElement !== null)
 				{
-					// Use textareas or the original elements.
+					// let updatedQuestion: HTMLElement | HTMLInputElement | null;
+					// let updatedAnswer: HTMLElement| HTMLInputElement | null;
+					
+					// let updatedQuestion: HTMLInputElement | null;
+					// let updatedAnswer: HTMLInputElement | null;
+					
 					let updatedQuestion: HTMLElement | null;
-					let updatedAnswer: HTMLElement| null;
+					let updatedAnswer: HTMLElement | null;
 					
-					let valueQuestion: Text | string | null;
-					let valueAnswer: Text | string | null;
+					// let valueQuestion: Text | string | null;
+					// let valueAnswer: Text | string | null;
 					
-					// Textareas with original text.
-					if (command === "edit")
-					{
-						updatedQuestion = document.createElement("textarea");
-						updatedAnswer = document.createElement("textarea");
+					let valueQuestion: string | null;
+					let valueAnswer: string | null;
+					
+						updatedQuestion = document.createElement("input");
+						updatedAnswer = document.createElement("input");
 						
 						valueQuestion = card.Question;
 						valueAnswer = card.Answer;
-					}
-					
-					// "Flat" areas with updated text.
-					else if (command === "update")
-					{
-						updatedQuestion = initialTitleElement;
-						updatedAnswer = initialTextElement;
-						
-						valueQuestion = initialQuestion.innerText;
-						valueAnswer =  initialAnswer.innerText;
-					}
-					
-					// "Flat" areas with original text.
-					else // (command === "cancel")
-					{
-						updatedQuestion = initialTitleElement;
-						updatedAnswer = initialTextElement;
-						
-						valueQuestion = card.Question;
-						valueAnswer =  card.Answer;
-					}
 					
 					
 					if (updatedQuestion !== null && updatedAnswer !== null)
 					{
-						// Set attributes for updated elements.
-						// Mainly used to give the textareas the same
-						// ids as the original elements.
-						// if (command === "update")
-						// {
 							updatedQuestion.id = idQuestion;
 							updatedAnswer.id = idAnswer;
-						// }
 						
 						if (valueQuestion !== null && valueAnswer !== null)
 						{
 							// Add text to updated elements.
-							updatedQuestion.innerText = valueQuestion;
-							updatedAnswer.innerText = valueAnswer;
+							updatedQuestion.textContent = valueQuestion;
+							updatedAnswer.textContent = valueAnswer;
 							
-							// Replace.
-							if (command === "cancel")
-							{
-								singleCard.replaceChild(initialTitleElement, initialQuestion);
-								singleCard.replaceChild(initialTextElement, initialAnswer);
-							}
-							
-							else
-							{
 								singleCard.replaceChild(updatedAnswer, initialAnswer);
 								singleCard.replaceChild(updatedQuestion, initialQuestion);
-							}
+								
 							return;
 						}
 					}
 				}
 			
 			}
-		}
+		
+			}
+			
+			// input to flat.
+			if (command === "cancel")
+			{
+				let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
+				let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
+				let singleCard: HTMLElement | null = document.getElementById(idCard);
+				
+				if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
+			{
+
+				if (initialTitleElement !== null && initialTextElement !== null)
+				{
+					// let updatedQuestion: HTMLElement | HTMLInputElement | null;
+					// let updatedAnswer: HTMLElement| HTMLInputElement | null;
+					
+					// let updatedQuestion: HTMLInputElement | null;
+					// let updatedAnswer: HTMLInputElement | null;
+					
+					let updatedQuestion: HTMLElement | null;
+					let updatedAnswer: HTMLElement | null;
+					
+					// let valueQuestion: Text | string | null;
+					// let valueAnswer: Text | string | null;
+					
+					let valueQuestion: string | null;
+					let valueAnswer: string | null;
+					
+						updatedQuestion = initialTitleElement;
+						updatedAnswer = initialTextElement;
+						
+						// valueQuestion = initialTitleElement.innerText;
+						// valueAnswer = initialTextElement.innerText;
+						
+						valueQuestion = card.Question;
+						valueAnswer = card.Answer;
+					
+					
+					if (updatedQuestion !== null && updatedAnswer !== null)
+					{
+							updatedQuestion.id = idQuestion;
+							updatedAnswer.id = idAnswer;
+						
+						if (valueQuestion !== null && valueAnswer !== null)
+						{
+							// Add text to updated elements.
+							// updatedQuestion.innerHTML = valueQuestion;
+							// updatedAnswer.innerHTML = valueAnswer;
+							
+							updatedQuestion.textContent = valueQuestion;
+							updatedAnswer.textContent = valueAnswer;
+							
+								singleCard.replaceChild(updatedAnswer, initialAnswer);
+								singleCard.replaceChild(updatedQuestion, initialQuestion);
+								
+							return;
+						}
+					}
+				}
+			
+			}
+		
+			}
+				
+			// input to flat.
+			if (command === "update")
+			{
+				let initialQuestion: HTMLElement | null = document.getElementById(idQuestion);
+				let initialAnswer: HTMLElement | null = document.getElementById(idAnswer);
+				let singleCard: HTMLElement | null = document.getElementById(idCard);
+				
+				if (initialQuestion !== null && initialAnswer !== null && singleCard !== null)
+			{
+
+				if (initialTitleElement !== null && initialTextElement !== null)
+				{
+					// let updatedQuestion: HTMLElement | HTMLInputElement | null;
+					// let updatedAnswer: HTMLElement| HTMLInputElement | null;
+					
+					// let updatedQuestion: HTMLInputElement | null;
+					// let updatedAnswer: HTMLInputElement | null;
+					
+					let updatedQuestion: HTMLElement | null;
+					let updatedAnswer: HTMLElement | null;
+					
+					// let valueQuestion: Text | string | null;
+					// let valueAnswer: Text | string | null;
+					
+					let valueQuestion: string | null;
+					let valueAnswer: string | null;
+					
+						updatedQuestion = initialTitleElement;
+						updatedAnswer = initialTextElement;
+						
+						// valueQuestion = initialQuestion.getAttribute("textContent");
+						// valueAnswer = initialAnswer.getAttribute("textContent");
+						
+						valueQuestion = initialQuestion.textContent;
+						valueAnswer = initialAnswer.textContent;
+					
+					
+					if (updatedQuestion !== null && updatedAnswer !== null)
+					{
+							updatedQuestion.id = idQuestion;
+							updatedAnswer.id = idAnswer;
+						
+						if (valueQuestion !== null && valueAnswer !== null)
+						{
+							// Add text to updated elements.
+							updatedQuestion.textContent = valueQuestion;
+							updatedAnswer.textContent = valueAnswer;
+							
+								singleCard.replaceChild(updatedAnswer, initialAnswer);
+								singleCard.replaceChild(updatedQuestion, initialQuestion);
+								
+							return;
+						}
+					}
+				}
+			
+			}
+		
+			}
+			
+			}
 		
 		if (command === "cancel"){
 			console.log("Could not remove input fields.");
@@ -607,6 +812,7 @@ function FlashCardDeckView () {
                                                 if (isConfirmed) {
                                                     // User confirmed, proceed with deletion
                                                     deleteCard(card.CardId);
+													toggleAllEditButtons("enable");
                                                     // Add your deletion logic here, e.g., calling an API or updating state
                                                 } else {
                                                     // User canceled, do nothing
