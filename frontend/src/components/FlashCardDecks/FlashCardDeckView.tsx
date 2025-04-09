@@ -452,9 +452,12 @@ function FlashCardDeckView () {
 						
 						if (valueQuestion !== null && valueAnswer !== null)
 						{
-							// Add text to updated elements.
-							updatedQuestion.textContent = valueQuestion;
-							updatedAnswer.textContent = valueAnswer;
+							// // Add text to updated elements.
+							// updatedQuestion.value = valueQuestion;
+							// updatedAnswer.value = valueAnswer;
+							
+							updatedQuestion.setAttribute("value", valueQuestion);
+							updatedAnswer.setAttribute("value", valueAnswer);
 							
 								singleCard.replaceChild(updatedAnswer, initialAnswer);
 								singleCard.replaceChild(updatedQuestion, initialQuestion);
@@ -561,11 +564,11 @@ function FlashCardDeckView () {
 						updatedQuestion = initialTitleElement;
 						updatedAnswer = initialTextElement;
 						
-						// valueQuestion = initialQuestion.getAttribute("textContent");
-						// valueAnswer = initialAnswer.getAttribute("textContent");
+						valueQuestion = initialQuestion.getAttribute("value");
+						valueAnswer = initialAnswer.getAttribute("value");
 						
-						valueQuestion = initialQuestion.textContent;
-						valueAnswer = initialAnswer.textContent;
+						// valueQuestion = initialQuestion.value;
+						// valueAnswer = initialAnswer.value;
 					
 					
 					if (updatedQuestion !== null && updatedAnswer !== null)
