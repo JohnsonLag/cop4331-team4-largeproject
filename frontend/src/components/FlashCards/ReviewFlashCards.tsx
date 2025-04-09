@@ -5,8 +5,7 @@ import { deleteToken, retrieveToken, storeToken, Token } from '../../tokenStorag
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { buildPath } from '../Path';
 
-function ReviewFlashCards() 
-{
+function ReviewFlashCards() {
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);    
     const { deckId } = useParams();
@@ -88,7 +87,7 @@ function ReviewFlashCards()
     }
 
     // Function to update confidence rating
-    async function rateFlashCard( cardId : number, confidence : number ): Promise<void> {
+    async function rateFlashCard(cardId: number, confidence: number): Promise<void> {
         let obj = { 
             userId: userId, 
             deckId: deckId, 
@@ -160,6 +159,22 @@ function ReviewFlashCards()
         setIsFlipped(false);
     };
 
+    // Handle Left (Previous) Button
+    const handlePrevious = () => {
+        if (currentCardIndex > 0) {
+            setCurrentCardIndex(currentCardIndex - 1);
+        }
+        setIsFlipped(false);
+    };
+
+    // Handle Right (Next) Button
+    const handleNext = () => {
+        if (currentCardIndex < cards.length - 1) {
+            setCurrentCardIndex(currentCardIndex + 1);
+        }
+        setIsFlipped(false);
+    };
+
     if (isLoading) {
         return (
             <div className="flashcard-container loading-container">
@@ -192,80 +207,98 @@ function ReviewFlashCards()
         <div className="full-page-background">
             <div className="flashcard-review-container">
                 <div className="progress-container">
-                <div className="progress">
-                    <div 
-                    className="progress-bar bg-purple" 
-                    role="progressbar" 
-                    style={{ width: `${((currentCardIndex + 1) / cards.length) * 100}%` }}
-                    aria-valuenow={currentCardIndex + 1}
-                    aria-valuemin={0}
-                    aria-valuemax={cards.length}
-                    >
-                    {currentCardIndex + 1}/{cards.length}
+                    <div className="progress">
+                        <div 
+                            className="progress-bar bg-purple" 
+                            role="progressbar" 
+                            style={{ width: `${((currentCardIndex + 1) / cards.length) * 100}%` }}
+                            aria-valuenow={currentCardIndex + 1}
+                            aria-valuemin={0}
+                            aria-valuemax={cards.length}
+                        >
+                            {currentCardIndex + 1}/{cards.length}
+                        </div>
                     </div>
-                </div>
                 </div>
 
                 <div 
-                className={`flashcard ${isFlipped ? 'flipped' : ''}`}
-                onClick={handleFlip}
+                    className={`flashcard ${isFlipped ? 'flipped' : ''}`}
+                    onClick={handleFlip}
                 >
-                <div className="flashcard-front">
-                    <h3>Question</h3>
-                    <p>{currentCard.Question}</p>
-                    <div className="hint">Click to reveal answer</div>
-                </div>
-                <div className="flashcard-back">
-                    <h3>Answer</h3>
-                    <p>{currentCard.Answer}</p>
-                    <div className="hint">Click to hide answer</div>
-                </div>
+                    <div className="flashcard-front">
+                        <h3>Question</h3>
+                        <p>{currentCard.Question}</p>
+                        <div className="hint">Click to reveal answer</div>
+                    </div>
+                    <div className="flashcard-back">
+                        <h3>Answer</h3>
+                        <p>{currentCard.Answer}</p>
+                        <div className="hint">Click to hide answer</div>
+                    </div>
                 </div>
 
                 {isFlipped && (
-                <div className="confidence-rating-container">
-                    <h4>How confident are you?</h4>
-                    <div className="confidence-buttons">
-                    {[-2, -1, 0, 1, 2].map((confidence) => (
-                        <button
-                        key={confidence}
-                        className={`btn confidence-btn ${confidence < 0 ? 'btn-low' : confidence === 0 ? 'btn-neutral' : 'btn-high'}`}
-                        onClick={() => rateFlashCard(
-                            Number(currentCard.CardId), 
-                            Number(confidence)
-                        )}
+                    <div className="confidence-rating-container">
+                        <h4>How confident are you?</h4>
+                        <div className="confidence-buttons">
+                            {[-2, -1, 0, 1, 2].map((confidence) => (
+                                <button
+                                    key={confidence}
+                                    className={`btn confidence-btn ${confidence < 0 ? 'btn-low' : confidence === 0 ? 'btn-neutral' : 'btn-high'}`}
+                                    onClick={() => rateFlashCard(
+                                        Number(currentCard.CardId), 
+                                        Number(confidence)
+                                    )}
+                                >
+                                    {getConfidenceLabel(confidence)}
+                                </button>
+                            ))}
+                        </div>
+                        <button 
+                            className="btn btn-skip"
+                            onClick={handleSkip}
                         >
-                        {getConfidenceLabel(confidence)}
+                            Skip Card
                         </button>
-                    ))}
                     </div>
-                    <button 
-                    className="btn btn-skip"
-                    onClick={handleSkip}
-                    >
-                    Skip Card
-                    </button>
-                </div>
                 )}
 
-            {/* Message */}
-            {message && (
-                <div
-                    className="alert mt-4"
-                    role="alert"
-                    style={{
-                        backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
-                        color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
-                        borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
-                    }}
-                >
-                    {message}
+                {/* Navigation buttons */}
+                <div className="card-navigation">
+                    <button 
+                        className="btn btn-nav" 
+                        onClick={handlePrevious} 
+                        disabled={currentCardIndex === 0}
+                    >
+                        &lt; Previous
+                    </button>
+                    <button 
+                        className="btn btn-nav" 
+                        onClick={handleNext} 
+                        disabled={currentCardIndex === cards.length - 1}
+                    >
+                        Next &gt;
+                    </button>
                 </div>
-            )}
+
+                {/* Message */}
+                {message && (
+                    <div
+                        className="alert mt-4"
+                        role="alert"
+                        style={{
+                            backgroundColor: messageType === 'success' ? '#D4EDDA' : '#F8D7DA', // Green for success, red for error
+                            color: messageType === 'success' ? '#155724' : '#721C24', // Dark green for success, dark red for error
+                            borderColor: messageType === 'success' ? '#C3E6CB' : '#F5C6CB', // Light green for success, light red for error
+                        }}
+                    >
+                        {message}
+                    </div>
+                )}
             </div>
         </div>
     );
-};
+}
 
 // Helper function to get confidence level labels
 const getConfidenceLabel = (rating: number): string => {
