@@ -22,5 +22,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "public/assets/InsertMarkdownPanel.js"]
+  "include": ["src", "public/assets/InsertMarkdownPanel.js"],
+  "exclude": ["src/__tests__", "src/setupTests.ts"]
 }
