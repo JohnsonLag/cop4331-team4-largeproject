@@ -53,7 +53,7 @@ function ResetPassword() {
             verifyToken();
         } else {
             setMessageType('error');
-            setMessage("No tooken provided");
+            setMessage("No token provided");
             setValidToken(false);
         }
     }, [token]);

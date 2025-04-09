@@ -276,6 +276,72 @@ exports.setApp = function ( app, client )
 
     });
 
+
+    // Update
+    app.post('/api/update_flashcard', async (req, res, next) =>
+    {
+        // incoming: userId, cardId, question, answer, jwtToken
+        // outgoing: cardId, error, jwtToken
+        const { userId, cardId, question, answer, jwtToken } = req.body;
+
+        // Check Json Web Token
+        try
+        {
+            if ( token.isExpired(jwtToken) )
+            {
+                var r = { error:"The JWT is no longer valid", jwtToken: ""};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch (e)
+        {
+            console.log(e.message);
+        }
+
+        // Update flash card
+        var error = '';
+        try 
+        {
+            // Find the deck and update it
+            const updatedCard = await FlashCards.findOneAndUpdate(
+                { UserId: userId, CardId: cardId },
+                { 
+                    $set: { 
+                        Question: question,
+                        Answer: answer,
+                    } 
+                },
+                { new: true }  // Return the updated document
+            );
+    
+            if (!updatedCard) {
+                error = "Flashcard not found or you don't have permission to edit it";
+            }
+        }
+        catch (e)
+        {
+            error = e.toString();
+            console.log(e);
+        }
+
+        // Refresh the token
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwtToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            error = e.toString();
+        }
+
+        // Return
+        var ret = { cardId: cardId, error: error, jwtToken: refreshedToken };
+        res.status(200).json(ret);
+    });
+
     // Delete
     app.post('/api/delete_flash_card', async (req, res, next) => 
     {

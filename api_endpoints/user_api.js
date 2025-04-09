@@ -10,7 +10,7 @@ const Users = require("../models/users.js");
 const getNextId = require("../utils/idGenerator.js");
 const { sendVerificationEmail } = require('../utils/sendEmail.js');
 
-// Email validator
+// Email & password validator
 const validator = require("../utils/validateRegex.js");
 
 
@@ -27,9 +27,18 @@ exports.setApp = function ( app, client )
         const { login, password, firstName, lastName, email } = req.body;
 
         // Check validity of email using regex
-        if (!validator.isValidEmail(email)){
-            error = 'Invalid email! please use format: user@email.com'
-            const ret = { id: -1, firstName: '', lastName: '', error: error};
+        if (!validator.isValidEmail(email)) {
+            error = 'Invalid email! Please use format: user@email.com'
+            const ret = { id: -1, firstName: '', lastName: '', error: error };
+            res.status(200).json(ret);
+            return;
+        }
+
+        // Check validity of password using regex
+        if (!validator.isValidPassword(password)) {
+            error = 'Invalid password! Please include at least eight characters, ' +
+                'at least one letter, and at least one number.';
+            const ret = { id: -1, firstName: '', lastName: '', error: error };
             res.status(200).json(ret);
             return;
         }

@@ -39,7 +39,7 @@ function MarkdownPanel({ noteId, textAreaId, note, noteBody }: MarkdownPanelProp
     let _ud: any = localStorage.getItem('user_data');
     let ud = JSON.parse(_ud);
     let userId: string = ud.id;
-
+	
     useEffect(() => {
         if (!textareaRef.current) return;
 
@@ -52,10 +52,12 @@ function MarkdownPanel({ noteId, textAreaId, note, noteBody }: MarkdownPanelProp
                 'bold', 'italic', 'heading', '|',
                 'quote', 'unordered-list', 'ordered-list', '|',
                 'link', 'image', '|',
-                'side-by-side', 'preview', '|',
+                'side-by-side', 'preview', 'fullscreen', '|',
             ]
         });
-
+		
+		addStyling();
+		
         return () => {
             // Cleanup on unmount
             if (easyMdeRef.current) {
@@ -127,7 +129,20 @@ function MarkdownPanel({ noteId, textAreaId, note, noteBody }: MarkdownPanelProp
             }
         }
     }
-
+	
+	function addStyling() : void {
+		// Change the icon colors.
+		const icons = document.getElementsByClassName("editor-toolbar")[0].children;
+		
+		for (let i = 0; i < icons.length; i++){
+			icons[i].setAttribute("style", "color:blue;");
+		}
+		
+		// Text alignment.
+		document.getElementsByClassName("CodeMirror")[0].setAttribute("style", "text-align:left;");
+		document.getElementsByClassName("editor-preview-side")[0].setAttribute("style", "text-align:left;");
+	}
+	
 	return (
 		<div className="container">
 			<div className="row justify-content-center">

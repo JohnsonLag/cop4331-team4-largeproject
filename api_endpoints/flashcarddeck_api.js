@@ -161,7 +161,7 @@ exports.setApp = function ( app, client )
         var error = '';
         try 
         {
-            // Find the note and update it
+            // Find the deck and update it
             const updatedDeck = await FlashCardDecks.findOneAndUpdate(
                 { UserId: userId, DeckId: deckId },
                 { 
